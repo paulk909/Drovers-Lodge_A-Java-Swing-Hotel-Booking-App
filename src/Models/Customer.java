@@ -14,6 +14,7 @@ import java.util.HashMap;
  */
 public class Customer {
     
+    private int customerID;
     private String username;
     private String password;
     private String firstName;
@@ -32,7 +33,8 @@ public class Customer {
         bookingList = new HashMap<Integer, Booking>();
     }
 
-    public Customer(String username, String password, String firstName, String lastName, Date dateOfBirth, String email, String house, String street, String town, String postcode, String telephone, String mobile) {
+    public Customer(int custoemrID, String username, String password, String firstName, String lastName, Date dateOfBirth, String email, String house, String street, String town, String postcode, String telephone, String mobile) {
+        this.customerID = customerID;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -48,6 +50,10 @@ public class Customer {
         bookingList = new HashMap<Integer, Booking>();
     }
 
+    public int getCustomerID() {
+        return customerID;
+    }
+    
     public String getUsername() {
         return username;
     }
@@ -100,6 +106,10 @@ public class Customer {
         return bookingList;
     }
 
+    public void setCustomerID(int customerID) {
+        this.customerID = customerID;
+    }
+    
     public void setUsername(String username) {
         this.username = username;
     }

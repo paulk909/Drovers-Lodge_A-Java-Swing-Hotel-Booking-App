@@ -19,7 +19,7 @@ public class Customer {
     private String password;
     private String firstName;
     private String lastName;
-    private Date dateOfBirth;
+    private String dateOfBirth;
     private String email;
     private String house;
     private String street;
@@ -33,8 +33,7 @@ public class Customer {
         bookingList = new HashMap<Integer, Booking>();
     }
 
-    public Customer(int custoemrID, String username, String password, String firstName, String lastName, Date dateOfBirth, String email, String house, String street, String town, String postcode, String telephone, String mobile) {
-        this.customerID = customerID;
+    public Customer(String username, String password, String firstName, String lastName, String dateOfBirth, String email, String house, String street, String town, String postcode, String telephone, String mobile) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -70,7 +69,7 @@ public class Customer {
         return lastName;
     }
     
-    public Date getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
@@ -106,9 +105,6 @@ public class Customer {
         return bookingList;
     }
 
-    public void setCustomerID(int customerID) {
-        this.customerID = customerID;
-    }
     
     public void setUsername(String username) {
         this.username = username;
@@ -126,7 +122,7 @@ public class Customer {
         this.lastName = lastName;
     }
     
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 

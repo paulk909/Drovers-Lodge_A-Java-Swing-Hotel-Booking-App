@@ -25,7 +25,7 @@ public class DBManager {
         String password = newCustomer.getPassword();
         String firstName = newCustomer.getFirstName();
         String lastName = newCustomer.getLastName();
-        Date dateOfBirth = newCustomer.getDateOfBirth();
+        String dateOfBirth = newCustomer.getDateOfBirth();
         String email = newCustomer.getEmail();
         String house = newCustomer.getHouse();
         String street = newCustomer.getStreet();
@@ -40,13 +40,13 @@ public class DBManager {
         Connection conn = DriverManager.getConnection("jdbc:ucanaccess://src/Db/DroversLodgeDb.accdb");
 
         Statement stmt = conn.createStatement();
-        String sql = "INSERT into Customer (Username, Password, FirstName, LastName, DateOfBirth, Email, House, Street, Town, Postcode, Telephone, Mobile)"
+        String sql = "INSERT into Customers (Username, Password, FirstName, LastName, DateOfBirth, Email, House, Street, Town, Postcode, Telephone, Mobile)"
                 + "VALUES ('"
                 + username + "','" 
                 + password + "','"
                 + firstName + "','"
-                + lastName + "','" 
-                + dateOfBirth + "','"
+                + lastName + "'," 
+                + dateOfBirth + ",'"
                 + email + "','"
                 + house + "','" 
                 + street + "','"

@@ -24,8 +24,7 @@ public class BookingLine {
         this.mealArray = new Meal[3];
     }
 
-    public BookingLine(int bookingLineID, Date checkInDate, Date checkOutDate, boolean isPaid, int bookingID) {
-        this.bookingLineID = bookingLineID;
+    public BookingLine(Date checkInDate, Date checkOutDate, boolean isPaid, int bookingID) {
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.isPaid = isPaid;
@@ -61,9 +60,6 @@ public class BookingLine {
         return mealArray;
     }
 
-    public void setBookingLineID(int bookingLineID) {
-        this.bookingLineID = bookingLineID;
-    }
 
     public void setCheckInDate(Date checkInDate) {
         this.checkInDate = checkInDate;

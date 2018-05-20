@@ -17,7 +17,8 @@ public class Meal {
     public Meal() {
     }
 
-    public Meal(String mealType, double mealPrice) {
+    public Meal(int mealID, String mealType, double mealPrice) {
+        this.mealID = mealID;
         this.mealType = mealType;
         this.mealPrice = mealPrice;
     }
@@ -34,7 +35,10 @@ public class Meal {
         return mealPrice;
     }
 
-
+    public void setMealID(int mealID) {
+        this.mealID = mealID;
+    }
+    
     public void setMealType(String mealType) {
         this.mealType = mealType;
     }

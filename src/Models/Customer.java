@@ -33,6 +33,23 @@ public class Customer {
         bookingList = new HashMap<Integer, Booking>();
     }
 
+    public Customer(int customerID, String username, String password, String firstName, String lastName, Date dateOfBirth, String email, String house, String street, String town, String postcode, String telephone, String mobile) {
+        this.customerID = customerID;
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.email = email;
+        this.house = house;
+        this.street = street;
+        this.town = town;
+        this.postcode = postcode;
+        this.telephone = telephone;
+        this.mobile = mobile;
+        bookingList = new HashMap<Integer, Booking>();
+    }
+    
     public Customer(String username, String password, String firstName, String lastName, Date dateOfBirth, String email, String house, String street, String town, String postcode, String telephone, String mobile) {
         this.username = username;
         this.password = password;
@@ -48,6 +65,7 @@ public class Customer {
         this.mobile = mobile;
         bookingList = new HashMap<Integer, Booking>();
     }
+    
 
     public int getCustomerID() {
         return customerID;
@@ -105,6 +123,10 @@ public class Customer {
         return bookingList;
     }
 
+    
+    public void setCustomerID(int customerID) {
+        this.customerID = customerID;
+    }
     
     public void setUsername(String username) {
         this.username = username;

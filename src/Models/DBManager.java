@@ -120,6 +120,29 @@ public class DBManager {
         return roomTypes;
     }
     
+    public HashMap<Integer, Meal> getMeals()
+    {
+        HashMap<Integer, Meal> meals = new HashMap<Integer, Meal>();
+        try 
+        {
+            String sqlString = "select * from Meals";
+            Statement st = dbCon.createStatement();
+            ResultSet rs = null;
+            rs = st.executeQuery(sqlString);
+            while(rs.next())        
+            {
+                Meal mealToAdd = new Meal();
+                mealToAdd.setMealID(rs.getInt("ID"));
+                mealToAdd.setMealType(rs.getString("MealType"));
+                mealToAdd.setMealPrice(rs.getDouble("MealPrice"));
+                meals.put(mealToAdd.getMealID(), mealToAdd);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }            
+        return meals;
+    }
+    
     
     
 }

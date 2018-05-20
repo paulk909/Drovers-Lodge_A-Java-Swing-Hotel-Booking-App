@@ -21,7 +21,8 @@ public class Staff {
     public Staff() {
     }
 
-    public Staff(String username, String password, String firstName, String lastName, String email, String staffRoleID) {
+    public Staff(int staffID, String username, String password, String firstName, String lastName, String email, String staffRoleID) {
+        this.staffID = staffID;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -58,6 +59,10 @@ public class Staff {
         return staffRoleID;
     }
 
+    
+    public void setStaffID(int staffID) {
+        this.staffID = staffID;
+    }
 
     public void setUsername(String username) {
         this.username = username;

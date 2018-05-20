@@ -17,7 +17,8 @@ public class Room {
     public Room() {
     }
 
-    public Room(int roomTypeID) {
+    public Room(int roomID, int roomTypeID) {
+        this.roomID = roomID;
         this.roomTypeID = roomTypeID;
     }
 
@@ -29,6 +30,10 @@ public class Room {
         return roomTypeID;
     }
 
+    
+    public void setRoomID(int roomID) {
+        this.roomID = roomID;
+    }
 
     public void setRoomTypeID(int roomTypeID) {
         this.roomTypeID = roomTypeID;

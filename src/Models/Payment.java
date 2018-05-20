@@ -24,7 +24,8 @@ public class Payment {
     public Payment() {
     }
 
-    public Payment(Date datePaid, String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost) {
+    public Payment(int paymentID, Date datePaid, String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost) {
+        this.paymentID = paymentID;
         this.datePaid = datePaid;
         this.payeeName = payeeName;
         this.cardNo = cardNo;
@@ -66,6 +67,10 @@ public class Payment {
         return totalCost;
     }
 
+    
+    public void setPaymentID(int paymentID) {
+        this.paymentID = paymentID;
+    }
 
     public void setDatePaid(Date datePaid) {
         this.datePaid = datePaid;

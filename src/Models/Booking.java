@@ -26,7 +26,8 @@ public class Booking {
         bookingLines = new HashMap<Integer, BookingLine>();
     }
 
-    public Booking(Date dateBooked, double outstandingBalance, double totalCost, int paymentID, int userID) {
+    public Booking(int bookingID, Date dateBooked, double outstandingBalance, double totalCost, int paymentID, int userID) {
+        this.bookingID = bookingID;
         this.dateBooked = dateBooked;
         this.outstandingBalance = outstandingBalance;
         this.totalCost = totalCost;
@@ -63,6 +64,10 @@ public class Booking {
         return bookingLines;
     }
 
+    
+    public void setBookingID(int bookingID) {
+        this.bookingID = bookingID;
+    }
 
     public void setDateBooked(Date dateBooked) {
         this.dateBooked = dateBooked;

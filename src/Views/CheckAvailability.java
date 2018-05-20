@@ -63,7 +63,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         long lengthOfStay = getLengthOfStay(checkIn, checkOut);
         txtNoOfDays.setText(String.valueOf(lengthOfStay));
         double price = calculatePrice(lengthOfStay, getMealID(), getRoomTypeID(roomType));
-        txtPrice.setText(String.valueOf(price));
+        txtPrice.setText("£" + String.valueOf(price));
     }
     
     

@@ -5,6 +5,8 @@
  */
 package Views;
 
+import Models.Booking;
+import Models.Customer;
 import Models.DBManager;
 import Models.RoomType;
 import java.awt.Color;
@@ -22,6 +24,9 @@ import javax.swing.DefaultComboBoxModel;
  * @author Paul
  */
 public class MainMenu extends javax.swing.JFrame {
+    
+    Customer loggedInCustomer = new Customer();
+    Booking currentBooking = loggedInCustomer.getCurrentBooking();
 
     /**
      * Creates new form MainMenu
@@ -33,6 +38,7 @@ public class MainMenu extends javax.swing.JFrame {
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
         populateRoomTypeDropDown();
+        currentBooking.populateBookingLines();
     }
     
     public void populateRoomTypeDropDown()
@@ -179,6 +185,11 @@ public class MainMenu extends javax.swing.JFrame {
         btnCart.setForeground(new java.awt.Color(255, 255, 255));
         btnCart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/basket.png"))); // NOI18N
         btnCart.setText("Cart");
+        btnCart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCartActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -254,6 +265,12 @@ public class MainMenu extends javax.swing.JFrame {
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnFindRoomsActionPerformed
+
+    private void btnCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartActionPerformed
+        Cart rForm = new Cart(currentBooking);
+        this.dispose();
+        rForm.setVisible(true);
+    }//GEN-LAST:event_btnCartActionPerformed
 
     /**
      * @param args the command line arguments

@@ -6,6 +6,8 @@
 package Models;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -105,7 +107,41 @@ public class BookingLine {
         this.meals = meals;
     }
     
-    public void setLinecost(double lineCost) {
+    public void setLineCost(double lineCost) {
         this.lineCost = lineCost;
     }   
+    
+    
+    public String getRoomType()
+    {
+        DBManager db = new DBManager();
+        HashMap<Integer, RoomType> roomTypes = new HashMap<Integer, RoomType>();
+        roomTypes = db.getRoomTypes();
+        String roomType = "";
+        
+        for (Map.Entry<Integer, RoomType> roomTypeEntry : roomTypes.entrySet())
+        {
+            if(roomTypeEntry.getValue().getRoomTypeID() == roomID)
+            {
+                roomType = roomTypeEntry.getValue().getRoomType();
+            }
+        } 
+        return roomType;
+    }
+    
+    public boolean getBreakfast()
+    {
+        return meals[0];
+    }
+    
+    public boolean getLunch()
+    {
+        return meals[1];
+    }
+    
+    public boolean getEveningMeal()
+    {
+        return meals[2];
+    }
+    
 }

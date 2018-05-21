@@ -216,4 +216,21 @@ public class Customer {
         return currentBookingID;
     }
     
+    public Booking getCurrentBooking()
+    {        
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        DBManager db = new DBManager();
+        bookings = db.getBookings();
+        Booking currentBooking = new Booking();
+        
+        for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+        {
+            if(bookingEntry.getValue().getIsConfirmed() == false)
+            {
+                currentBooking = bookingEntry.getValue();
+            }
+        }    
+        return currentBooking;
+    }
+    
 }

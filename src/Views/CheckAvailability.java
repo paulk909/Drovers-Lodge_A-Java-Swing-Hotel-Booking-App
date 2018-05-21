@@ -5,7 +5,9 @@
  */
 package Views;
 
+import Models.Booking;
 import Models.BookingLine;
+import Models.Customer;
 import Models.DBManager;
 import Models.MealType;
 import Models.RoomType;
@@ -24,28 +26,35 @@ import java.util.concurrent.TimeUnit;
  * @author Paul
  */
 public class CheckAvailability extends javax.swing.JFrame {
+    
+    Customer loggedInCustomer = new Customer();
+    Booking currentBooking = loggedInCustomer.getCurrentBooking();
 
     /**
      * Creates new form CheckAvailability
      */
     
-    private HashMap<Integer, BookingLine> cart = new HashMap<Integer, BookingLine>();
-    
-//    private Date checkIn;
-//    private Date checkOut;
-//    private String roomType;
-    
+
     
     public CheckAvailability(Date pCheckIn, Date pCheckOut, String pRoomType) {
         initComponents();
         this.getContentPane().setBackground(Color.white);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+        
         populateRoomTypeDropDown();
-//        this.checkIn = pCheckIn;
-//        this.checkOut = pCheckOut;
-//        this.roomType = pRoomType;
         updateAvailability(pCheckIn, pCheckOut, pRoomType);
+        currentBooking.populateBookingLines();
+    }
+    
+    public CheckAvailability() {
+        initComponents();
+        this.getContentPane().setBackground(Color.white);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+        
+        populateRoomTypeDropDown();
+        currentBooking.populateBookingLines();
     }
     
     
@@ -71,7 +80,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         long lengthOfStay = getLengthOfStay(checkIn, checkOut);
         txtNoOfDays.setText(String.valueOf(lengthOfStay));
         double price = calculatePrice(lengthOfStay, meals, getRoomTypeID(roomType));
-        txtPrice.setText("£" + String.valueOf(price));
+        txtPrice.setText("£" + String.format("%.02f",price));
     }
     
     
@@ -158,7 +167,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         return totalPrice;
     }
     
-        public void populateRoomTypeDropDown()
+    public void populateRoomTypeDropDown()
     {
         comboRoomType.removeAllItems();
         DBManager db = new DBManager();        
@@ -171,7 +180,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         }
     }
         
-        public long getLengthOfStay(Date checkIn, Date checkOut)
+    public long getLengthOfStay(Date checkIn, Date checkOut)
     {
         long length = checkOut.getTime() - checkIn.getTime();
         long lengthInDays = TimeUnit.DAYS.convert(length, TimeUnit.MILLISECONDS);
@@ -237,6 +246,11 @@ public class CheckAvailability extends javax.swing.JFrame {
         btnCart.setForeground(new java.awt.Color(255, 255, 255));
         btnCart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/basket.png"))); // NOI18N
         btnCart.setText("Cart");
+        btnCart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCartActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -505,7 +519,7 @@ public class CheckAvailability extends javax.swing.JFrame {
                 .addComponent(lblTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -581,6 +595,12 @@ public class CheckAvailability extends javax.swing.JFrame {
         DBManager db = new DBManager();
         db.addBookingLineToDb(newBookingLine);
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartActionPerformed
+        Cart rForm = new Cart(currentBooking);
+        this.dispose();
+        rForm.setVisible(true);
+    }//GEN-LAST:event_btnCartActionPerformed
 
     /**
      * @param args the command line arguments

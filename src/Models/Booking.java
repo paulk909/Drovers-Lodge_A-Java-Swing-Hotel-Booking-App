@@ -7,6 +7,7 @@ package Models;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -130,6 +131,21 @@ public class Booking {
         this.bookingLines = bookingLines;
     }
     
+    
+    public void populateBookingLines()
+    {
+        HashMap<Integer, BookingLine> allBookingLines = new HashMap<Integer, BookingLine>();
+        DBManager db = new DBManager();
+        allBookingLines = db.getBookingLines();
+        
+        for (Map.Entry<Integer, BookingLine> bookingLineEntry : allBookingLines.entrySet())
+        {
+            if(bookingLineEntry.getValue().getBookingID() == bookingID)
+            {
+                bookingLines.put(bookingLineEntry.getValue().getBookingLineID(), bookingLineEntry.getValue());
+            }
+        }        
+    }
     
     
 }

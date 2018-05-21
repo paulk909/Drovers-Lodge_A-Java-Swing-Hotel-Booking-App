@@ -100,8 +100,6 @@ public class DBManager {
     public void addBookingToDb(Booking bookingToAdd)
     {
         Customer currentCustomer = new Customer();
-        Date dateBooked = bookingToAdd.getDateBooked();
-        double outstandingBalance = bookingToAdd.getOutstandingBalance();
         double totalCost = bookingToAdd.getTotalCost();
         boolean isConfirmed = bookingToAdd.getIsConfirmed();
         boolean isPaid = bookingToAdd.getIsPaid();
@@ -113,9 +111,7 @@ public class DBManager {
         
         try {
             Statement stmt = dbCon.createStatement();
-            String sql = "INSERT INTO Bookings (DateBooked, OutstandingBalance, TotalCost, IsConfirmed, IsPaid, PaymentTypeID, PaymentID, CustomerTypeID, CustomerID) VALUES('"
-                    + dateFormat.format(dateBooked) + "',"
-                    + outstandingBalance + ","
+            String sql = "INSERT INTO Bookings (TotalCost, IsConfirmed, IsPaid, PaymentTypeID, PaymentID, CustomerTypeID, CustomerID) VALUES("
                     + totalCost + ","
                     + isConfirmed + ","
                     + isPaid + ","
@@ -167,8 +163,8 @@ public class DBManager {
         else
         {
             Booking newBooking = new Booking();
-            Date date = new Date();
-            newBooking.setDateBooked(date);
+            //Date date = new Date();
+            //newBooking.setDateBooked(date);
             addBookingToDb(newBooking);
             try {
                 int bookingID = currentCustomer.getCurrentBookingID();                
@@ -225,6 +221,38 @@ public class DBManager {
         return bookings;
     }
     
+    
+    public HashMap<Integer, BookingLine> getBookingLines()
+    {
+        HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
+        try 
+        {
+            String sqlString = "select * from BookingLines";
+            Statement st = dbCon.createStatement();
+            ResultSet rs = null;
+            rs = st.executeQuery(sqlString);
+            while(rs.next())        
+            {
+                BookingLine bookingLineToAdd = new BookingLine();
+                bookingLineToAdd.setBookingLineID(rs.getInt("ID"));
+                bookingLineToAdd.setCheckInDate(rs.getDate("CheckInDate"));
+                bookingLineToAdd.setCheckOutDate(rs.getDate("CheckOutDate"));
+                bookingLineToAdd.setBookingID(rs.getInt("BookingID"));
+                bookingLineToAdd.setRoomID(rs.getInt("RoomID"));
+                boolean breakfast = (rs.getBoolean("Breakfast"));
+                boolean lunch = (rs.getBoolean("Lunch"));
+                boolean eveningMeal = (rs.getBoolean("EveningMeal"));
+                boolean[] meals = {breakfast, lunch, eveningMeal};
+                bookingLineToAdd.setMeals(meals);
+                bookingLineToAdd.setLineCost(rs.getDouble("LineCost"));      
+                bookingLines.put(bookingLineToAdd.getBookingLineID(), bookingLineToAdd);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }            
+        return bookingLines;
+    }
+    
     public HashMap<Integer, RoomType> getRoomTypes()
     {
         HashMap<Integer, RoomType> roomTypes = new HashMap<Integer, RoomType>();
@@ -246,6 +274,28 @@ public class DBManager {
             Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
         }            
         return roomTypes;
+    }
+    
+    public HashMap<Integer, PaymentType> getPaymentTypes()
+    {
+        HashMap<Integer, PaymentType> paymentTypes = new HashMap<Integer, PaymentType>();
+        try 
+        {
+            String sqlString = "select * from PaymentTypes";
+            Statement st = dbCon.createStatement();
+            ResultSet rs = null;
+            rs = st.executeQuery(sqlString);
+            while(rs.next())        
+            {
+                PaymentType paymentTypeToAdd = new PaymentType();
+                paymentTypeToAdd.setPaymentTypeID(rs.getInt("ID"));
+                paymentTypeToAdd.setPaymentType(rs.getString("PaymentType"));
+                paymentTypes.put(paymentTypeToAdd.getPaymentTypeID(), paymentTypeToAdd);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }            
+        return paymentTypes;
     }
     
     public HashMap<Integer, MealType> getMealTypes()
@@ -281,6 +331,56 @@ public class DBManager {
             stmt.execute(sql);
         } catch (SQLException ex) {
             Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void reduceBookingTotalCost(int bookingID, double costToBeTakenOff)
+    {        
+        try {
+            Statement stmt = dbCon.createStatement();
+            String sql = "UPDATE Bookings SET TotalCost = TotalCost - " + costToBeTakenOff  + " WHERE ID = " + bookingID;
+            stmt.execute(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    public void removeBookingLine(int bookingLineID)
+    {
+        int bookingID = 0;
+        double bookingLineValue = 0;
+        HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
+        bookingLines = getBookingLines();
+        for (Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+        {
+            if(bookingLineEntry.getValue().getBookingLineID() == bookingLineID)
+            {
+                bookingID = bookingLineEntry.getValue().getBookingID();
+                bookingLineValue = bookingLineEntry.getValue().getLineCost();
+            }
+        }
+        if(bookingLines.size()>1)
+        {
+            try {
+                Statement stmt = dbCon.createStatement();
+                String sql = "DELETE from BookingLines where ID = " + bookingLineID;
+                stmt.execute(sql);
+                reduceBookingTotalCost(bookingID, bookingLineValue);
+            } catch (SQLException ex) {
+                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else
+        {
+            try {
+                Statement stmt = dbCon.createStatement();
+                String sql = "DELETE from BookingLines where ID = " + bookingLineID;
+                stmt.execute(sql);
+                String sql2 = "DELETE from Bookings where ID = " + bookingID;
+                stmt.execute(sql2);
+            } catch (SQLException ex) {
+                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
        

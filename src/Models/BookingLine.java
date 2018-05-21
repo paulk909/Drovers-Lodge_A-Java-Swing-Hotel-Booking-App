@@ -15,24 +15,42 @@ public class BookingLine {
     private int bookingLineID;
     private Date checkInDate;
     private Date checkOutDate;
-    private boolean isPaid;
     private int bookingID;
     private int roomID;
-    private Meal[] mealArray;
+    private boolean[] meals;
+    private double lineCost;
 
     public BookingLine() {
-        this.mealArray = new Meal[3];
+        this.meals = new boolean[3];
     }
 
-    public BookingLine(int bookingLineID, Date checkInDate, Date checkOutDate, boolean isPaid, int bookingID) {
+    public BookingLine(int bookingLineID, Date checkInDate, Date checkOutDate, int bookingID, int roomID, boolean[] meals, double lineCost) {
         this.bookingLineID = bookingLineID;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
-        this.isPaid = isPaid;
         this.bookingID = bookingID;
-        this.mealArray = new Meal[3];
+        this.roomID = roomID;
+        this.meals = meals;
+        this.lineCost = lineCost;
+    }
+    
+    public BookingLine(Date checkInDate, Date checkOutDate, int bookingID, int roomID, boolean[] meals, double lineCost) {
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.bookingID = bookingID;
+        this.roomID = roomID;
+        this.meals = meals;
+        this.lineCost = lineCost;
     }
 
+    public BookingLine(Date checkInDate, Date checkOutDate, int roomID, boolean[] meals, double lineCost) {
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.roomID = roomID;
+        this.meals = meals;
+        this.lineCost = lineCost;
+    }
+    
     public int getBookingLineID() {
         return bookingLineID;
     }
@@ -45,9 +63,6 @@ public class BookingLine {
         return checkOutDate;
     }
 
-    public boolean isIsPaid() {
-        return isPaid;
-    }
 
     public int getBookingID() {
         return bookingID;
@@ -57,8 +72,12 @@ public class BookingLine {
         return roomID;
     }
 
-    public Meal[] getMealArray() {
-        return mealArray;
+    public boolean[] getMeals() {
+        return meals;
+    }
+    
+    public double getLineCost() {
+        return lineCost;
     }
 
     
@@ -74,10 +93,6 @@ public class BookingLine {
         this.checkOutDate = checkOutDate;
     }
 
-    public void setIsPaid(boolean isPaid) {
-        this.isPaid = isPaid;
-    }
-
     public void setBookingID(int bookingID) {
         this.bookingID = bookingID;
     }
@@ -86,10 +101,11 @@ public class BookingLine {
         this.roomID = roomID;
     }
 
-    public void setMealArray(Meal[] mealArray) {
-        this.mealArray = mealArray;
+    public void setMeals(boolean[] meals) {
+        this.meals = meals;
     }
     
-    
-    
+    public void setLinecost(double lineCost) {
+        this.lineCost = lineCost;
+    }   
 }

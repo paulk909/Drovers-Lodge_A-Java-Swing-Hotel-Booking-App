@@ -272,7 +272,7 @@ public class CustomerRegister extends javax.swing.JFrame {
         String mobile = txtMobile.getText();
         Customer customerToBeAdded = new Customer(username, password, firstName, lastName, dateOfBirth, email, house, street, town, postcode, telephone, mobile);
         DBManager db = new DBManager();
-        db.addCustomer(customerToBeAdded);
+        db.addCustomerToDb(customerToBeAdded);
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed

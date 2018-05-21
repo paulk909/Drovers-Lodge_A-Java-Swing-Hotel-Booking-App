@@ -12,27 +12,32 @@ import java.util.HashMap;
  *
  * @author 30211275
  */
-public class Booking {
-    
+public class Booking {    
     private int bookingID;
     private Date dateBooked;
     private double outstandingBalance;
     private double totalCost;
+    private boolean isConfirmed;
+    private boolean isPaid;
+    private int paymentTypeID;
     private int paymentID;
-    private int userID;
+    private int customerTypeID;
+    private int customerID;
     private HashMap<Integer, BookingLine> bookingLines;
 
     public Booking() {
+        paymentTypeID = 1;
+        customerTypeID = 1;
         bookingLines = new HashMap<Integer, BookingLine>();
     }
 
-    public Booking(int bookingID, Date dateBooked, double outstandingBalance, double totalCost, int paymentID, int userID) {
+    public Booking(int bookingID, Date dateBooked, double outstandingBalance, double totalCost, int paymentID, int customerID) {
         this.bookingID = bookingID;
         this.dateBooked = dateBooked;
         this.outstandingBalance = outstandingBalance;
         this.totalCost = totalCost;
         this.paymentID = paymentID;
-        this.userID = userID;
+        this.customerID = customerID;
         bookingLines = new HashMap<Integer, BookingLine>();
     }
 
@@ -51,13 +56,29 @@ public class Booking {
     public double getTotalCost() {
         return totalCost;
     }
+    
+    public boolean getIsConfirmed() {
+        return isConfirmed;
+    }
+    
+    public boolean getIsPaid() {
+        return isPaid;
+    }
+    
+    public int getPaymentTypeID() {
+        return paymentTypeID;
+    }
 
     public int getPaymentID() {
         return paymentID;
     }
+    
+    public int getCustomerTypeID() {
+        return customerTypeID;
+    }
 
-    public int getUserID() {
-        return userID;
+    public int getCustomerID() {
+        return customerID;
     }
 
     public HashMap<Integer, BookingLine> getBookingLines() {
@@ -80,13 +101,29 @@ public class Booking {
     public void setTotalCost(double totalCost) {
         this.totalCost = totalCost;
     }
+    
+    public void setIsConfirmed(boolean isConfirmed) {
+        this.isConfirmed = isConfirmed;
+    }
+    
+    public void setIsPaid(boolean isPaid) {
+        this.isPaid = isPaid;
+    }
+    
+    public void setPaymentTypeID(int paymentTypeID) {
+        this.paymentTypeID = paymentTypeID;
+    }
 
     public void setPaymentID(int paymentID) {
         this.paymentID = paymentID;
     }
+    
+    public void setCustomerTypeID(int customerTypeID) {
+        this.customerTypeID = customerTypeID;
+    }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setCustomerID(int customerID) {
+        this.customerID = customerID;
     }
 
     public void setBookingLines(HashMap<Integer, BookingLine> bookingLines) {

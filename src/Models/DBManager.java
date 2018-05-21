@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,21 +41,21 @@ public class DBManager {
     }
     
     
-    public boolean addCustomer(Customer addCustomer)
+    public boolean addCustomerToDb(Customer customerToAdd)
     {      
         try {
-            String username = addCustomer.getUsername();
-            String password = addCustomer.getPassword();
-            String firstName = addCustomer.getFirstName();
-            String lastName = addCustomer.getLastName();
-            Date dateOfBirth = addCustomer.getDateOfBirth();
-            String email = addCustomer.getEmail();
-            String house = addCustomer.getHouse();
-            String street = addCustomer.getStreet();
-            String town = addCustomer.getTown();
-            String postcode = addCustomer.getPostcode();
-            String telephone = addCustomer.getTelephone();
-            String mobile = addCustomer.getMobile();
+            String username = customerToAdd.getUsername();
+            String password = customerToAdd.getPassword();
+            String firstName = customerToAdd.getFirstName();
+            String lastName = customerToAdd.getLastName();
+            Date dateOfBirth = customerToAdd.getDateOfBirth();
+            String email = customerToAdd.getEmail();
+            String house = customerToAdd.getHouse();
+            String street = customerToAdd.getStreet();
+            String town = customerToAdd.getTown();
+            String postcode = customerToAdd.getPostcode();
+            String telephone = customerToAdd.getTelephone();
+            String mobile = customerToAdd.getMobile();
             
             Statement st = dbCon.createStatement();
             ResultSet rs = null;
@@ -88,13 +89,140 @@ public class DBManager {
                     ps.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
+                }                
             }
         } catch (SQLException ex) {
             Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
+    }
+    
+    public void addBookingToDb(Booking bookingToAdd)
+    {
+        Customer currentCustomer = new Customer();
+        Date dateBooked = bookingToAdd.getDateBooked();
+        double outstandingBalance = bookingToAdd.getOutstandingBalance();
+        double totalCost = bookingToAdd.getTotalCost();
+        boolean isConfirmed = bookingToAdd.getIsConfirmed();
+        boolean isPaid = bookingToAdd.getIsPaid();
+        int paymentTypeID = bookingToAdd.getPaymentTypeID();
+        int paymentID = bookingToAdd.getPaymentID();
+        int customerTypeID = bookingToAdd.getCustomerTypeID();
+        int customerID = bookingToAdd.getCustomerID();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        
+        try {
+            Statement stmt = dbCon.createStatement();
+            String sql = "INSERT INTO Bookings (DateBooked, OutstandingBalance, TotalCost, IsConfirmed, IsPaid, PaymentTypeID, PaymentID, CustomerTypeID, CustomerID) VALUES('"
+                    + dateFormat.format(dateBooked) + "',"
+                    + outstandingBalance + ","
+                    + totalCost + ","
+                    + isConfirmed + ","
+                    + isPaid + ","
+                    + paymentTypeID + ","
+                    + paymentID + ","
+                    + customerTypeID + ","
+                    + customerID + ")";
+                
+            stmt.executeUpdate(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void addBookingLineToDb(BookingLine bookingLineToAdd)
+    {
+        Customer currentCustomer = new Customer();
+        Date checkInDate = bookingLineToAdd.getCheckInDate();
+        Date checkOutDate = bookingLineToAdd.getCheckOutDate();
+        int roomID = bookingLineToAdd.getRoomID();
+        boolean[] meals = bookingLineToAdd.getMeals();
+        boolean breakfast = meals[0];
+        boolean lunch = meals[1];
+        boolean eveningMeal = meals[2];
+        double lineCost = bookingLineToAdd.getLineCost();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        
+        if(currentCustomer.findCurrentBooking())
+        {
+            try {
+                int bookingID = currentCustomer.getCurrentBookingID();                
+                Statement stmt = dbCon.createStatement();
+                String sql = "INSERT INTO BookingLines (CheckInDate, CheckOutDate, BookingID, RoomID, Breakfast, Lunch, EveningMeal, LineCost) VALUES('"
+                        + dateFormat.format(checkInDate) + "','"
+                        + dateFormat.format(checkOutDate) + "',"
+                        + bookingID + ","
+                        + roomID + ","
+                        + breakfast + ","
+                        + lunch + ","
+                        + eveningMeal + ","
+                        + lineCost + ")";
+                
+                stmt.executeUpdate(sql);
+                updateBookingTotalCost(bookingID, lineCost);
+            } catch (SQLException ex) {
+                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else
+        {
+            Booking newBooking = new Booking();
+            Date date = new Date();
+            newBooking.setDateBooked(date);
+            addBookingToDb(newBooking);
+            try {
+                int bookingID = currentCustomer.getCurrentBookingID();                
+                Statement stmt = dbCon.createStatement();
+                String sql = "INSERT INTO BookingLines (CheckInDate, CheckOutDate, BookingID, RoomID, Breakfast, Lunch, EveningMeal, LineCost) VALUES('"
+                        + dateFormat.format(checkInDate) + "','"
+                        + dateFormat.format(checkOutDate) + "',"
+                        + bookingID + ","
+                        + roomID + ","
+                        + breakfast + ","
+                        + lunch + ","
+                        + eveningMeal + ","
+                        + lineCost + ")";
+                
+                stmt.executeUpdate(sql);
+                updateBookingTotalCost(bookingID, lineCost);
+            } catch (SQLException ex) {
+                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+    }
+    
+
+    
+    
+    public HashMap<Integer, Booking> getBookings()
+    {
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        try 
+        {
+            String sqlString = "select * from Bookings";
+            Statement st = dbCon.createStatement();
+            ResultSet rs = null;
+            rs = st.executeQuery(sqlString);
+            while(rs.next())        
+            {
+                Booking bookingToAdd = new Booking();
+                bookingToAdd.setBookingID(rs.getInt("ID"));
+                bookingToAdd.setDateBooked(rs.getDate("DateBooked"));
+                bookingToAdd.setOutstandingBalance(rs.getDouble("OutstandingBalance"));
+                bookingToAdd.setTotalCost(rs.getDouble("TotalCost"));
+                bookingToAdd.setIsConfirmed(rs.getBoolean("IsConfirmed"));
+                bookingToAdd.setIsPaid(rs.getBoolean("IsPaid"));
+                bookingToAdd.setPaymentTypeID(rs.getInt("PaymentTypeID"));
+                bookingToAdd.setPaymentID(rs.getInt("PaymentID"));
+                bookingToAdd.setCustomerTypeID(rs.getInt("CustomerTypeID"));
+                bookingToAdd.setCustomerID(rs.getInt("CustomerID"));                
+                bookings.put(bookingToAdd.getBookingID(), bookingToAdd);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }            
+        return bookings;
     }
     
     public HashMap<Integer, RoomType> getRoomTypes()
@@ -120,18 +248,18 @@ public class DBManager {
         return roomTypes;
     }
     
-    public HashMap<Integer, Meal> getMeals()
+    public HashMap<Integer, MealType> getMealTypes()
     {
-        HashMap<Integer, Meal> meals = new HashMap<Integer, Meal>();
+        HashMap<Integer, MealType> meals = new HashMap<Integer, MealType>();
         try 
         {
-            String sqlString = "select * from Meals";
+            String sqlString = "select * from MealTypes";
             Statement st = dbCon.createStatement();
             ResultSet rs = null;
             rs = st.executeQuery(sqlString);
             while(rs.next())        
             {
-                Meal mealToAdd = new Meal();
+                MealType mealToAdd = new MealType();
                 mealToAdd.setMealID(rs.getInt("ID"));
                 mealToAdd.setMealType(rs.getString("MealType"));
                 mealToAdd.setMealPrice(rs.getDouble("MealPrice"));
@@ -145,4 +273,15 @@ public class DBManager {
     
     
     
+    public void updateBookingTotalCost(int bookingID, double costToBeAdded)
+    {        
+        try {
+            Statement stmt = dbCon.createStatement();
+            String sql = "UPDATE Bookings SET TotalCost = TotalCost + " + costToBeAdded  + " WHERE ID = " + bookingID;
+            stmt.execute(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+       
 }

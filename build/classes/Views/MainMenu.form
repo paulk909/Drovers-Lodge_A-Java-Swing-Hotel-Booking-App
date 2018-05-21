@@ -295,7 +295,6 @@
               <Image iconType="3" name="/img/basket.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Cart"/>
-            <Property name="actionCommand" type="java.lang.String" value="Cart"/>
           </Properties>
         </Component>
       </SubComponents>

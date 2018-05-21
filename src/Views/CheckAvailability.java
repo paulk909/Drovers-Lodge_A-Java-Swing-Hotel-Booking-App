@@ -5,8 +5,9 @@
  */
 package Views;
 
+import Models.BookingLine;
 import Models.DBManager;
-import Models.Meal;
+import Models.MealType;
 import Models.RoomType;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,6 +28,8 @@ public class CheckAvailability extends javax.swing.JFrame {
     /**
      * Creates new form CheckAvailability
      */
+    
+    private HashMap<Integer, BookingLine> cart = new HashMap<Integer, BookingLine>();
     
 //    private Date checkIn;
 //    private Date checkOut;
@@ -59,47 +62,59 @@ public class CheckAvailability extends javax.swing.JFrame {
     {
         jdateCheckIn.setDate(checkIn);
         jdateCheckOut.setDate(checkOut);
-        comboRoomType.setSelectedItem(roomType);  
+        comboRoomType.setSelectedItem(roomType);
+        boolean[] meals = new boolean[3];
+        if(checkBreakfast.isSelected()) { meals[0] = true; }
+        if(checkLunch.isSelected()) { meals[1] = true; }
+        if(checkEveningMeal.isSelected()) { meals[2] = true; }
+        
         long lengthOfStay = getLengthOfStay(checkIn, checkOut);
         txtNoOfDays.setText(String.valueOf(lengthOfStay));
-        double price = calculatePrice(lengthOfStay, getMealID(), getRoomTypeID(roomType));
+        double price = calculatePrice(lengthOfStay, meals, getRoomTypeID(roomType));
         txtPrice.setText("£" + String.valueOf(price));
     }
     
     
-    public int getMealID()
+    public double getMealPrice(boolean[] meals)
     {
-        int mealID  = 0; 
-        HashMap<Integer, Meal> meals = new HashMap<Integer, Meal>();
+        double mealPrice  = 0;
+        double breakfastPrice  = 0;
+        double lunchPrice  = 0;
+        double eveningMealPrice  = 0;
+        HashMap<Integer, MealType> mealTypes = new HashMap<Integer, MealType>();
         DBManager db = new DBManager();
-        meals = db.getMeals();
+        mealTypes = db.getMealTypes();
         
-        if(checkBreakfast.isSelected() && !checkLunch.isSelected() && !checkEveningMeal.isSelected())
+        for (Map.Entry<Integer, MealType> mealTypeEntry : mealTypes.entrySet())
         {
-            mealID  = 2;
-        } else if(!checkBreakfast.isSelected() && checkLunch.isSelected() && !checkEveningMeal.isSelected())
-        {
-            mealID  = 3;
-        } else if(!checkBreakfast.isSelected() && !checkLunch.isSelected() && checkEveningMeal.isSelected())
-        {
-            mealID  = 4;
-        } else if(checkBreakfast.isSelected() && checkLunch.isSelected() && !checkEveningMeal.isSelected())
-        {
-            mealID  = 5;
-        } else if(checkBreakfast.isSelected() && !checkLunch.isSelected() && checkEveningMeal.isSelected())
-        {
-            mealID  = 6;
-        } else if(!checkBreakfast.isSelected() && checkLunch.isSelected() && checkEveningMeal.isSelected())
-        {
-            mealID  = 7;
-        } else if(checkBreakfast.isSelected() && checkLunch.isSelected() && checkEveningMeal.isSelected())
-        {
-            mealID  = 8;
-        } else
-        {
-            mealID  = 1;
+            if(mealTypeEntry.getValue().getMealType().endsWith("Breakfast"))
+            {
+                breakfastPrice = mealTypeEntry.getValue().getMealPrice();
+            } 
+            else if (mealTypeEntry.getValue().getMealType().endsWith("Lunch"))
+            {
+                lunchPrice = mealTypeEntry.getValue().getMealPrice();
+            }
+            else if (mealTypeEntry.getValue().getMealType().endsWith("Evening Meal"))
+            {
+                eveningMealPrice = mealTypeEntry.getValue().getMealPrice();
+            } 
         }
-        return mealID;
+        
+        if(meals[0] == true)
+        {
+            mealPrice = mealPrice + breakfastPrice;
+        }
+        if(meals[1] == true)
+        {
+            mealPrice = mealPrice + lunchPrice;
+        }
+        if(meals[2] == true)
+        {
+            mealPrice = mealPrice + eveningMealPrice;
+        }
+               
+        return mealPrice;
     }
     
     public int getRoomTypeID(String roomType)
@@ -120,24 +135,16 @@ public class CheckAvailability extends javax.swing.JFrame {
     }
     
     
-    public double calculatePrice(long lengthOfStay, int mealID, int roomTypeID)
+    public double calculatePrice(long lengthOfStay, boolean[] meals, int roomTypeID)
     {
         double totalPrice = 0;
         double mealPrice = 0;
+        mealPrice = getMealPrice(meals);
         double roomTypePrice = 0;
-        HashMap<Integer, Meal> meals = new HashMap<Integer, Meal>();
+        
         HashMap<Integer, RoomType> roomTypes = new HashMap<Integer, RoomType>();
         DBManager db = new DBManager();
-        meals = db.getMeals();
         roomTypes = db.getRoomTypes();
-        
-        for (Map.Entry<Integer, Meal> mealEntry : meals.entrySet())
-        {
-            if(mealEntry.getValue().getMealID() == mealID)
-            {
-                mealPrice = mealEntry.getValue().getMealPrice();
-            }
-        }
         
         for (Map.Entry<Integer, RoomType> roomTypeEntry : roomTypes.entrySet())
         {
@@ -340,6 +347,11 @@ public class CheckAvailability extends javax.swing.JFrame {
         btnAdd.setBackground(new java.awt.Color(51, 0, 0));
         btnAdd.setForeground(new java.awt.Color(255, 255, 255));
         btnAdd.setText("Add to Cart");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
         txtPrice.setEditable(false);
 
@@ -407,7 +419,7 @@ public class CheckAvailability extends javax.swing.JFrame {
                     .addComponent(jLabel6)
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(checkBreakfast)
                     .addComponent(checkLunch)
                     .addComponent(checkEveningMeal))
@@ -482,9 +494,8 @@ public class CheckAvailability extends javax.swing.JFrame {
                 .addGap(0, 32, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(23, 23, 23))
         );
         layout.setVerticalGroup(
@@ -535,6 +546,41 @@ public class CheckAvailability extends javax.swing.JFrame {
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         refreshAvailability();
     }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        Date checkIn = jdateCheckIn.getDate();
+        Date checkOut = jdateCheckOut.getDate();
+        int roomID = getRoomTypeID(String.valueOf(comboRoomType.getSelectedItem()));
+        boolean[] meals = new boolean[3];
+        
+        if(checkBreakfast.isSelected())
+        {
+            meals[0] = true;
+        } else
+        {
+            meals[0] = false;
+        }
+        if(checkLunch.isSelected())
+        {
+            meals[1] = true;
+        } else
+        {
+            meals[1] = false;
+        }
+        if(checkEveningMeal.isSelected())
+        {
+            meals[2] = true;
+        } else
+        {
+            meals[2] = false;
+        }
+        long lengthOfStay = getLengthOfStay(checkIn, checkOut);
+        double lineCost = calculatePrice(lengthOfStay, meals, roomID);
+        
+        BookingLine newBookingLine = new BookingLine(checkIn, checkOut, roomID, meals, lineCost);
+        DBManager db = new DBManager();
+        db.addBookingLineToDb(newBookingLine);
+    }//GEN-LAST:event_btnAddActionPerformed
 
     /**
      * @param args the command line arguments

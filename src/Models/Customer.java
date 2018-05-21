@@ -7,6 +7,7 @@ package Models;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -181,5 +182,38 @@ public class Customer {
     }
     
     
+    public boolean findCurrentBooking()
+    {
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        DBManager db = new DBManager();
+        bookings = db.getBookings();
+        boolean isFound = false;
+        
+        for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+        {
+            if(bookingEntry.getValue().getIsConfirmed() == false)
+            {
+                isFound = true;
+            }
+        }         
+        return isFound;
+    }
+    
+    public int getCurrentBookingID()
+    {        
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        DBManager db = new DBManager();
+        bookings = db.getBookings();
+        int currentBookingID = 0;
+        
+        for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+        {
+            if(bookingEntry.getValue().getIsConfirmed() == false)
+            {
+                currentBookingID = bookingEntry.getValue().getBookingID();
+            }
+        }    
+        return currentBookingID;
+    }
     
 }

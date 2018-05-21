@@ -9,15 +9,15 @@ package Models;
  *
  * @author Paul
  */
-public class Meal {
+public class MealType {
     private int mealID;
     private String mealType;
     private double mealPrice;
 
-    public Meal() {
+    public MealType() {
     }
 
-    public Meal(int mealID, String mealType, double mealPrice) {
+    public MealType(int mealID, String mealType, double mealPrice) {
         this.mealID = mealID;
         this.mealType = mealType;
         this.mealPrice = mealPrice;

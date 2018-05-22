@@ -129,6 +129,11 @@ public class BookingLine {
         return roomType;
     }
     
+//    public int getRoomTypeID()
+//    {
+//        
+//    }
+    
     public boolean getBreakfast()
     {
         return meals[0];

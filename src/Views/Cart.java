@@ -47,7 +47,7 @@ public class Cart extends javax.swing.JFrame {
             BookingLine currentBookingLine = bookingLineEntry.getValue();
             
             model.addRow(new Object[]{currentBookingLine.getBookingLineID(), currentBookingLine.getCheckInDate(), currentBookingLine.getCheckOutDate(),
-                            currentBookingLine.getRoomType(), currentBookingLine.getBreakfast(), currentBookingLine.getLunch(), 
+                            currentBookingLine.getRoomType(), currentBookingLine.getRoomID(), currentBookingLine.getBreakfast(), currentBookingLine.getLunch(), 
                             currentBookingLine.getEveningMeal(), "£" + String.format("%.02f",currentBookingLine.getLineCost()) });
         }
         txtBookingID.setText(String.valueOf(currentBooking.getBookingID()));
@@ -55,24 +55,12 @@ public class Cart extends javax.swing.JFrame {
     }
     
     
-    public void refreshCart()
+    public void refreshCart(int rowIndex)
     {
-        currentBooking.populateBookingLines();
-        tblBookingLines.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-        DefaultTableModel model = (DefaultTableModel)tblBookingLines.getModel();
-        model.setRowCount(0);
-        for(Map.Entry<Integer, BookingLine> bookingLineEntry : 
-                currentBooking.getBookingLines().entrySet())
-        {
-            BookingLine currentBookingLine = bookingLineEntry.getValue();
-            
-            model.addRow(new Object[]{currentBookingLine.getBookingLineID(), currentBookingLine.getCheckInDate(), currentBookingLine.getCheckOutDate(),
-                            currentBookingLine.getRoomType(), currentBookingLine.getBreakfast(), currentBookingLine.getLunch(), 
-                            currentBookingLine.getEveningMeal(), "£" + String.format("%.02f",currentBookingLine.getLineCost()) });
-        }
+        ((DefaultTableModel)tblBookingLines.getModel()).removeRow(rowIndex);
+        currentBooking = loggedInCustomer.getCurrentBooking();
         txtBookingID.setText(String.valueOf(currentBooking.getBookingID()));
-        txtTotalCost.setText("£" + String.valueOf(currentBooking.getTotalCost()));
+        txtTotalCost.setText("£" + String.format("%.02f",(currentBooking.getTotalCost())));
     }
     
     
@@ -177,14 +165,14 @@ public class Cart extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Check In", "Check Out", "Room Type", "Breakfast", "Lunch", "Evening Meal", "Cost"
+                "Booking Line ID", "Check In", "Check Out", "Room Type", "Room ID", "Breakfast", "Lunch", "Evening Meal", "Cost"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                true, true, true, true, false, false, false, true
+                true, true, true, true, true, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -284,8 +272,7 @@ public class Cart extends javax.swing.JFrame {
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(148, 148, 148)
-                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(19, 19, 19))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -333,9 +320,10 @@ public class Cart extends javax.swing.JFrame {
         {
             DefaultTableModel model = (DefaultTableModel)tblBookingLines.getModel();
             int bookingLineID = Integer.parseInt(String.valueOf(model.getValueAt(tblBookingLines.getSelectedRow(),0)));
+            int rowIndex = tblBookingLines.getSelectedRow();
             DBManager db = new DBManager();
             db.removeBookingLine(bookingLineID);
-            refreshCart();
+            refreshCart(rowIndex);
         }
     }//GEN-LAST:event_btnRemoveActionPerformed
 

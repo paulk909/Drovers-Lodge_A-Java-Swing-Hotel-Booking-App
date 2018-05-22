@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -219,6 +220,92 @@ public class DBManager {
             Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
         }            
         return bookings;
+    }
+    
+    
+    public HashMap<Integer, Room> getRooms()
+    {
+        HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
+        try 
+        {
+            String sqlString = "select * from Rooms";
+            Statement st = dbCon.createStatement();
+            ResultSet rs = null;
+            rs = st.executeQuery(sqlString);
+            while(rs.next())        
+            {
+                Room roomToAdd = new Room();
+                roomToAdd.setRoomID(rs.getInt("ID"));
+                roomToAdd.setRoomTypeID(rs.getInt("RoomTypeID"));        
+                rooms.put(roomToAdd.getRoomID(), roomToAdd);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }            
+        return rooms;
+    }
+    
+    public int getAvailableRoomID(Date checkIn, Date checkOut, String roomType)
+    {
+        int roomID = 0;
+        
+        HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
+        HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
+        bookingLines = getBookingLines();
+        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
+                
+        for (Map.Entry<Integer, Room> roomEntry : rooms.entrySet())
+        {
+            if(roomEntry.getValue().getRoomType().equalsIgnoreCase(roomType))
+            {
+                for (Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+                {
+                    try {
+                        Date existingCheckIn = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckInDate()));
+                        Date existingCheckOut = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckOutDate()));
+                        if(!((checkIn.before(existingCheckIn)) && (checkOut.after(existingCheckIn)))
+                              &&  !((checkIn.after(existingCheckIn)) && (checkIn.before(existingCheckOut)))
+                                &&        !(checkIn.compareTo(existingCheckIn) == 0)
+                                  &&              !((checkIn.after(existingCheckIn)) && (checkOut.equals(existingCheckOut))))
+                                        {
+                                            roomID = roomEntry.getValue().getRoomID();
+                                        }
+                    } catch (ParseException ex) {
+                        Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }        
+        return roomID;
+    }
+    
+    public int getAvailability(Date checkIn, Date checkOut, String roomType)
+    {
+        int available = 0;
+        HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
+        bookingLines = getBookingLines();
+        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
+        
+        for (Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+        {
+            if(bookingLineEntry.getValue().getRoomType().equalsIgnoreCase(roomType))
+            {
+                try {
+                    Date existingCheckIn = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckInDate()));
+                    Date existingCheckOut = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckOutDate()));
+                    if(!((checkIn.before(existingCheckIn)) && (checkOut.after(existingCheckIn)))
+                            &&  !((checkIn.after(existingCheckIn)) && (checkIn.before(existingCheckOut)))
+                            &&        !(checkIn.compareTo(existingCheckIn) == 0)
+                            &&              !((checkIn.after(existingCheckIn)) && (checkOut.equals(existingCheckOut))))
+                    {
+                        available = available + 1;
+                    }
+                } catch (ParseException ex) {
+                    Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        return available;
     }
     
     

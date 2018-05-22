@@ -5,6 +5,9 @@
  */
 package Models;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author Paul
@@ -30,7 +33,25 @@ public class Room {
         return roomTypeID;
     }
 
+    public String getRoomType()
+    {
+        HashMap<Integer, RoomType> roomTypes = new HashMap<Integer, RoomType>();
+        DBManager db = new DBManager();
+        roomTypes = db.getRoomTypes();
+        String roomType = "";
+        
+        for (Map.Entry<Integer, RoomType> roomTypeEntry : roomTypes.entrySet())
+            {
+                if(roomTypeEntry.getValue().getRoomTypeID() == roomTypeID)
+                {
+                    roomType = roomTypeEntry.getValue().getRoomType();
+                }
+            }
+        return roomType;
+    }
     
+            
+            
     public void setRoomID(int roomID) {
         this.roomID = roomID;
     }
@@ -38,6 +59,7 @@ public class Room {
     public void setRoomTypeID(int roomTypeID) {
         this.roomTypeID = roomTypeID;
     }
+    
     
     
     

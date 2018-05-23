@@ -14,12 +14,16 @@ import Models.RoomType;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -186,9 +190,17 @@ public class CheckAvailability extends javax.swing.JFrame {
         
     public long getLengthOfStay(Date checkIn, Date checkOut)
     {
-        long length = checkOut.getTime() - checkIn.getTime();
-        long lengthInDays = TimeUnit.DAYS.convert(length, TimeUnit.MILLISECONDS);
-        return lengthInDays;
+        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            Date fCheckIn = fmt.parse(fmt.format(checkIn));
+            Date fCheckOut = fmt.parse(fmt.format(checkOut));
+            long length = fCheckOut.getTime() - fCheckIn.getTime();
+            long lengthInDays = TimeUnit.DAYS.convert(length, TimeUnit.MILLISECONDS);
+            return lengthInDays;
+        } catch (ParseException ex) {
+            Logger.getLogger(CheckAvailability.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
     }
         
         
@@ -313,6 +325,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         });
 
         jdateCheckIn.setBackground(new java.awt.Color(255, 255, 255));
+        jdateCheckIn.setFocusable(false);
         jdateCheckIn.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jdateCheckInPropertyChange(evt);
@@ -320,6 +333,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         });
 
         jdateCheckOut.setBackground(new java.awt.Color(255, 255, 255));
+        jdateCheckOut.setFocusable(false);
         jdateCheckOut.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jdateCheckOutPropertyChange(evt);

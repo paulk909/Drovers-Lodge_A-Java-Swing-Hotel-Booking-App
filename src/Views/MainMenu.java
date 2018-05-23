@@ -142,8 +142,10 @@ public class MainMenu extends javax.swing.JFrame {
         comboRoomType.setToolTipText("");
 
         jdateCheckIn.setBackground(new java.awt.Color(255, 255, 255));
+        jdateCheckIn.setFocusable(false);
 
         jdateCheckOut.setBackground(new java.awt.Color(255, 255, 255));
+        jdateCheckOut.setFocusable(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

@@ -169,8 +169,8 @@
                 <Column editable="true" title="Booking Line ID" type="java.lang.Integer"/>
                 <Column editable="true" title="Check In" type="java.lang.Object"/>
                 <Column editable="true" title="Check Out" type="java.lang.Object"/>
-                <Column editable="true" title="Room Type" type="java.lang.String"/>
                 <Column editable="true" title="Room ID" type="java.lang.Integer"/>
+                <Column editable="true" title="Room Type" type="java.lang.String"/>
                 <Column editable="false" title="Breakfast" type="java.lang.Boolean"/>
                 <Column editable="false" title="Lunch" type="java.lang.Boolean"/>
                 <Column editable="false" title="Evening Meal" type="java.lang.Boolean"/>

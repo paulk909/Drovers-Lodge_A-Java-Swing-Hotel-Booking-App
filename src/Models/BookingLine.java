@@ -112,27 +112,6 @@ public class BookingLine {
     }   
     
     
-    public String getRoomType()
-    {
-        DBManager db = new DBManager();
-        HashMap<Integer, RoomType> roomTypes = new HashMap<Integer, RoomType>();
-        roomTypes = db.getRoomTypes();
-        String roomType = "";
-        
-        for (Map.Entry<Integer, RoomType> roomTypeEntry : roomTypes.entrySet())
-        {
-            if(roomTypeEntry.getValue().getRoomTypeID() == roomID)
-            {
-                roomType = roomTypeEntry.getValue().getRoomType();
-            }
-        } 
-        return roomType;
-    }
-    
-//    public int getRoomTypeID()
-//    {
-//        
-//    }
     
     public boolean getBreakfast()
     {

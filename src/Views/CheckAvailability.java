@@ -83,6 +83,8 @@ public class CheckAvailability extends javax.swing.JFrame {
         txtNoOfDays.setText(String.valueOf(lengthOfStay));
         double price = calculatePrice(lengthOfStay, meals, getRoomTypeID(roomType));
         txtPrice.setText("£" + String.format("%.02f",price));
+        DBManager db = new DBManager();
+        txtAvailability.setText(String.valueOf(db.getAvailability(checkIn, checkOut, roomType)));
     }
     
     
@@ -609,11 +611,12 @@ public class CheckAvailability extends javax.swing.JFrame {
             meals[2] = false;
         }
         long lengthOfStay = getLengthOfStay(checkIn, checkOut);
-        double lineCost = calculatePrice(lengthOfStay, meals, roomID);
+        double lineCost = calculatePrice(lengthOfStay, meals, db.getRoomTypeIDFromRoomID(roomID));
         
         BookingLine newBookingLine = new BookingLine(checkIn, checkOut, roomID, meals, lineCost);
         db.addBookingLineToDb(newBookingLine);
         currentBooking = loggedInCustomer.getCurrentBooking();
+        txtAvailability.setText(String.valueOf(db.getAvailability(checkIn, checkOut, roomType)));
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartActionPerformed

@@ -45,9 +45,11 @@ public class Cart extends javax.swing.JFrame {
                 currentBooking.getBookingLines().entrySet())
         {
             BookingLine currentBookingLine = bookingLineEntry.getValue();
+            DBManager db = new DBManager();
+            String roomType = db.getRoomTypeFromRoomTypeID(db.getRoomTypeIDFromRoomID(currentBookingLine.getRoomID()));
             
             model.addRow(new Object[]{currentBookingLine.getBookingLineID(), currentBookingLine.getCheckInDate(), currentBookingLine.getCheckOutDate(),
-                            currentBookingLine.getRoomType(), currentBookingLine.getRoomID(), currentBookingLine.getBreakfast(), currentBookingLine.getLunch(), 
+                            currentBookingLine.getRoomID(), roomType, currentBookingLine.getBreakfast(), currentBookingLine.getLunch(), 
                             currentBookingLine.getEveningMeal(), "£" + String.format("%.02f",currentBookingLine.getLineCost()) });
         }
         txtBookingID.setText(String.valueOf(currentBooking.getBookingID()));
@@ -165,11 +167,11 @@ public class Cart extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Booking Line ID", "Check In", "Check Out", "Room Type", "Room ID", "Breakfast", "Lunch", "Evening Meal", "Cost"
+                "Booking Line ID", "Check In", "Check Out", "Room ID", "Room Type", "Breakfast", "Lunch", "Evening Meal", "Cost"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 true, true, true, true, true, false, false, false, true

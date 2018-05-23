@@ -262,8 +262,8 @@ public class MainMenu extends javax.swing.JFrame {
     private void btnFindRoomsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindRoomsActionPerformed
         Date checkin = jdateCheckIn.getDate();
         Date checkout = jdateCheckOut.getDate();
-        String roomTypeID = String.valueOf(comboRoomType.getSelectedItem());
-        CheckAvailability rForm = new CheckAvailability(checkin, checkout, roomTypeID);
+        String roomType = String.valueOf(comboRoomType.getSelectedItem());
+        CheckAvailability rForm = new CheckAvailability(checkin, checkout, roomType);
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnFindRoomsActionPerformed

@@ -33,24 +33,6 @@ public class Room {
         return roomTypeID;
     }
 
-    public String getRoomType()
-    {
-        HashMap<Integer, RoomType> roomTypes = new HashMap<Integer, RoomType>();
-        DBManager db = new DBManager();
-        roomTypes = db.getRoomTypes();
-        String roomType = "";
-        
-        for (Map.Entry<Integer, RoomType> roomTypeEntry : roomTypes.entrySet())
-            {
-                if(roomTypeEntry.getValue().getRoomTypeID() == roomTypeID)
-                {
-                    roomType = roomTypeEntry.getValue().getRoomType();
-                }
-            }
-        return roomType;
-    }
-    
-            
             
     public void setRoomID(int roomID) {
         this.roomID = roomID;

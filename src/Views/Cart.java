@@ -9,10 +9,12 @@ import Models.Booking;
 import Models.BookingLine;
 import Models.Customer;
 import Models.DBManager;
+import Models.PaymentType;
 import Models.RoomType;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.ListSelectionModel;
@@ -41,6 +43,7 @@ public class Cart extends javax.swing.JFrame {
         tblBookingLines.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
         DefaultTableModel model = (DefaultTableModel)tblBookingLines.getModel();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         for(Map.Entry<Integer, BookingLine> bookingLineEntry : 
                 currentBooking.getBookingLines().entrySet())
         {
@@ -48,12 +51,13 @@ public class Cart extends javax.swing.JFrame {
             DBManager db = new DBManager();
             String roomType = db.getRoomTypeFromRoomTypeID(db.getRoomTypeIDFromRoomID(currentBookingLine.getRoomID()));
             
-            model.addRow(new Object[]{currentBookingLine.getBookingLineID(), currentBookingLine.getCheckInDate(), currentBookingLine.getCheckOutDate(),
+            model.addRow(new Object[]{currentBookingLine.getBookingLineID(), dateFormat.format(currentBookingLine.getCheckInDate()), dateFormat.format(currentBookingLine.getCheckOutDate()),
                             currentBookingLine.getRoomID(), roomType, currentBookingLine.getBreakfast(), currentBookingLine.getLunch(), 
                             currentBookingLine.getEveningMeal(), "£" + String.format("%.02f",currentBookingLine.getLineCost()) });
         }
         txtBookingID.setText(String.valueOf(currentBooking.getBookingID()));
         txtTotalCost.setText("£" + String.valueOf(currentBooking.getTotalCost()));
+        populatePaymentTypeDropDown();
     }
     
     
@@ -66,16 +70,16 @@ public class Cart extends javax.swing.JFrame {
     }
     
     
-    public void populateRoomTypeDropDown()
+    public void populatePaymentTypeDropDown()
     {
         comboPaymentType.removeAllItems();
         DBManager db = new DBManager();        
-        HashMap<Integer, RoomType> roomTypes = new HashMap<Integer, RoomType>();
-        roomTypes = db.getRoomTypes(); 
+        HashMap<Integer, PaymentType> paymentTypes = new HashMap<Integer, PaymentType>();
+        paymentTypes = db.getPaymentTypes(); 
         comboPaymentType.addItem("--Please Select--");
-        for (Map.Entry<Integer, RoomType> roomTypeEntry : roomTypes.entrySet())
+        for (Map.Entry<Integer, PaymentType> paymentTypeEntry : paymentTypes.entrySet())
         {
-            comboPaymentType.addItem(roomTypeEntry.getValue().getRoomType());
+            comboPaymentType.addItem(paymentTypeEntry.getValue().getPaymentType());
         }
     }
     
@@ -218,14 +222,14 @@ public class Cart extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(txtBookingID, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(comboPaymentType, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(comboPaymentType, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
                 .addComponent(txtTotalCost, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)

@@ -66,6 +66,8 @@ public class MainMenu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jframeLogin = new javax.swing.JFrame();
+        jLabel5 = new javax.swing.JLabel();
         lblTitle = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -81,6 +83,25 @@ public class MainMenu extends javax.swing.JFrame {
         btnRegister = new javax.swing.JButton();
         btnSignIn = new javax.swing.JButton();
         btnCart = new javax.swing.JButton();
+
+        jLabel5.setText("Login");
+
+        javax.swing.GroupLayout jframeLoginLayout = new javax.swing.GroupLayout(jframeLogin.getContentPane());
+        jframeLogin.getContentPane().setLayout(jframeLoginLayout);
+        jframeLoginLayout.setHorizontalGroup(
+            jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jframeLoginLayout.createSequentialGroup()
+                .addGap(163, 163, 163)
+                .addComponent(jLabel5)
+                .addContainerGap(190, Short.MAX_VALUE))
+        );
+        jframeLoginLayout.setVerticalGroup(
+            jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jframeLoginLayout.createSequentialGroup()
+                .addGap(63, 63, 63)
+                .addComponent(jLabel5)
+                .addContainerGap(112, Short.MAX_VALUE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -256,7 +277,11 @@ public class MainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
-        // TODO add your handling code here:
+        jframeLogin.setVisible(true);
+        jframeLogin.setSize(400,200); 
+        jframeLogin.getContentPane().setBackground(Color.white); 
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        jframeLogin.setLocation(dim.width/2-jframeLogin.getSize().width/2, dim.height/2-jframeLogin.getSize().height/2);
     }//GEN-LAST:event_btnSignInActionPerformed
 
     private void btnFindRoomsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindRoomsActionPerformed
@@ -320,10 +345,12 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private com.toedter.calendar.JDateChooser jdateCheckIn;
     private com.toedter.calendar.JDateChooser jdateCheckOut;
+    private javax.swing.JFrame jframeLogin;
     private javax.swing.JLabel lblTitle;
     // End of variables declaration//GEN-END:variables
 }

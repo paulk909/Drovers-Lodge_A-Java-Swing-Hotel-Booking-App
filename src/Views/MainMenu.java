@@ -8,10 +8,15 @@ package Views;
 import Models.Booking;
 import Models.Customer;
 import Models.DBManager;
+import Models.LoggedInUser;
 import Models.RoomType;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,8 +30,8 @@ import javax.swing.DefaultComboBoxModel;
  */
 public class MainMenu extends javax.swing.JFrame {
     
-    Customer loggedInCustomer = new Customer();
-    Booking currentBooking = loggedInCustomer.getCurrentBooking();
+    private LoggedInUser loggedInUser = new LoggedInUser();
+    private Booking currentBooking = new Booking(); //loggedInCustomer.getCurrentBooking();
 
     /**
      * Creates new form MainMenu
@@ -36,7 +41,23 @@ public class MainMenu extends javax.swing.JFrame {
         this.getContentPane().setBackground(Color.white); 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+        
+        Font ttfBase = null;
+        Font ttfReal = null;
+        try 
+        {
+            InputStream myStream = new BufferedInputStream(new FileInputStream("src/fonts/Dillanda Caligraphy Script Demo.ttf"));
+            ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
+            ttfReal = ttfBase.deriveFont(Font.BOLD, 50);
+            lblTitle.setFont(ttfReal);
+            lblTitle.setForeground(new Color(102, 0, 0));
 
+        } catch (Exception ex) 
+        {
+            ex.printStackTrace();
+            System.err.println("Custom font not loaded.");
+        }
+                
         populateRoomTypeDropDown();
         currentBooking.populateBookingLines();
     }
@@ -68,6 +89,12 @@ public class MainMenu extends javax.swing.JFrame {
 
         jframeLogin = new javax.swing.JFrame();
         jLabel5 = new javax.swing.JLabel();
+        txtUsername = new javax.swing.JTextField();
+        txtPassword = new javax.swing.JPasswordField();
+        jLabel6 = new javax.swing.JLabel();
+        btnLogin = new javax.swing.JButton();
+        btnClose = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
         lblTitle = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -84,23 +111,76 @@ public class MainMenu extends javax.swing.JFrame {
         btnSignIn = new javax.swing.JButton();
         btnCart = new javax.swing.JButton();
 
-        jLabel5.setText("Login");
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel5.setText("Username");
+
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel6.setText("Password");
+
+        btnLogin.setText("Login");
+        btnLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoginActionPerformed(evt);
+            }
+        });
+
+        btnClose.setText("Close");
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel7.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(51, 0, 0));
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel7.setText("Enter login details");
 
         javax.swing.GroupLayout jframeLoginLayout = new javax.swing.GroupLayout(jframeLogin.getContentPane());
         jframeLogin.getContentPane().setLayout(jframeLoginLayout);
         jframeLoginLayout.setHorizontalGroup(
             jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jframeLoginLayout.createSequentialGroup()
-                .addGap(163, 163, 163)
-                .addComponent(jLabel5)
-                .addContainerGap(190, Short.MAX_VALUE))
+                .addGap(59, 59, 59)
+                .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jframeLoginLayout.createSequentialGroup()
+                        .addGap(46, 46, 46)
+                        .addComponent(btnLogin)
+                        .addGap(51, 51, 51)
+                        .addComponent(btnClose))
+                    .addGroup(jframeLoginLayout.createSequentialGroup()
+                        .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addGap(31, 31, 31)
+                        .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtPassword)
+                            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(63, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jframeLoginLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel7)
+                .addGap(91, 91, 91))
         );
         jframeLoginLayout.setVerticalGroup(
             jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jframeLoginLayout.createSequentialGroup()
-                .addGap(63, 63, 63)
-                .addComponent(jLabel5)
-                .addContainerGap(112, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addGap(33, 33, 33)
+                .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnLogin)
+                    .addComponent(btnClose))
+                .addGap(20, 20, 20))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -108,7 +188,7 @@ public class MainMenu extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(725, 416));
 
         lblTitle.setBackground(new java.awt.Color(255, 255, 204));
-        lblTitle.setFont(new java.awt.Font("Vivaldi", 1, 48)); // NOI18N
+        lblTitle.setFont(new java.awt.Font("Arial", 1, 48)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(102, 0, 0));
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitle.setText("Drovers Lodge");
@@ -193,11 +273,17 @@ public class MainMenu extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jPanel2.setBackground(new java.awt.Color(235, 235, 235));
+        jPanel2.setBackground(new java.awt.Color(224, 224, 224));
+        jPanel2.setToolTipText("");
 
         jButton2.setText("About Drovers Lodge");
 
         btnRegister.setText("Register");
+        btnRegister.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegisterActionPerformed(evt);
+            }
+        });
 
         btnSignIn.setText("Sign In");
         btnSignIn.addActionListener(new java.awt.event.ActionListener() {
@@ -233,24 +319,20 @@ public class MainMenu extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
-                    .addComponent(btnRegister)
                     .addComponent(btnSignIn)
+                    .addComponent(btnRegister)
                     .addComponent(btnCart))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(174, 174, 174)
-                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -260,19 +342,23 @@ public class MainMenu extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(20, 20, 20))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(191, 191, 191)
+                .addComponent(lblTitle)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblTitle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(17, 17, 17)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
 
         pack();
@@ -280,7 +366,7 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
         jframeLogin.setVisible(true);
-        jframeLogin.setSize(400,200); 
+        jframeLogin.setSize(400,250); 
         jframeLogin.getContentPane().setBackground(Color.white); 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         jframeLogin.setLocation(dim.width/2-jframeLogin.getSize().width/2, dim.height/2-jframeLogin.getSize().height/2);
@@ -291,15 +377,58 @@ public class MainMenu extends javax.swing.JFrame {
         Date checkout = jdateCheckOut.getDate();
         String roomType = String.valueOf(comboRoomType.getSelectedItem());
         CheckAvailability rForm = new CheckAvailability(checkin, checkout, roomType);
+        if(loggedInUser.getIsLoggedIn())
+        {
+            rForm.getUser(loggedInUser.getUsername());
+        }
+        
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnFindRoomsActionPerformed
 
     private void btnCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartActionPerformed
         Cart rForm = new Cart(currentBooking);
+        if(loggedInUser.getIsLoggedIn())
+        {
+            rForm.getUser(loggedInUser.getUsername());
+        }
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnCartActionPerformed
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        jframeLogin.setVisible(false);
+    }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
+        if(loggedInUser.getIsLoggedIn())
+        {
+            loggedInUser = new LoggedInUser();
+            btnSignIn.setText("Sign In");
+            btnSignIn.setEnabled(true);
+            btnRegister.setText("Register");
+        }
+    }//GEN-LAST:event_btnRegisterActionPerformed
+
+    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+        String username  =  txtUsername.getText();
+        String password  =  txtPassword.getText();
+        DBManager db= new DBManager();
+        
+        if(db.checkLoginDetails(username, password))
+        {
+            loggedInUser = db.getValidUser(username);
+            btnSignIn.setText("Logged in as " + loggedInUser.getUsername());
+            btnSignIn.setEnabled(false);
+            btnRegister.setText("Logout");
+            txtUsername.setText("");
+            txtPassword.setText("");
+            jframeLogin.dispose();
+        }
+        
+        
+               
+    }//GEN-LAST:event_btnLoginActionPerformed
 
     /**
      * @param args the command line arguments
@@ -338,7 +467,9 @@ public class MainMenu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCart;
+    private javax.swing.JButton btnClose;
     private javax.swing.JButton btnFindRooms;
+    private javax.swing.JButton btnLogin;
     private javax.swing.JButton btnRegister;
     private javax.swing.JButton btnSignIn;
     private javax.swing.JComboBox<String> comboRoomType;
@@ -348,11 +479,15 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private com.toedter.calendar.JDateChooser jdateCheckIn;
     private com.toedter.calendar.JDateChooser jdateCheckOut;
     private javax.swing.JFrame jframeLogin;
     private javax.swing.JLabel lblTitle;
+    private javax.swing.JPasswordField txtPassword;
+    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }

@@ -9,11 +9,16 @@ import Models.Booking;
 import Models.BookingLine;
 import Models.Customer;
 import Models.DBManager;
+import Models.LoggedInUser;
 import Models.PaymentType;
 import Models.RoomType;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +31,8 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Cart extends javax.swing.JFrame {
     
-    private Customer loggedInCustomer = new Customer();
-    private Booking currentBooking = loggedInCustomer.getCurrentBooking();
+    private LoggedInUser loggedInUser = new LoggedInUser();
+    private Booking currentBooking = new Booking();
     
 
     /**
@@ -39,6 +44,22 @@ public class Cart extends javax.swing.JFrame {
         this.getContentPane().setBackground(Color.white); 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+        
+        Font ttfBase = null;
+        Font ttfReal = null;
+        try 
+        {
+            InputStream myStream = new BufferedInputStream(new FileInputStream("src/fonts/Dillanda Caligraphy Script Demo.ttf"));
+            ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
+            ttfReal = ttfBase.deriveFont(Font.BOLD, 50);
+            lblTitle.setFont(ttfReal);
+            lblTitle.setForeground(new Color(102, 0, 0));
+
+        } catch (Exception ex) 
+        {
+            ex.printStackTrace();
+            System.err.println("Custom font not loaded.");
+        }
         
         tblBookingLines.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
@@ -61,10 +82,23 @@ public class Cart extends javax.swing.JFrame {
     }
     
     
+    public void getUser(String username)
+    {
+        DBManager db= new DBManager();        
+        loggedInUser = db.getValidUser(username);       
+        btnSignIn.setText("Logged in as " + loggedInUser.getUsername());
+        btnSignIn.setEnabled(false);
+        btnRegister.setText("Logout");
+//        txtUsername.setText("");
+//        txtPassword.setText("");
+//        jframeLogin.dispose();
+    }
+    
+    
     public void refreshCart(int rowIndex)
     {
         ((DefaultTableModel)tblBookingLines.getModel()).removeRow(rowIndex);
-        currentBooking = loggedInCustomer.getCurrentBooking();
+//        currentBooking = loggedInCustomer.getCurrentBooking();
         txtBookingID.setText(String.valueOf(currentBooking.getBookingID()));
         txtTotalCost.setText("£" + String.format("%.02f",(currentBooking.getTotalCost())));
     }
@@ -94,12 +128,6 @@ public class Cart extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel2 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
-        btnRegister = new javax.swing.JButton();
-        btnSignIn = new javax.swing.JButton();
-        btnCart = new javax.swing.JButton();
-        lblTitle = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblBookingLines = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
@@ -112,59 +140,14 @@ public class Cart extends javax.swing.JFrame {
         txtTotalCost = new javax.swing.JTextField();
         btnRemove = new javax.swing.JButton();
         btnAddMoreRooms = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
+        btnRegister = new javax.swing.JButton();
+        btnSignIn = new javax.swing.JButton();
+        btnCart = new javax.swing.JButton();
+        lblTitle = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jPanel2.setBackground(new java.awt.Color(235, 235, 235));
-
-        jButton2.setText("About Drovers Lodge");
-
-        btnRegister.setText("Register");
-
-        btnSignIn.setText("Sign In");
-        btnSignIn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSignInActionPerformed(evt);
-            }
-        });
-
-        btnCart.setBackground(new java.awt.Color(51, 0, 0));
-        btnCart.setForeground(new java.awt.Color(255, 255, 255));
-        btnCart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/basket.png"))); // NOI18N
-        btnCart.setText("Cart");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSignIn)
-                .addGap(18, 18, 18)
-                .addComponent(btnRegister)
-                .addGap(18, 18, 18)
-                .addComponent(btnCart)
-                .addGap(15, 15, 15))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(btnRegister)
-                    .addComponent(btnSignIn)
-                    .addComponent(btnCart))
-                .addContainerGap())
-        );
-
-        lblTitle.setBackground(new java.awt.Color(255, 255, 204));
-        lblTitle.setFont(new java.awt.Font("Vivaldi", 1, 48)); // NOI18N
-        lblTitle.setForeground(new java.awt.Color(102, 0, 0));
-        lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTitle.setText("Drovers Lodge");
 
         tblBookingLines.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -267,6 +250,68 @@ public class Cart extends javax.swing.JFrame {
             }
         });
 
+        jPanel2.setBackground(new java.awt.Color(224, 224, 224));
+        jPanel2.setToolTipText("");
+
+        jButton2.setText("About Drovers Lodge");
+
+        btnRegister.setText("Register");
+        btnRegister.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegisterActionPerformed(evt);
+            }
+        });
+
+        btnSignIn.setText("Sign In");
+        btnSignIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSignInActionPerformed(evt);
+            }
+        });
+
+        btnCart.setBackground(new java.awt.Color(51, 0, 0));
+        btnCart.setForeground(new java.awt.Color(255, 255, 255));
+        btnCart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/basket.png"))); // NOI18N
+        btnCart.setText("Cart");
+        btnCart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCartActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSignIn)
+                .addGap(18, 18, 18)
+                .addComponent(btnRegister)
+                .addGap(18, 18, 18)
+                .addComponent(btnCart)
+                .addGap(15, 15, 15))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(2, 2, 2)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(btnSignIn)
+                    .addComponent(btnRegister)
+                    .addComponent(btnCart))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        lblTitle.setBackground(new java.awt.Color(255, 255, 204));
+        lblTitle.setFont(new java.awt.Font("Arial", 1, 48)); // NOI18N
+        lblTitle.setForeground(new java.awt.Color(102, 0, 0));
+        lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTitle.setText("Drovers Lodge");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -276,9 +321,6 @@ public class Cart extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(148, 148, 148)
-                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(19, 19, 19))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -287,15 +329,19 @@ public class Cart extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(btnRemove)
                 .addGap(30, 30, 30))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(183, 183, 183)
+                .addComponent(lblTitle)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblTitle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -308,10 +354,6 @@ public class Cart extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnSignInActionPerformed
 
     private void comboPaymentTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboPaymentTypeActionPerformed
         // TODO add your handling code here:
@@ -338,6 +380,24 @@ public class Cart extends javax.swing.JFrame {
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnAddMoreRoomsActionPerformed
+
+    private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRegisterActionPerformed
+
+    private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
+//        jframeLogin.setVisible(true);
+//        jframeLogin.setSize(400,250);
+//        jframeLogin.getContentPane().setBackground(Color.white);
+//        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+//        jframeLogin.setLocation(dim.width/2-jframeLogin.getSize().width/2, dim.height/2-jframeLogin.getSize().height/2);
+    }//GEN-LAST:event_btnSignInActionPerformed
+
+    private void btnCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartActionPerformed
+        Cart rForm = new Cart(currentBooking);
+        this.dispose();
+        rForm.setVisible(true);
+    }//GEN-LAST:event_btnCartActionPerformed
 
     /**
      * @param args the command line arguments

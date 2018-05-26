@@ -28,9 +28,11 @@ public class Customer {
     private String postcode;
     private String telephone;
     private String mobile;
+    private boolean isLoggedIn;
     private HashMap<Integer, Booking> bookingList;
 
     public Customer() {
+        isLoggedIn = false;
         bookingList = new HashMap<Integer, Booking>();
     }
 
@@ -48,6 +50,7 @@ public class Customer {
         this.postcode = postcode;
         this.telephone = telephone;
         this.mobile = mobile;
+        isLoggedIn = false;
         bookingList = new HashMap<Integer, Booking>();
     }
     
@@ -119,6 +122,10 @@ public class Customer {
     public String getMobile() {
         return mobile;
     }
+    
+    public boolean getIsLoggedIn() {
+        return isLoggedIn;
+    }
 
     public HashMap<Integer, Booking> getBookingList() {
         return bookingList;
@@ -176,6 +183,10 @@ public class Customer {
     public void setMobile(String Mobile) {
         this.mobile = Mobile;
     }
+    
+    public void setIsLoggedIn(boolean isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
+    }
 
     public void setBookingList(HashMap<Integer, Booking> BookingList) {
         this.bookingList = bookingList;
@@ -189,13 +200,31 @@ public class Customer {
         bookings = db.getBookings();
         boolean isFound = false;
         
-        for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+        if(!isLoggedIn)
         {
-            if(bookingEntry.getValue().getIsConfirmed() == false)
+            for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
             {
-                isFound = true;
-            }
-        }         
+                if(bookingEntry.getValue().getCustomerTypeID() == 1)
+                {
+                    if(bookingEntry.getValue().getIsConfirmed() == false)
+                    {
+                        isFound = true;
+                    }
+                }
+            }         
+        } else
+        {
+            for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+            {
+                if(bookingEntry.getValue().getCustomerID() == customerID)
+                {
+                    if(bookingEntry.getValue().getIsConfirmed() == false)
+                    {
+                        isFound = true;
+                    }
+                }
+            }  
+        }
         return isFound;
     }
     
@@ -206,13 +235,31 @@ public class Customer {
         bookings = db.getBookings();
         int currentBookingID = 0;
         
-        for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+        if(!isLoggedIn)
         {
-            if(bookingEntry.getValue().getIsConfirmed() == false)
+            for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
             {
-                currentBookingID = bookingEntry.getValue().getBookingID();
+                if(bookingEntry.getValue().getCustomerTypeID() == 1)
+                {
+                    if(bookingEntry.getValue().getIsConfirmed() == false)
+                    {
+                        currentBookingID = bookingEntry.getValue().getBookingID();
+                    }
+                }
             }
-        }    
+        } else
+        {
+            for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+            {
+                if(bookingEntry.getValue().getCustomerID() == customerID)
+                {
+                    if(bookingEntry.getValue().getIsConfirmed() == false)
+                    {
+                        currentBookingID = bookingEntry.getValue().getBookingID();
+                    }
+                }
+            }
+        }
         return currentBookingID;
     }
     
@@ -223,13 +270,31 @@ public class Customer {
         bookings = db.getBookings();
         Booking currentBooking = new Booking();
         
-        for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+        if(!isLoggedIn)
         {
-            if(bookingEntry.getValue().getIsConfirmed() == false)
+            for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
             {
-                currentBooking = bookingEntry.getValue();
+                if(bookingEntry.getValue().getCustomerTypeID() == 1)
+                {
+                    if(bookingEntry.getValue().getIsConfirmed() == false)
+                    {
+                        currentBooking = bookingEntry.getValue();
+                    }
+                }
+            }    
+        } else 
+        {
+            for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+            {
+                if(bookingEntry.getValue().getCustomerID() == customerID)
+                {
+                    if(bookingEntry.getValue().getIsConfirmed() == false)
+                    {
+                        currentBooking = bookingEntry.getValue();
+                    }
+                }
             }
-        }    
+        }
         return currentBooking;
     }
     

@@ -23,6 +23,7 @@ public class Booking {
     private int paymentTypeID;
     private int paymentID;
     private int customerTypeID;
+    private int staffID;
     private int customerID;
     private HashMap<Integer, BookingLine> bookingLines;
 
@@ -38,6 +39,7 @@ public class Booking {
         this.outstandingBalance = outstandingBalance;
         this.totalCost = totalCost;
         this.paymentID = paymentID;
+        this.customerTypeID = 1;
         this.customerID = customerID;
         bookingLines = new HashMap<Integer, BookingLine>();
     }
@@ -76,6 +78,10 @@ public class Booking {
     
     public int getCustomerTypeID() {
         return customerTypeID;
+    }
+    
+    public int getStaffID() {
+        return staffID;
     }
 
     public int getCustomerID() {
@@ -121,6 +127,10 @@ public class Booking {
     
     public void setCustomerTypeID(int customerTypeID) {
         this.customerTypeID = customerTypeID;
+    }
+    
+    public void setStaffID(int staffID) {
+        this.staffID = staffID;
     }
 
     public void setCustomerID(int customerID) {

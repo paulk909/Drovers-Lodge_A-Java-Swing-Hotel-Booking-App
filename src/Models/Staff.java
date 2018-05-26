@@ -16,12 +16,12 @@ public class Staff {
     private String firstName;
     private String lastName;
     private String email;
-    private String staffRoleID;
+    private int staffRoleID;
 
     public Staff() {
     }
 
-    public Staff(int staffID, String username, String password, String firstName, String lastName, String email, String staffRoleID) {
+    public Staff(int staffID, String username, String password, String firstName, String lastName, String email, int staffRoleID) {
         this.staffID = staffID;
         this.username = username;
         this.password = password;
@@ -55,7 +55,7 @@ public class Staff {
         return email;
     }
 
-    public String getStaffRoleID() {
+    public int getStaffRoleID() {
         return staffRoleID;
     }
 
@@ -84,7 +84,7 @@ public class Staff {
         this.email = email;
     }
 
-    public void setStaffRoleID(String staffRoleID) {
+    public void setStaffRoleID(int staffRoleID) {
         this.staffRoleID = staffRoleID;
     }
     

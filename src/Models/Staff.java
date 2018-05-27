@@ -5,6 +5,9 @@
  */
 package Models;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author Paul
@@ -17,8 +20,10 @@ public class Staff {
     private String lastName;
     private String email;
     private int staffRoleID;
+    private boolean isLoggedIn;
 
     public Staff() {
+        isLoggedIn = false;
     }
 
     public Staff(int staffID, String username, String password, String firstName, String lastName, String email, int staffRoleID) {
@@ -59,6 +64,9 @@ public class Staff {
         return staffRoleID;
     }
 
+    public boolean getIsLoggedIn() {
+        return isLoggedIn;
+    }
     
     public void setStaffID(int staffID) {
         this.staffID = staffID;
@@ -88,6 +96,78 @@ public class Staff {
         this.staffRoleID = staffRoleID;
     }
     
+    public void setIsLoggedIn(boolean isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
+    }
     
+    
+    public boolean findCurrentBooking()
+    {
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        DBManager db = new DBManager();
+        bookings = db.getBookings();
+        boolean isFound = false;
+        
+        if(isLoggedIn)
+        {
+            for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+            {
+                if(bookingEntry.getValue().getStaffID() == staffID)
+                {
+                    if(bookingEntry.getValue().getIsConfirmed() == false)
+                    {
+                        isFound = true;
+                    }
+                }
+            }  
+        }
+        return isFound;
+    }
+    
+    public int getCurrentBookingID()
+    {        
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        DBManager db = new DBManager();
+        bookings = db.getBookings();
+        int currentBookingID = 0;
+        
+        if(isLoggedIn)
+        {
+            for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+            {
+                if(bookingEntry.getValue().getStaffID() == staffID)
+                {
+                    if(bookingEntry.getValue().getIsConfirmed() == false)
+                    {
+                        currentBookingID = bookingEntry.getValue().getBookingID();
+                    }
+                }
+            }
+        }
+        return currentBookingID;
+    }
+    
+    public Booking getCurrentBooking()
+    {        
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        DBManager db = new DBManager();
+        bookings = db.getBookings();
+        Booking currentBooking = new Booking();
+        
+        if(isLoggedIn)
+        {
+            for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+            {
+                if(bookingEntry.getValue().getStaffID() == staffID)
+                {
+                    if(bookingEntry.getValue().getIsConfirmed() == false)
+                    {
+                        currentBooking = bookingEntry.getValue();
+                    }
+                }
+            }
+        }
+        return currentBooking;
+    }
     
 }

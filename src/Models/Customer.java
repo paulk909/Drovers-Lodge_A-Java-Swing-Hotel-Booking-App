@@ -50,7 +50,6 @@ public class Customer {
         this.postcode = postcode;
         this.telephone = telephone;
         this.mobile = mobile;
-        isLoggedIn = false;
         bookingList = new HashMap<Integer, Booking>();
     }
     

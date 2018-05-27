@@ -17,6 +17,7 @@ public class LoggedInUser {
     private boolean isLoggedIn;
 
     public LoggedInUser() {
+        userTypeID = 1;
         isLoggedIn = false;
     }
 
@@ -24,7 +25,6 @@ public class LoggedInUser {
         this.username = username;
         this.userTypeID = userTypeID;
         this.staffTypeID = staffTypeID;
-        isLoggedIn = false;
     }
 
     public String getUsername() {

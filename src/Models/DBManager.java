@@ -130,33 +130,66 @@ public class DBManager {
         }
         else if(loggedInUser.getIsLoggedIn() == true)
         {
-            String username = loggedInUser.getUsername();
-            Customer currentCustomer = getCustomerFromUsername(username);
-            double totalCost = bookingToAdd.getTotalCost();
-            boolean isConfirmed = bookingToAdd.getIsConfirmed();
-            boolean isPaid = bookingToAdd.getIsPaid();
-            int paymentTypeID = bookingToAdd.getPaymentTypeID();
-            int paymentID = bookingToAdd.getPaymentID();
-            int customerTypeID = 2;
-            int customerID = currentCustomer.getCustomerID();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-            try 
+            if(loggedInUser.getUserTypeID() == 2)
             {
-                Statement stmt = dbCon.createStatement();
-                String sql = "INSERT INTO Bookings (TotalCost, IsConfirmed, IsPaid, PaymentTypeID, PaymentID, CustomerTypeID, CustomerID) VALUES("
-                        + totalCost + ","
-                        + isConfirmed + ","
-                        + isPaid + ","
-                        + paymentTypeID + ","
-                        + paymentID + ","
-                        + customerTypeID + ","
-                        + customerID + ")";
+                String username = loggedInUser.getUsername();
+                Customer currentCustomer = getCustomerFromUsername(username);
+                double totalCost = bookingToAdd.getTotalCost();
+                boolean isConfirmed = bookingToAdd.getIsConfirmed();
+                boolean isPaid = bookingToAdd.getIsPaid();
+                int paymentTypeID = bookingToAdd.getPaymentTypeID();
+                int paymentID = bookingToAdd.getPaymentID();
+                int customerTypeID = 2;
+                int customerID = currentCustomer.getCustomerID();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-                stmt.executeUpdate(sql);
-            } catch (SQLException ex) 
+                try 
+                {
+                    Statement stmt = dbCon.createStatement();
+                    String sql = "INSERT INTO Bookings (TotalCost, IsConfirmed, IsPaid, PaymentTypeID, PaymentID, CustomerTypeID, CustomerID) VALUES("
+                            + totalCost + ","
+                            + isConfirmed + ","
+                            + isPaid + ","
+                            + paymentTypeID + ","
+                            + paymentID + ","
+                            + customerTypeID + ","
+                            + customerID + ")";
+
+                    stmt.executeUpdate(sql);
+                } catch (SQLException ex) 
+                {
+                    Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if(loggedInUser.getUserTypeID() == 3)
             {
-                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                String username = loggedInUser.getUsername();
+                Staff currentStaff = getStaffFromUsername(username);
+                double totalCost = bookingToAdd.getTotalCost();
+                boolean isConfirmed = bookingToAdd.getIsConfirmed();
+                boolean isPaid = bookingToAdd.getIsPaid();
+                int paymentTypeID = bookingToAdd.getPaymentTypeID();
+                int paymentID = bookingToAdd.getPaymentID();
+                int customerTypeID = 3;
+                int staffID = currentStaff.getStaffID();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                try 
+                {
+                    Statement stmt = dbCon.createStatement();
+                    String sql = "INSERT INTO Bookings (TotalCost, IsConfirmed, IsPaid, PaymentTypeID, PaymentID, CustomerTypeID, StaffID) VALUES("
+                            + totalCost + ","
+                            + isConfirmed + ","
+                            + isPaid + ","
+                            + paymentTypeID + ","
+                            + paymentID + ","
+                            + customerTypeID + ","
+                            + staffID + ")";
+
+                    stmt.executeUpdate(sql);
+                } catch (SQLException ex) 
+                {
+                    Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
@@ -226,7 +259,7 @@ public class DBManager {
             }
         } else if (loggedInUser.getIsLoggedIn() == true)
         {
-            if(loggedInUser.getUserTypeID() == 1)
+            if(loggedInUser.getUserTypeID() == 2)
             {
                 String username = loggedInUser.getUsername();
                 Customer currentCustomer = getCustomerFromUsername(username);
@@ -289,6 +322,69 @@ public class DBManager {
                         Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
                     }            
                 }
+            } else if(loggedInUser.getUserTypeID() == 3)
+            {
+                String username = loggedInUser.getUsername();
+                Staff currentStaff = getStaffFromUsername(username);
+                currentStaff.setIsLoggedIn(true);
+                Date checkInDate = bookingLineToAdd.getCheckInDate();
+                Date checkOutDate = bookingLineToAdd.getCheckOutDate();
+                int roomID = bookingLineToAdd.getRoomID();
+                boolean[] meals = bookingLineToAdd.getMeals();
+                boolean breakfast = meals[0];
+                boolean lunch = meals[1];
+                boolean eveningMeal = meals[2];
+                double lineCost = bookingLineToAdd.getLineCost();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                if(currentStaff.findCurrentBooking())
+                {
+                    try 
+                    {
+                        int bookingID = currentStaff.getCurrentBookingID();                
+                        Statement stmt = dbCon.createStatement();
+                        String sql = "INSERT INTO BookingLines (CheckInDate, CheckOutDate, BookingID, RoomID, Breakfast, Lunch, EveningMeal, LineCost) VALUES('"
+                                + dateFormat.format(checkInDate) + "','"
+                                + dateFormat.format(checkOutDate) + "',"
+                                + bookingID + ","
+                                + roomID + ","
+                                + breakfast + ","
+                                + lunch + ","
+                                + eveningMeal + ","
+                                + lineCost + ")";
+
+                        stmt.executeUpdate(sql);
+                        updateBookingTotalCost(bookingID, lineCost);
+                    } catch (SQLException ex) 
+                    {
+                        Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                else
+                {
+                    Booking newBooking = new Booking();
+                    addBookingToDb(loggedInUser, newBooking);
+                    try 
+                    {
+                        int bookingID = currentStaff.getCurrentBookingID();                
+                        Statement stmt = dbCon.createStatement();
+                        String sql = "INSERT INTO BookingLines (CheckInDate, CheckOutDate, BookingID, RoomID, Breakfast, Lunch, EveningMeal, LineCost) VALUES('"
+                                + dateFormat.format(checkInDate) + "','"
+                                + dateFormat.format(checkOutDate) + "',"
+                                + bookingID + ","
+                                + roomID + ","
+                                + breakfast + ","
+                                + lunch + ","
+                                + eveningMeal + ","
+                                + lineCost + ")";
+
+                        stmt.executeUpdate(sql);
+                        updateBookingTotalCost(bookingID, lineCost);
+                    } catch (SQLException ex) 
+                    {
+                        Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }            
+                }
             }
         }
     }
@@ -317,6 +413,7 @@ public class DBManager {
                 bookingToAdd.setPaymentTypeID(rs.getInt("PaymentTypeID"));
                 bookingToAdd.setPaymentID(rs.getInt("PaymentID"));
                 bookingToAdd.setCustomerTypeID(rs.getInt("CustomerTypeID"));
+                bookingToAdd.setStaffID(rs.getInt("StaffID"));           
                 bookingToAdd.setCustomerID(rs.getInt("CustomerID"));                
                 bookings.put(bookingToAdd.getBookingID(), bookingToAdd);
             }
@@ -392,7 +489,7 @@ public class DBManager {
                 staffToAdd.setStaffID(rs.getInt("ID"));
                 staffToAdd.setUsername(rs.getString("Username")); 
                 staffToAdd.setPassword(rs.getString("Password"));        
-                staffToAdd.setFirstName(rs.getString("Password"));
+                staffToAdd.setFirstName(rs.getString("FirstName"));
                 staffToAdd.setLastName(rs.getString("LastName"));  
                 staffToAdd.setEmail(rs.getString("Email"));  
                 staffToAdd.setStaffRoleID(rs.getInt("StaffRoleID"));
@@ -468,7 +565,7 @@ public class DBManager {
         {
             if(customerEntry.getValue().getUsername().equals(username))
             {
-                loggedInUser.setUserTypeID(1);
+                loggedInUser.setUserTypeID(2);
                 loggedInUser.setStaffTypeID(0);
                 loggedInUser.setIsLoggedIn(true);
             }
@@ -478,7 +575,7 @@ public class DBManager {
         {
             if(staffEntry.getValue().getUsername().equals(username))
             {
-                loggedInUser.setUserTypeID(2);
+                loggedInUser.setUserTypeID(3);
                 loggedInUser.setStaffTypeID(staffEntry.getValue().getStaffRoleID());
                 loggedInUser.setIsLoggedIn(true);
             }

@@ -80,8 +80,7 @@ public class CheckAvailability extends javax.swing.JFrame {
             ex.printStackTrace();
             System.err.println("Custom font not loaded.");
         }
-        populateRoomTypeDropDown();
-        
+        populateRoomTypeDropDown();        
     }
     
     
@@ -248,6 +247,14 @@ public class CheckAvailability extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jframeLogin = new javax.swing.JFrame();
+        jLabel10 = new javax.swing.JLabel();
+        txtUsername = new javax.swing.JTextField();
+        txtPassword = new javax.swing.JPasswordField();
+        jLabel11 = new javax.swing.JLabel();
+        btnLogin = new javax.swing.JButton();
+        btnClose = new javax.swing.JButton();
+        jLabel12 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -277,6 +284,78 @@ public class CheckAvailability extends javax.swing.JFrame {
         btnSignIn = new javax.swing.JButton();
         btnCart = new javax.swing.JButton();
         lblTitle = new javax.swing.JLabel();
+
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel10.setText("Username");
+
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel11.setText("Password");
+
+        btnLogin.setText("Login");
+        btnLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoginActionPerformed(evt);
+            }
+        });
+
+        btnClose.setText("Close");
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
+
+        jLabel12.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel12.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(51, 0, 0));
+        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel12.setText("Enter login details");
+
+        javax.swing.GroupLayout jframeLoginLayout = new javax.swing.GroupLayout(jframeLogin.getContentPane());
+        jframeLogin.getContentPane().setLayout(jframeLoginLayout);
+        jframeLoginLayout.setHorizontalGroup(
+            jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jframeLoginLayout.createSequentialGroup()
+                .addGap(59, 59, 59)
+                .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jframeLoginLayout.createSequentialGroup()
+                        .addGap(46, 46, 46)
+                        .addComponent(btnLogin)
+                        .addGap(51, 51, 51)
+                        .addComponent(btnClose))
+                    .addGroup(jframeLoginLayout.createSequentialGroup()
+                        .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel11))
+                        .addGap(31, 31, 31)
+                        .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtPassword)
+                            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(63, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jframeLoginLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel12)
+                .addGap(91, 91, 91))
+        );
+        jframeLoginLayout.setVerticalGroup(
+            jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jframeLoginLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11))
+                .addGap(33, 33, 33)
+                .addGroup(jframeLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnLogin)
+                    .addComponent(btnClose))
+                .addGap(20, 20, 20))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -670,26 +749,51 @@ public class CheckAvailability extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
-        // TODO add your handling code here:
+        if(loggedInUser.getIsLoggedIn())
+        {
+            loggedInUser = new LoggedInUser();
+            loggedInUser.setIsLoggedIn(false);
+            btnSignIn.setText("Sign In");
+            btnSignIn.setEnabled(true);
+            btnRegister.setText("Register");
+        }
     }//GEN-LAST:event_btnRegisterActionPerformed
 
     private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
-//        jframeLogin.setVisible(true);
-//        jframeLogin.setSize(400,250);
-//        jframeLogin.getContentPane().setBackground(Color.white);
-//        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-//        jframeLogin.setLocation(dim.width/2-jframeLogin.getSize().width/2, dim.height/2-jframeLogin.getSize().height/2);
+        jframeLogin.setVisible(true);
+        jframeLogin.setSize(400,250);
+        jframeLogin.getContentPane().setBackground(Color.white);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        jframeLogin.setLocation(dim.width/2-jframeLogin.getSize().width/2, dim.height/2-jframeLogin.getSize().height/2);
     }//GEN-LAST:event_btnSignInActionPerformed
 
     private void btnCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartActionPerformed
-        Cart rForm = new Cart(currentBooking);
-        if(loggedInUser.getIsLoggedIn())
-        {
-            rForm.getUser(loggedInUser.getUsername());
-        }
+        Cart rForm = new Cart(loggedInUser);//currentBooking);
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnCartActionPerformed
+
+    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+        String username  =  txtUsername.getText();
+        String password  =  txtPassword.getText();
+        DBManager db= new DBManager();
+
+        if(db.checkLoginDetails(username, password))
+        {
+            loggedInUser = db.getValidUser(username);
+            btnSignIn.setText("Logged in as " + loggedInUser.getUsername());
+            btnSignIn.setEnabled(false);
+            btnRegister.setText("Logout");
+            txtUsername.setText("");
+            txtPassword.setText("");
+            jframeLogin.dispose();
+        }
+
+    }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        jframeLogin.setVisible(false);
+    }//GEN-LAST:event_btnCloseActionPerformed
 
     /**
      * @param args the command line arguments
@@ -729,6 +833,8 @@ public class CheckAvailability extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnCart;
+    private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnLogin;
     private javax.swing.JButton btnRegister;
     private javax.swing.JButton btnSignIn;
     private javax.swing.JButton btnUpdate;
@@ -738,6 +844,9 @@ public class CheckAvailability extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> comboRoomType;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -752,9 +861,12 @@ public class CheckAvailability extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private com.toedter.calendar.JDateChooser jdateCheckIn;
     private com.toedter.calendar.JDateChooser jdateCheckOut;
+    private javax.swing.JFrame jframeLogin;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JTextField txtAvailability;
     private javax.swing.JTextField txtNoOfDays;
+    private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtPrice;
+    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }

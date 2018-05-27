@@ -37,6 +37,12 @@ public class MainMenu extends javax.swing.JFrame {
      * Creates new form MainMenu
      */
     public MainMenu() {
+        loadFrame();
+//        currentBooking.populateBookingLines();
+    }
+    
+    public void loadFrame()
+    {
         initComponents();
         this.getContentPane().setBackground(Color.white); 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -59,7 +65,6 @@ public class MainMenu extends javax.swing.JFrame {
         }
                 
         populateRoomTypeDropDown();
-        currentBooking.populateBookingLines();
     }
     
     public void populateRoomTypeDropDown()
@@ -387,11 +392,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnFindRoomsActionPerformed
 
     private void btnCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartActionPerformed
-        Cart rForm = new Cart(currentBooking);
-        if(loggedInUser.getIsLoggedIn())
-        {
-            rForm.getUser(loggedInUser.getUsername());
-        }
+        Cart rForm = new Cart(loggedInUser);//currentBooking);
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnCartActionPerformed
@@ -404,9 +405,14 @@ public class MainMenu extends javax.swing.JFrame {
         if(loggedInUser.getIsLoggedIn())
         {
             loggedInUser = new LoggedInUser();
+            loggedInUser.setIsLoggedIn(false);
             btnSignIn.setText("Sign In");
             btnSignIn.setEnabled(true);
             btnRegister.setText("Register");
+        } else
+        {
+            CustomerRegister rForm = new CustomerRegister();
+            rForm.setVisible(true);
         }
     }//GEN-LAST:event_btnRegisterActionPerformed
 

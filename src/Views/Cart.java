@@ -7,9 +7,11 @@ package Views;
 
 import Models.Booking;
 import Models.BookingLine;
+import Models.CardType;
 import Models.Customer;
 import Models.DBManager;
 import Models.LoggedInUser;
+import Models.Payment;
 import Models.PaymentType;
 import Models.RoomType;
 import Models.Staff;
@@ -20,9 +22,13 @@ import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
@@ -207,6 +213,19 @@ public class Cart extends javax.swing.JFrame {
     }
     
     
+    public void populateCardTypeDropDown()
+    {
+        comboCardType.removeAllItems();
+        DBManager db = new DBManager();        
+        HashMap<Integer, CardType> cardTypes = new HashMap<Integer, CardType>();
+        cardTypes = db.getCardTypes(); 
+        comboCardType.addItem("--Please Select--");
+        for (Map.Entry<Integer, CardType> cardTypeEntry : cardTypes.entrySet())
+        {
+            comboCardType.addItem(cardTypeEntry.getValue().getCardType());
+        }
+    }
+    
     public void populateCustomerDropDown()
     {
         comboCustomer.removeAllItems();
@@ -238,6 +257,25 @@ public class Cart extends javax.swing.JFrame {
         btnLogin = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
+        jframePayment = new javax.swing.JFrame();
+        btnPaymentSubmit = new javax.swing.JButton();
+        btnPaymentClear = new javax.swing.JButton();
+        btnPaymentClose = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        txtPayeeName = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        txtCardNo = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        txtSecurityNo = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        comboCardType = new javax.swing.JComboBox<>();
+        txtPaymentTotalCost = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jMonthExpiry = new com.toedter.calendar.JMonthChooser();
+        jYearExpiry = new com.toedter.calendar.JYearChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblBookingLines = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
@@ -331,6 +369,163 @@ public class Cart extends javax.swing.JFrame {
                 .addGap(20, 20, 20))
         );
 
+        btnPaymentSubmit.setText("Submit");
+        btnPaymentSubmit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPaymentSubmitActionPerformed(evt);
+            }
+        });
+
+        btnPaymentClear.setText("Clear");
+        btnPaymentClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPaymentClearActionPerformed(evt);
+            }
+        });
+
+        btnPaymentClose.setText("Close");
+        btnPaymentClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPaymentCloseActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel8.setText("Card Holder's Name");
+
+        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel9.setText("Card No");
+
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel10.setText("Security No");
+
+        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel12.setText("Card Type");
+
+        txtPaymentTotalCost.setEditable(false);
+
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel13.setText("Total Cost");
+
+        jLabel14.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel14.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        jLabel14.setForeground(new java.awt.Color(51, 0, 0));
+        jLabel14.setText("Payment Details");
+
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel11.setText("Expiry Date");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jMonthExpiry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jYearExpiry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 11, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel11)
+                .addGap(70, 70, 70))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(20, Short.MAX_VALUE)
+                .addComponent(jLabel11)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jMonthExpiry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jYearExpiry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23))
+        );
+
+        javax.swing.GroupLayout jframePaymentLayout = new javax.swing.GroupLayout(jframePayment.getContentPane());
+        jframePayment.getContentPane().setLayout(jframePaymentLayout);
+        jframePaymentLayout.setHorizontalGroup(
+            jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jframePaymentLayout.createSequentialGroup()
+                .addGap(57, 57, 57)
+                .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jframePaymentLayout.createSequentialGroup()
+                        .addGap(75, 75, 75)
+                        .addComponent(jLabel14))
+                    .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jframePaymentLayout.createSequentialGroup()
+                            .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel10)
+                                .addGroup(jframePaymentLayout.createSequentialGroup()
+                                    .addGap(10, 10, 10)
+                                    .addComponent(txtSecurityNo, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel8)))
+                            .addGap(32, 32, 32)
+                            .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtPayeeName, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtCardNo, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jframePaymentLayout.createSequentialGroup()
+                            .addComponent(btnPaymentSubmit)
+                            .addGap(54, 54, 54)
+                            .addComponent(btnPaymentClear)
+                            .addGap(61, 61, 61)
+                            .addComponent(btnPaymentClose))
+                        .addGroup(jframePaymentLayout.createSequentialGroup()
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jframePaymentLayout.createSequentialGroup()
+                                    .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel12)
+                                        .addComponent(jLabel13))
+                                    .addGap(32, 32, 32)
+                                    .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(txtPaymentTotalCost, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(comboCardType, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                .addContainerGap(66, Short.MAX_VALUE))
+        );
+        jframePaymentLayout.setVerticalGroup(
+            jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jframePaymentLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(jLabel14)
+                .addGap(49, 49, 49)
+                .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(txtPayeeName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(txtCardNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jframePaymentLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jframePaymentLayout.createSequentialGroup()
+                        .addGap(45, 45, 45)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtSecurityNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(comboCardType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(txtPaymentTotalCost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(44, 44, 44)
+                .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnPaymentSubmit)
+                    .addComponent(btnPaymentClear)
+                    .addComponent(btnPaymentClose))
+                .addContainerGap(46, Short.MAX_VALUE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         tblBookingLines.setModel(new javax.swing.table.DefaultTableModel(
@@ -380,6 +575,11 @@ public class Cart extends javax.swing.JFrame {
         btnConfirm.setBackground(new java.awt.Color(51, 0, 0));
         btnConfirm.setForeground(new java.awt.Color(255, 255, 255));
         btnConfirm.setText("Confirm Booking");
+        btnConfirm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfirmActionPerformed(evt);
+            }
+        });
 
         txtTotalCost.setEditable(false);
 
@@ -632,11 +832,46 @@ public class Cart extends javax.swing.JFrame {
             txtUsername.setText("");
             txtPassword.setText("");
             jframeLogin.dispose();
-            if((db.getCustomerFromUsername(loggedInUser.getUsername())).findCurrentBooking())
+            
+            Customer ccheck = db.getCustomerFromUsername(loggedInUser.getUsername());
+            boolean bcheck = db.getCustomerFromUsername(loggedInUser.getUsername()).findCurrentBooking();
+            Booking bbcheck = db.getCustomerFromUsername(loggedInUser.getUsername()).getCurrentBooking();
+            
+            if(loggedInUser.getUserTypeID() == 2)
             {
-                clearCart();
-                loadCart();
-            }
+                Customer loggedInCustomer = db.getCustomerFromUsername(loggedInUser.getUsername());
+                loggedInCustomer.setIsLoggedIn(true);
+                if(loggedInCustomer.findCurrentBooking())
+                {
+                    clearCart();
+                    loadCart();
+                }
+                else
+                {
+                    if(db.checkForUnassignedBooking())
+                    {
+                        db.assignUnassignedBookingToUser(loggedInUser);
+                    }
+                }
+            } 
+            else if(loggedInUser.getUserTypeID() == 3)
+            {
+                Staff loggedInStaff = db.getStaffFromUsername(loggedInUser.getUsername());
+                loggedInStaff.setIsLoggedIn(true);
+                if(loggedInStaff.findCurrentBooking())
+                {
+                    clearCart();
+                    loadCart();
+                }
+                else
+                {
+                    if(db.checkForUnassignedBooking())
+                    {
+                        db.assignUnassignedBookingToUser(loggedInUser);
+                    }
+                }
+            }            
+            
         }
 
     }//GEN-LAST:event_btnLoginActionPerformed
@@ -644,6 +879,115 @@ public class Cart extends javax.swing.JFrame {
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
         jframeLogin.setVisible(false);
     }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
+        DBManager db = new DBManager();
+        
+        int paymentTypeID = db.getPaymentTypeIDFromPaymentType(String.valueOf(comboPaymentType.getSelectedItem()));
+        int customerID = 0;
+        if(loggedInUser.getUserTypeID() == 2)
+        {
+            customerID = db.getCustomerFromUsername(loggedInUser.getUsername()).getCustomerID();
+        }
+        else if(loggedInUser.getUserTypeID() == 3)
+        {
+            customerID = db.getCustomerFromUsername(String.valueOf(comboCustomer.getSelectedItem())).getCustomerID();
+        }
+        int bookingID = currentBooking.getBookingID();
+        
+        if(paymentTypeID == 1)
+        {
+            db.confirmBookingPayAtCheckIn(loggedInUser, bookingID, customerID);
+        }
+        else if(paymentTypeID == 2)
+        {
+            jframePayment.setVisible(true);
+            jframePayment.setSize(440,600); 
+            jframePayment.getContentPane().setBackground(Color.white); 
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            jframePayment.setLocation(dim.width/2-jframePayment.getSize().width/2, dim.height/2-jframePayment.getSize().height/2);
+            jframePayment.setVisible(true);
+            populateCardTypeDropDown();
+            txtPaymentTotalCost.setText("£" + String.format("%.02f",(currentBooking.getTotalCost())));
+        }
+        
+    }//GEN-LAST:event_btnConfirmActionPerformed
+
+    private void btnPaymentSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaymentSubmitActionPerformed
+        DBManager db = new DBManager();
+        String payeeName = txtPayeeName.getText();
+        String cardNo = txtCardNo.getText();
+        String securityNo = txtSecurityNo.getText();
+        int expiryMonth = jMonthExpiry.getMonth();
+        String monthString;
+        switch (expiryMonth) {
+            case 0:  monthString = "Jan";
+                     break;
+            case 1:  monthString = "Feb";
+                     break;
+            case 2:  monthString = "Mar";
+                     break;
+            case 3:  monthString = "Apr";
+                     break;
+            case 4:  monthString = "May";
+                     break;
+            case 5:  monthString = "Jun";
+                     break;
+            case 6:  monthString = "Jul";
+                     break;
+            case 7:  monthString = "Aug";
+                     break;
+            case 8:  monthString = "Sep";
+                     break;
+            case 9: monthString = "Oct";
+                     break;
+            case 10: monthString = "Nov";
+                     break;
+            case 11: monthString = "Dec";
+                     break;
+            default: monthString = "Invalid month";
+                     break;
+        }
+        int expiryYear = jYearExpiry.getYear();      
+        Date expiryDate = new Date();
+        try 
+        {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+            expiryDate = dateFormat.parse(expiryYear + "-" + monthString + "-01 00:00:00");
+        } 
+        catch (ParseException ex) 
+        {
+            Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        int cardTypeID = db.getCardTypeIDFromCardType(String.valueOf(comboCardType.getSelectedItem()));
+        double totalCost = currentBooking.getTotalCost();
+        
+        Payment payment = new Payment(payeeName, cardNo, securityNo, expiryDate, cardTypeID, totalCost);
+        
+        int customerID = 0;
+        if(loggedInUser.getUserTypeID() == 2)
+        {
+            customerID = db.getCustomerFromUsername(loggedInUser.getUsername()).getCustomerID();
+        }
+        else if(loggedInUser.getUserTypeID() == 3)
+        {
+            customerID = db.getCustomerFromUsername(String.valueOf(comboCustomer.getSelectedItem())).getCustomerID();
+        }
+        int bookingID = currentBooking.getBookingID();
+        
+        db.confirmBookingPayNow(loggedInUser, bookingID, customerID, payment);
+        jframePayment.dispose();
+    }//GEN-LAST:event_btnPaymentSubmitActionPerformed
+
+    private void btnPaymentClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaymentClearActionPerformed
+        txtPayeeName.setText("");
+        txtCardNo.setText("");
+        txtSecurityNo.setText("");
+    }//GEN-LAST:event_btnPaymentClearActionPerformed
+
+    private void btnPaymentCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaymentCloseActionPerformed
+        jframePayment.dispose();
+    }//GEN-LAST:event_btnPaymentCloseActionPerformed
 
     /**
      * @param args the command line arguments
@@ -686,27 +1030,46 @@ public class Cart extends javax.swing.JFrame {
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnConfirm;
     private javax.swing.JButton btnLogin;
+    private javax.swing.JButton btnPaymentClear;
+    private javax.swing.JButton btnPaymentClose;
+    private javax.swing.JButton btnPaymentSubmit;
     private javax.swing.JButton btnRegister;
     private javax.swing.JButton btnRemove;
     private javax.swing.JButton btnSignIn;
+    private javax.swing.JComboBox<String> comboCardType;
     private javax.swing.JComboBox<String> comboCustomer;
     private javax.swing.JComboBox<String> comboPaymentType;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private com.toedter.calendar.JMonthChooser jMonthExpiry;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private com.toedter.calendar.JYearChooser jYearExpiry;
     private javax.swing.JFrame jframeLogin;
+    private javax.swing.JFrame jframePayment;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JTable tblBookingLines;
     private javax.swing.JTextField txtBookingID;
+    private javax.swing.JTextField txtCardNo;
     private javax.swing.JPasswordField txtPassword;
+    private javax.swing.JTextField txtPayeeName;
+    private javax.swing.JTextField txtPaymentTotalCost;
+    private javax.swing.JTextField txtSecurityNo;
     private javax.swing.JTextField txtTotalCost;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables

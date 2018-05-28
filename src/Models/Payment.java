@@ -35,6 +35,15 @@ public class Payment {
         this.totalCost = totalCost;
     }
 
+    public Payment(String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost) {
+        this.payeeName = payeeName;
+        this.cardNo = cardNo;
+        this.securityNo = securityNo;
+        this.expiryDate = expiryDate;
+        this.cardTypeID = cardTypeID;
+        this.totalCost = totalCost;
+    }
+    
     public int getPaymentID() {
         return paymentID;
     }

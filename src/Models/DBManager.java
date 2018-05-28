@@ -390,6 +390,157 @@ public class DBManager {
     }
     
 
+    public void confirmBookingPayAtCheckIn(LoggedInUser loggedInUser, int bookingID, int customerID)
+    {
+        try {
+            Date dateBooked = new Date();
+            double outstandingBalance = getBookingFromBookingID(bookingID).getTotalCost();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Statement stmt = dbCon.createStatement();
+            
+            String sql = "UPDATE Bookings SET DateBooked = '"+ dateFormat.format(dateBooked) + 
+                    "', OutstandingBalance = " + outstandingBalance + 
+                    ", IsConfirmed = " + true + 
+                    ", CustomerID = " + customerID + 
+                    " WHERE ID = " + bookingID;
+
+            stmt.executeUpdate(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    public boolean checkForUnassignedBooking()
+    {
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        bookings = getBookings();
+        boolean isFound = false;
+        
+        for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+            {
+                if(bookingEntry.getValue().getCustomerTypeID() == 1)
+                {
+                    if(bookingEntry.getValue().getIsConfirmed() == false)
+                    {
+                        isFound = true;
+                    }
+                }
+            } 
+        return isFound;
+    }
+    
+    public void assignUnassignedBookingToUser(LoggedInUser loggedInUser)
+    {
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        bookings = getBookings();
+        
+        for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+            {
+                if(bookingEntry.getValue().getCustomerTypeID() == 1)
+                {
+                    if(bookingEntry.getValue().getIsConfirmed() == false)
+                    {
+                        if(loggedInUser.getUserTypeID() == 2)
+                        {
+                            try {
+                                int customerID = getCustomerFromUsername(loggedInUser.getUsername()).getCustomerID();
+                                int bookingID = bookingEntry.getValue().getBookingID();
+                                Statement stmt = dbCon.createStatement();
+                                String sql = "UPDATE Bookings SET CustomerTypeID = 2, CustomerID = " + customerID  + " WHERE ID = " + bookingID;
+                                stmt.execute(sql);
+                            } catch (SQLException ex) {
+                                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        else if(loggedInUser.getUserTypeID() == 3)
+                        {
+                            try {
+                                int staffID = getStaffFromUsername(loggedInUser.getUsername()).getStaffID();
+                                int bookingID = bookingEntry.getValue().getBookingID();
+                                Statement stmt = dbCon.createStatement();
+                                String sql = "UPDATE Bookings SET CustomerTypeID = 3, StaffID = " + staffID  + " WHERE ID = " + bookingID;
+                                stmt.execute(sql);
+                            } catch (SQLException ex) {
+                                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+                }
+            } 
+    }
+    
+    
+    public void clearUnassignedBookingsOnStartup()
+    {
+        int bookingID = 0;
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        bookings = getBookings();
+        for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+        {
+            if(bookingEntry.getValue().getCustomerTypeID() == 1)
+            {
+                bookingID = bookingEntry.getValue().getBookingID();
+                try 
+                {
+                    Statement stmt = dbCon.createStatement();
+                    String sql = "DELETE from BookingLines where BookingID = " + bookingID;
+                    stmt.execute(sql);
+                    String sql2 = "DELETE from Bookings where ID = " + bookingID;
+                    stmt.execute(sql2);
+                } 
+                catch (SQLException ex) 
+                {
+                    Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }        
+    }
+    
+    
+    public void confirmBookingPayNow(LoggedInUser loggedInUser, int bookingID, int customerID, Payment payment)
+    {
+        try 
+        {
+            Date dateBooked = new Date();
+            String payeeName = payment.getPayeeName();
+            String cardNo = payment.getCardNo();
+            String securityNo = payment.getSecurityNo();
+            Date expiryDate = payment.getExpiryDate();
+            int cardTypeID = payment.getCardTypeID();
+            double totalCost = payment.getTotalCost();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            
+            Statement stmt = dbCon.createStatement();
+                String sql = "INSERT INTO Payments (DatePaid, PayeeName, CardNo, SecurityNo, ExpiryDate, CardTypeID, TotalCost) VALUES('"
+                        + dateFormat.format(dateBooked) + "', '"
+                        + payeeName + "', '"
+                        + cardNo + "', '"
+                        + securityNo + "', '"
+                        + dateFormat.format(expiryDate) + "', "
+                        + cardTypeID + ", "
+                        + totalCost + ")";
+
+                stmt.executeUpdate(sql);
+            
+            
+            
+            String sql2 = "UPDATE Bookings SET DateBooked = '" + dateFormat.format(dateBooked) + 
+                    "', IsConfirmed = " + true + 
+                    ", IsPaid = " + true + 
+                    ", PaymentTypeID = " + 2 + 
+                    ", PaymentID = " + 2 + 
+                    ", CustomerID = " + customerID + 
+                    " WHERE ID = " + bookingID;
+
+            stmt.executeUpdate(sql2);
+        } 
+        catch (SQLException ex) 
+        {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     
     
     public HashMap<Integer, Booking> getBookings()
@@ -421,6 +572,23 @@ public class DBManager {
             Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
         }            
         return bookings;
+    }
+    
+    
+    public Booking getBookingFromBookingID(int bookingID)
+    {
+     HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+     bookings = getBookings();
+     Booking booking = new Booking();
+     
+     for (Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+     {
+         if(bookingEntry.getValue().getBookingID() == bookingID)
+         {
+             return bookingEntry.getValue();
+         }
+     }
+     return booking;
     }
     
     
@@ -886,6 +1054,62 @@ public class DBManager {
         return paymentTypes;
     }
     
+    
+    public int getPaymentTypeIDFromPaymentType(String paymentType)
+    {
+        HashMap<Integer, PaymentType> paymentTypes = new HashMap<Integer, PaymentType>();
+        paymentTypes = getPaymentTypes();
+        int paymentTypeID = 0;
+
+        for (Map.Entry<Integer, PaymentType> paymentTypeEntry : paymentTypes.entrySet())
+        {
+            if(paymentTypeEntry.getValue().getPaymentType() == paymentType)
+            {
+                return paymentTypeEntry.getValue().getPaymentTypeID();
+            }
+        }
+        return paymentTypeID;
+    }
+    
+    public int getCardTypeIDFromCardType(String cardType)
+    {
+        HashMap<Integer, CardType> cardTypes = new HashMap<Integer, CardType>();
+        cardTypes = getCardTypes();
+        int cardTypeID = 0;
+
+        for (Map.Entry<Integer, CardType> cardTypeEntry : cardTypes.entrySet())
+        {
+            if(cardTypeEntry.getValue().getCardType().equals(cardType))
+            {
+                return cardTypeEntry.getValue().getCardTypeID();
+            }
+        }
+        return cardTypeID;
+    }
+    
+    public HashMap<Integer, CardType> getCardTypes()
+    {
+        HashMap<Integer, CardType> cardTypes = new HashMap<Integer, CardType>();
+        try 
+        {
+            String sqlString = "select * from CardTypes";
+            Statement st = dbCon.createStatement();
+            ResultSet rs = null;
+            rs = st.executeQuery(sqlString);
+            while(rs.next())        
+            {
+                CardType cardTypeToAdd = new CardType();
+                cardTypeToAdd.setCardTypeID(rs.getInt("ID"));
+                cardTypeToAdd.setCardType(rs.getString("CardType"));
+                cardTypes.put(cardTypeToAdd.getCardTypeID(), cardTypeToAdd);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }            
+        return cardTypes;
+    }
+    
+    
     public HashMap<Integer, MealType> getMealTypes()
     {
         HashMap<Integer, MealType> meals = new HashMap<Integer, MealType>();
@@ -937,6 +1161,7 @@ public class DBManager {
     public void removeBookingLine(int bookingLineID)
     {
         int bookingID = 0;
+        int noOfBookingLines = 0;
         double bookingLineValue = 0;
         HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
         bookingLines = getBookingLines();
@@ -948,7 +1173,14 @@ public class DBManager {
                 bookingLineValue = bookingLineEntry.getValue().getLineCost();
             }
         }
-        if(bookingLines.size()>1)
+        for (Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+        {
+            if(bookingLineEntry.getValue().getBookingID() == bookingID)
+            {
+                noOfBookingLines++;
+            }
+        }
+        if(noOfBookingLines > 1)
         {
             try {
                 Statement stmt = dbCon.createStatement();

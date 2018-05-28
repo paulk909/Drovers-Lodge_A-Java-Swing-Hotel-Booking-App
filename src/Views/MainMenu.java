@@ -43,6 +43,7 @@ public class MainMenu extends javax.swing.JFrame {
     
     public void loadFrame()
     {
+        clearUnassignedBookingsOnStartup();
         initComponents();
         this.getContentPane().setBackground(Color.white); 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -65,6 +66,12 @@ public class MainMenu extends javax.swing.JFrame {
         }
                 
         populateRoomTypeDropDown();
+    }
+    
+    public void clearUnassignedBookingsOnStartup()
+    {
+        DBManager db = new DBManager();
+        db.clearUnassignedBookingsOnStartup();
     }
     
     public void populateRoomTypeDropDown()

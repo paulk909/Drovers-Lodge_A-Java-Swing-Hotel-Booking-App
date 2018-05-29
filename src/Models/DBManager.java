@@ -523,13 +523,13 @@ public class DBManager {
 
                 stmt.executeUpdate(sql);
             
-            
+            int paymentID = getMostRecentPaymentIDFromDateBooked(dateBooked);
             
             String sql2 = "UPDATE Bookings SET DateBooked = '" + dateFormat.format(dateBooked) + 
                     "', IsConfirmed = " + true + 
                     ", IsPaid = " + true + 
                     ", PaymentTypeID = " + 2 + 
-                    ", PaymentID = " + 2 + 
+                    ", PaymentID = " + paymentID + 
                     ", CustomerID = " + customerID + 
                     " WHERE ID = " + bookingID;
 
@@ -540,7 +540,54 @@ public class DBManager {
             Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
+    public int getMostRecentPaymentIDFromDateBooked(Date dateBooked)
+    {
+        HashMap<Integer, Payment> payments = new HashMap<Integer, Payment>();
+        payments = getPayments();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        int paymentID = 0;
+        
+        for(Map.Entry<Integer, Payment> paymentEntry : payments.entrySet())
+        {
+            if(dateFormat.format(paymentEntry.getValue().getDatePaid()).equals(dateFormat.format(dateBooked)))
+            {
+                paymentID = paymentEntry.getValue().getPaymentID();
+            }
+        }
+        
+        return paymentID;
+    }
 
+    
+    public HashMap<Integer, Payment> getPayments()
+    {
+        HashMap<Integer, Payment> payments = new HashMap<Integer, Payment>();
+        try 
+        {
+            String sqlString = "select * from Payments";
+            Statement st = dbCon.createStatement();
+            ResultSet rs = null;
+            rs = st.executeQuery(sqlString);
+            while(rs.next())        
+            {
+                Payment paymentToAdd = new Payment();
+                paymentToAdd.setPaymentID(rs.getInt("ID"));
+                paymentToAdd.setDatePaid(rs.getDate("DatePaid"));  
+                paymentToAdd.setPayeeName(rs.getString("PayeeName"));
+                paymentToAdd.setCardNo(rs.getString("CardNo"));  
+                paymentToAdd.setSecurityNo(rs.getString("SecurityNo"));
+                paymentToAdd.setExpiryDate(rs.getDate("ExpiryDate"));  
+                paymentToAdd.setCardTypeID(rs.getInt("CardTypeID"));
+                paymentToAdd.setTotalCost(rs.getDouble("TotalCost"));  
+                payments.put(paymentToAdd.getPaymentID(), paymentToAdd);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }            
+        return payments;
+    }
     
     
     public HashMap<Integer, Booking> getBookings()
@@ -574,6 +621,23 @@ public class DBManager {
         return bookings;
     }
     
+    public HashMap<Integer, Booking> getBookingsForCustomerID(int customerID)
+    {
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        HashMap<Integer, Booking> bookingsForCustomerID = new HashMap<Integer, Booking>();
+        bookings = getBookings();
+        int index = 0;
+        
+        for(Map.Entry<Integer, Booking> bookingEntry : bookings.entrySet())
+        {
+            if(bookingEntry.getValue().getCustomerID() == customerID)
+            {
+                bookingsForCustomerID.put(index, bookingEntry.getValue());
+                index++;
+            }
+        }        
+        return bookingsForCustomerID;
+    }
     
     public Booking getBookingFromBookingID(int bookingID)
     {
@@ -589,6 +653,40 @@ public class DBManager {
          }
      }
      return booking;
+    }
+    
+    
+    public BookingLine getBookingLineFromBookingLineID(int bookingLineID)
+    {
+     HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
+     bookingLines = getBookingLines();
+     BookingLine bookingLine = new BookingLine();
+     
+     for (Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+     {
+         if(bookingLineEntry.getValue().getBookingLineID() == bookingLineID)
+         {
+             return bookingLineEntry.getValue();
+         }
+     }
+     return bookingLine;
+    }
+    
+    
+    public double getBookingLineCostFromBookingLineID(int bookingLineID)
+    {
+     HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
+     bookingLines = getBookingLines();
+     double bookingLineCost = 0;
+     
+     for (Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+     {
+         if(bookingLineEntry.getValue().getBookingLineID() == bookingLineID)
+         {
+             return bookingLineEntry.getValue().getLineCost();
+         }
+     }
+     return bookingLineCost;
     }
     
     
@@ -814,6 +912,23 @@ public class DBManager {
         return roomID;
     }
     
+    public int getEditAvailableRoomID(int bookingLineID, Date checkIn, Date checkOut, String roomType)
+    {
+        int roomID = 0;
+        HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
+        int roomTypeID = getRoomTypeIDFromString(roomType);
+        rooms = getRoomsOfRoomType(roomTypeID);
+            
+        for(Map.Entry<Integer, Room> roomEntry : rooms.entrySet())
+        {
+            if(isEditAvailable(bookingLineID, checkIn, checkOut, roomEntry.getValue().getRoomID()))
+            {
+                return roomEntry.getValue().getRoomID();
+            }
+        }  
+        return roomID;
+    }
+    
     public int getTotalRoomsOfRoomType(String roomType)
     {
         HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
@@ -840,6 +955,58 @@ public class DBManager {
         rooms = getRoomsOfRoomType(roomTypeID);
         HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
         bookingLines = getBookingLinesOfRoomType(roomType);
+        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
+        try 
+        {
+            checkIn = fmt.parse(fmt.format(checkIn));
+            checkOut = fmt.parse(fmt.format(checkOut));
+        } catch (ParseException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        for (Map.Entry<Integer, Room> roomEntry : rooms.entrySet())
+        {
+            for (Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+            {                
+                if(bookingLineEntry.getValue().getRoomID() == roomEntry.getValue().getRoomID())
+                {
+                    try 
+                    {
+                        Date existingCheckIn = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckInDate()));
+                        Date existingCheckOut = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckOutDate()));
+                        if((!(checkOut.after(existingCheckIn))) == false && (!(checkIn.before(existingCheckOut)) == false))
+                        {
+                            available = available - 1;
+                        }
+                    } catch (ParseException ex) {
+                        Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+        return available;
+    }
+    
+    
+    public int getEditAvailability(int bookingLineID, Date checkIn, Date checkOut, String roomType)
+    {
+        int available = getTotalRoomsOfRoomType(roomType);
+        HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
+        int roomTypeID = getRoomTypeIDFromString(roomType);
+        rooms = getRoomsOfRoomType(roomTypeID);
+        HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
+        bookingLines = getBookingLinesOfRoomType(roomType);
+        
+        int bookingLineToRemoveKey = 0;
+        for(Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+        {
+            if(bookingLineEntry.getValue().getBookingLineID() == bookingLineID)
+            {
+                bookingLineToRemoveKey = bookingLineEntry.getKey();
+            }
+        }
+        bookingLines.remove(bookingLineToRemoveKey);
+        
         SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
         try 
         {
@@ -908,6 +1075,51 @@ public class DBManager {
         return true;
     }
     
+    public boolean isEditAvailable(int bookingLineID, Date checkIn, Date checkOut, int roomID)
+    {
+        HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
+        int roomTypeID = getRoomTypeIDFromRoomID(roomID);
+        String roomType = getRoomTypeFromRoomTypeID(roomTypeID);
+        bookingLines = getBookingLinesOfRoomType(roomType);
+        
+        int bookingLineToRemoveKey = 0;
+        for(Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+        {
+            if(bookingLineEntry.getValue().getBookingLineID() == bookingLineID)
+            {
+                bookingLineToRemoveKey = bookingLineEntry.getKey();
+            }
+        }
+        bookingLines.remove(bookingLineToRemoveKey);
+        
+        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
+        
+        try {
+            checkIn = fmt.parse(fmt.format(checkIn));
+            checkOut = fmt.parse(fmt.format(checkOut));
+        } catch (ParseException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        for(Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+        {
+            if(bookingLineEntry.getValue().getRoomID() == roomID)
+            {
+                try 
+                {
+                    Date existingCheckIn = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckInDate()));
+                    Date existingCheckOut = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckOutDate()));
+                    if((!(checkOut.after(existingCheckIn))) == false && (!(checkIn.before(existingCheckOut)) == false))
+                    {
+                        return false;
+                    }
+                } catch (ParseException ex) {
+                    Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        return true;
+    }
     
     public HashMap<Integer, BookingLine> getBookingLines()
     {
@@ -1133,6 +1345,50 @@ public class DBManager {
         return meals;
     }
     
+    
+    public void updateCustomerDetails(int customerID, Customer newCustomerDetails)
+    {        
+        String firstName = newCustomerDetails.getFirstName();
+        String lastName = newCustomerDetails.getLastName();
+        Date dateOfBirth = newCustomerDetails.getDateOfBirth();
+        String email = newCustomerDetails.getEmail();
+        String house = newCustomerDetails.getHouse();
+        String street = newCustomerDetails.getStreet();
+        String town = newCustomerDetails.getTown();
+        String postcode = newCustomerDetails.getPostcode();
+        String telephone = newCustomerDetails.getTelephone();
+        String mobile = newCustomerDetails.getMobile();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            
+        try {
+            Statement stmt = dbCon.createStatement();
+            String sql = "UPDATE Customers SET FirstName = '" + firstName + 
+                    "', LastName = '" + lastName + 
+                    "', DateOfBirth = '" + dateFormat.format(dateOfBirth) + 
+                    "', Email = '" + email + 
+                    "', House = '" + house + 
+                    "', Street = '" + street + 
+                    "', Town = '" + town + 
+                    "', Postcode = '" + postcode + 
+                    "', Telephone = '" + telephone + 
+                    "', Mobile = '" + mobile + 
+                    "' WHERE ID = " + customerID;
+            stmt.execute(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void updateCustomerPassword(int customerID, String newPassword)
+    {        
+        try {
+            Statement stmt = dbCon.createStatement();
+            String sql = "UPDATE Customers SET Password = '" + newPassword + "' WHERE ID = " + customerID;
+            stmt.execute(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     
     public void updateBookingTotalCost(int bookingID, double costToBeAdded)

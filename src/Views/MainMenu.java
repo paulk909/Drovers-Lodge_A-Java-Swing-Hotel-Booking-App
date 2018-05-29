@@ -64,7 +64,7 @@ public class MainMenu extends javax.swing.JFrame {
             ex.printStackTrace();
             System.err.println("Custom font not loaded.");
         }
-                
+        lblStaff.setVisible(false);
         populateRoomTypeDropDown();
     }
     
@@ -122,6 +122,8 @@ public class MainMenu extends javax.swing.JFrame {
         btnRegister = new javax.swing.JButton();
         btnSignIn = new javax.swing.JButton();
         btnCart = new javax.swing.JButton();
+        btnControlPanel = new javax.swing.JButton();
+        lblStaff = new javax.swing.JLabel();
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Username");
@@ -199,7 +201,7 @@ public class MainMenu extends javax.swing.JFrame {
         setBackground(new java.awt.Color(255, 255, 255));
         setSize(new java.awt.Dimension(725, 416));
 
-        lblTitle.setBackground(new java.awt.Color(255, 255, 204));
+        lblTitle.setBackground(new java.awt.Color(255, 255, 255));
         lblTitle.setFont(new java.awt.Font("Arial", 1, 48)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(102, 0, 0));
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -314,6 +316,15 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
+        btnControlPanel.setBackground(new java.awt.Color(51, 0, 0));
+        btnControlPanel.setForeground(new java.awt.Color(255, 255, 255));
+        btnControlPanel.setText("Control Panel");
+        btnControlPanel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnControlPanelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -321,6 +332,8 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton2)
+                .addGap(18, 18, 18)
+                .addComponent(btnControlPanel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSignIn)
                 .addGap(18, 18, 18)
@@ -337,33 +350,47 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(btnSignIn)
                     .addComponent(btnRegister)
-                    .addComponent(btnCart))
+                    .addComponent(btnCart)
+                    .addComponent(btnControlPanel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        lblStaff.setBackground(new java.awt.Color(255, 255, 51));
+        lblStaff.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblStaff.setForeground(new java.awt.Color(51, 51, 51));
+        lblStaff.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblStaff.setText("STAFF");
+        lblStaff.setToolTipText("");
+        lblStaff.setOpaque(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(191, 191, 191)
+                        .addComponent(lblTitle)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(20, 20, 20))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(191, 191, 191)
-                .addComponent(lblTitle)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblStaff))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(17, 17, 17)
@@ -399,7 +426,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnFindRoomsActionPerformed
 
     private void btnCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartActionPerformed
-        Cart rForm = new Cart(loggedInUser);//currentBooking);
+        Cart rForm = new Cart(loggedInUser);
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnCartActionPerformed
@@ -416,6 +443,7 @@ public class MainMenu extends javax.swing.JFrame {
             btnSignIn.setText("Sign In");
             btnSignIn.setEnabled(true);
             btnRegister.setText("Register");
+            lblStaff.setVisible(false);
         } else
         {
             CustomerRegister rForm = new CustomerRegister();
@@ -437,11 +465,24 @@ public class MainMenu extends javax.swing.JFrame {
             txtUsername.setText("");
             txtPassword.setText("");
             jframeLogin.dispose();
+            if(loggedInUser.getUserTypeID() == 3)
+            {
+                lblStaff.setVisible(true);
+            }
         }
         
         
                
     }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void btnControlPanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnControlPanelActionPerformed
+        if(loggedInUser.getUserTypeID() == 2)
+        {
+            CustomerHome rForm = new CustomerHome(loggedInUser);
+            this.dispose();
+            rForm.setVisible(true);
+        }
+    }//GEN-LAST:event_btnControlPanelActionPerformed
 
     /**
      * @param args the command line arguments
@@ -481,6 +522,7 @@ public class MainMenu extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCart;
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnControlPanel;
     private javax.swing.JButton btnFindRooms;
     private javax.swing.JButton btnLogin;
     private javax.swing.JButton btnRegister;
@@ -499,6 +541,7 @@ public class MainMenu extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser jdateCheckIn;
     private com.toedter.calendar.JDateChooser jdateCheckOut;
     private javax.swing.JFrame jframeLogin;
+    private javax.swing.JLabel lblStaff;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;

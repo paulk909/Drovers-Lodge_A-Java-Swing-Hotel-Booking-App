@@ -69,6 +69,19 @@ public class Customer {
         bookingList = new HashMap<Integer, Booking>();
     }
     
+    public Customer(String firstName, String lastName, Date dateOfBirth, String email, String house, String street, String town, String postcode, String telephone, String mobile) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.email = email;
+        this.house = house;
+        this.street = street;
+        this.town = town;
+        this.postcode = postcode;
+        this.telephone = telephone;
+        this.mobile = mobile;
+    }
+    
 
     public int getCustomerID() {
         return customerID;

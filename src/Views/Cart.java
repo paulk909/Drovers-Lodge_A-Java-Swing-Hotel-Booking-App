@@ -45,26 +45,14 @@ public class Cart extends javax.swing.JFrame {
     /**
      * Creates new form Cart
      */
-    public Cart(LoggedInUser loggedInUser){//Booking currentBooking) {
+    public Cart(LoggedInUser loggedInUser){
         this.loggedInUser = loggedInUser;
         getCurrentBooking();
         loadFrame();
         loadCart();        
     }
     
-    
-//    public void getUser(String username)
-//    {
-//        DBManager db= new DBManager();        
-//        loggedInUser = db.getValidUser(username);       
-////        btnSignIn.setText("Logged in as " + loggedInUser.getUsername());
-////        btnSignIn.setEnabled(false);
-////        btnRegister.setText("Logout");
-////        txtUsername.setText("");
-////        txtPassword.setText("");
-////        jframeLogin.dispose();
-//    }
-    
+   
     public void getCurrentBooking()
     {
         if(loggedInUser.getIsLoggedIn() == false)
@@ -132,12 +120,16 @@ public class Cart extends javax.swing.JFrame {
             btnSignIn.setEnabled(false);
             btnRegister.setText("Logout");
         }
+        lblStaff.setVisible(false);
+        if(loggedInUser.getUserTypeID() == 3)
+        {
+            lblStaff.setVisible(true);
+        }
     }
     
     public void loadCart()
     {
-        tblBookingLines.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+        tblBookingLines.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);        
         DefaultTableModel model = (DefaultTableModel)tblBookingLines.getModel();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         for(Map.Entry<Integer, BookingLine> bookingLineEntry : 
@@ -295,7 +287,10 @@ public class Cart extends javax.swing.JFrame {
         btnRegister = new javax.swing.JButton();
         btnSignIn = new javax.swing.JButton();
         btnCart = new javax.swing.JButton();
+        btnControlPanel = new javax.swing.JButton();
         lblTitle = new javax.swing.JLabel();
+        lblStaff = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Username");
@@ -498,9 +493,10 @@ public class Cart extends javax.swing.JFrame {
                     .addComponent(jLabel8)
                     .addComponent(txtPayeeName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(txtCardNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtCardNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel9)))
                 .addGroup(jframePaymentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jframePaymentLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
@@ -527,6 +523,7 @@ public class Cart extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         tblBookingLines.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -597,21 +594,23 @@ public class Cart extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(txtBookingID, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(65, 65, 65)
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(comboCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(127, 127, 127))
+                        .addGap(129, 129, 129))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(comboPaymentType, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addComponent(comboCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(18, 18, 18)
-                        .addComponent(txtTotalCost, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(41, 41, 41)))
+                        .addComponent(txtTotalCost, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(63, 63, 63)
                 .addComponent(btnConfirm)
                 .addGap(18, 18, 18))
         );
@@ -683,6 +682,15 @@ public class Cart extends javax.swing.JFrame {
             }
         });
 
+        btnControlPanel.setBackground(new java.awt.Color(51, 0, 0));
+        btnControlPanel.setForeground(new java.awt.Color(255, 255, 255));
+        btnControlPanel.setText("Control Panel");
+        btnControlPanel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnControlPanelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -690,6 +698,8 @@ public class Cart extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton2)
+                .addGap(18, 18, 18)
+                .addComponent(btnControlPanel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSignIn)
                 .addGap(18, 18, 18)
@@ -706,7 +716,8 @@ public class Cart extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(btnSignIn)
                     .addComponent(btnRegister)
-                    .addComponent(btnCart))
+                    .addComponent(btnCart)
+                    .addComponent(btnControlPanel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -716,33 +727,52 @@ public class Cart extends javax.swing.JFrame {
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitle.setText("Drovers Lodge");
 
+        lblStaff.setBackground(new java.awt.Color(255, 255, 51));
+        lblStaff.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblStaff.setForeground(new java.awt.Color(51, 51, 51));
+        lblStaff.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblStaff.setText("STAFF");
+        lblStaff.setOpaque(true);
+
+        jSeparator1.setEnabled(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(19, 19, 19))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAddMoreRooms)
                 .addGap(18, 18, 18)
                 .addComponent(btnRemove)
                 .addGap(30, 30, 30))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(183, 183, 183)
-                .addComponent(lblTitle)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(183, 183, 183)
+                        .addComponent(lblTitle)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(19, 19, 19))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblStaff)
+                        .addGap(23, 23, 23)
+                        .addComponent(jSeparator1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22)
@@ -753,7 +783,7 @@ public class Cart extends javax.swing.JFrame {
                     .addComponent(btnAddMoreRooms))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
@@ -798,6 +828,7 @@ public class Cart extends javax.swing.JFrame {
             btnSignIn.setText("Sign In");
             btnSignIn.setEnabled(true);
             btnRegister.setText("Register");
+            lblStaff.setVisible(false);
             clearCart();
             loadCart();
         }
@@ -851,6 +882,8 @@ public class Cart extends javax.swing.JFrame {
                     if(db.checkForUnassignedBooking())
                     {
                         db.assignUnassignedBookingToUser(loggedInUser);
+                        clearCart();
+                        loadCart();
                     }
                 }
             } 
@@ -858,6 +891,7 @@ public class Cart extends javax.swing.JFrame {
             {
                 Staff loggedInStaff = db.getStaffFromUsername(loggedInUser.getUsername());
                 loggedInStaff.setIsLoggedIn(true);
+                lblStaff.setVisible(true);
                 if(loggedInStaff.findCurrentBooking())
                 {
                     clearCart();
@@ -868,6 +902,8 @@ public class Cart extends javax.swing.JFrame {
                     if(db.checkForUnassignedBooking())
                     {
                         db.assignUnassignedBookingToUser(loggedInUser);
+                        clearCart();
+                        loadCart();
                     }
                 }
             }            
@@ -989,6 +1025,15 @@ public class Cart extends javax.swing.JFrame {
         jframePayment.dispose();
     }//GEN-LAST:event_btnPaymentCloseActionPerformed
 
+    private void btnControlPanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnControlPanelActionPerformed
+        if(loggedInUser.getUserTypeID() == 2)
+        {
+            CustomerHome rForm = new CustomerHome(loggedInUser);
+            this.dispose();
+            rForm.setVisible(true);
+        }
+    }//GEN-LAST:event_btnControlPanelActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1029,6 +1074,7 @@ public class Cart extends javax.swing.JFrame {
     private javax.swing.JButton btnCart;
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnConfirm;
+    private javax.swing.JButton btnControlPanel;
     private javax.swing.JButton btnLogin;
     private javax.swing.JButton btnPaymentClear;
     private javax.swing.JButton btnPaymentClose;
@@ -1059,9 +1105,11 @@ public class Cart extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
     private com.toedter.calendar.JYearChooser jYearExpiry;
     private javax.swing.JFrame jframeLogin;
     private javax.swing.JFrame jframePayment;
+    private javax.swing.JLabel lblStaff;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JTable tblBookingLines;
     private javax.swing.JTextField txtBookingID;

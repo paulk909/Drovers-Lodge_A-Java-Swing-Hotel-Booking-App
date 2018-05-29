@@ -21,6 +21,8 @@ public class BookingLine {
     private int roomID;
     private boolean[] meals;
     private double lineCost;
+    private boolean isCheckedIn;
+    private boolean isCheckedOut;
 
     public BookingLine() {
         this.meals = new boolean[3];
@@ -82,6 +84,16 @@ public class BookingLine {
         return lineCost;
     }
 
+    public boolean isIsCheckedIn() {
+        return isCheckedIn;
+    }
+
+    public boolean isIsCheckedOut() {
+        return isCheckedOut;
+    }
+
+    
+    
     
     public void setBookingLineID(int bookingLineID) {
         this.bookingLineID = bookingLineID;
@@ -110,6 +122,15 @@ public class BookingLine {
     public void setLineCost(double lineCost) {
         this.lineCost = lineCost;
     }   
+
+    public void setIsCheckedIn(boolean isCheckedIn) {
+        this.isCheckedIn = isCheckedIn;
+    }
+
+    public void setIsCheckedOut(boolean isCheckedOut) {
+        this.isCheckedOut = isCheckedOut;
+    }
+    
     
     
     

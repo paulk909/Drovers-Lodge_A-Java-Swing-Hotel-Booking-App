@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 public class CheckAvailability extends javax.swing.JFrame {
     
     private LoggedInUser loggedInUser = new LoggedInUser();
-    private Booking currentBooking = new Booking(); //loggedInCustomer.getCurrentBooking();
+    private Booking currentBooking = new Booking(); 
 
     /**
      * Creates new form CheckAvailability
@@ -80,6 +80,7 @@ public class CheckAvailability extends javax.swing.JFrame {
             ex.printStackTrace();
             System.err.println("Custom font not loaded.");
         }
+        lblStaff.setVisible(false);   
         populateRoomTypeDropDown();        
     }
     
@@ -91,9 +92,10 @@ public class CheckAvailability extends javax.swing.JFrame {
         btnSignIn.setText("Logged in as " + loggedInUser.getUsername());
         btnSignIn.setEnabled(false);
         btnRegister.setText("Logout");
-//        txtUsername.setText("");
-//        txtPassword.setText("");
-//        jframeLogin.dispose();
+        if(loggedInUser.getUserTypeID() == 3)
+        {
+            lblStaff.setVisible(true);
+        }
     }
     
     
@@ -283,7 +285,10 @@ public class CheckAvailability extends javax.swing.JFrame {
         btnRegister = new javax.swing.JButton();
         btnSignIn = new javax.swing.JButton();
         btnCart = new javax.swing.JButton();
+        btnControlPanel = new javax.swing.JButton();
         lblTitle = new javax.swing.JLabel();
+        lblStaff = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
 
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel10.setText("Username");
@@ -359,6 +364,7 @@ public class CheckAvailability extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Check Availability", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Times New Roman", 0, 14))); // NOI18N
@@ -613,6 +619,15 @@ public class CheckAvailability extends javax.swing.JFrame {
             }
         });
 
+        btnControlPanel.setBackground(new java.awt.Color(51, 0, 0));
+        btnControlPanel.setForeground(new java.awt.Color(255, 255, 255));
+        btnControlPanel.setText("Control Panel");
+        btnControlPanel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnControlPanelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -620,6 +635,8 @@ public class CheckAvailability extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton2)
+                .addGap(18, 18, 18)
+                .addComponent(btnControlPanel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSignIn)
                 .addGap(18, 18, 18)
@@ -636,22 +653,32 @@ public class CheckAvailability extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(btnSignIn)
                     .addComponent(btnRegister)
-                    .addComponent(btnCart))
+                    .addComponent(btnCart)
+                    .addComponent(btnControlPanel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        lblTitle.setBackground(new java.awt.Color(255, 255, 204));
+        lblTitle.setBackground(new java.awt.Color(255, 255, 255));
         lblTitle.setFont(new java.awt.Font("Arial", 1, 48)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(102, 0, 0));
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitle.setText("Drovers Lodge");
+
+        lblStaff.setBackground(new java.awt.Color(255, 255, 51));
+        lblStaff.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblStaff.setForeground(new java.awt.Color(51, 51, 51));
+        lblStaff.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblStaff.setText("STAFF");
+        lblStaff.setOpaque(true);
+
+        jSeparator2.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 24, Short.MAX_VALUE)
+                .addGap(0, 30, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -659,17 +686,25 @@ public class CheckAvailability extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lblTitle)
-                        .addGap(161, 161, 161)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(23, 23, 23))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblStaff)
+                        .addGap(18, 18, 18)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -756,6 +791,7 @@ public class CheckAvailability extends javax.swing.JFrame {
             btnSignIn.setText("Sign In");
             btnSignIn.setEnabled(true);
             btnRegister.setText("Register");
+            lblStaff.setVisible(false);
         }
     }//GEN-LAST:event_btnRegisterActionPerformed
 
@@ -787,13 +823,25 @@ public class CheckAvailability extends javax.swing.JFrame {
             txtUsername.setText("");
             txtPassword.setText("");
             jframeLogin.dispose();
+            if(loggedInUser.getUserTypeID() == 3)
+            {
+                lblStaff.setVisible(true);
+            }
         }
-
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
         jframeLogin.setVisible(false);
     }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void btnControlPanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnControlPanelActionPerformed
+        if(loggedInUser.getUserTypeID() == 2)
+        {
+            CustomerHome rForm = new CustomerHome(loggedInUser);
+            this.dispose();
+            rForm.setVisible(true);
+        }
+    }//GEN-LAST:event_btnControlPanelActionPerformed
 
     /**
      * @param args the command line arguments
@@ -834,6 +882,7 @@ public class CheckAvailability extends javax.swing.JFrame {
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnCart;
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnControlPanel;
     private javax.swing.JButton btnLogin;
     private javax.swing.JButton btnRegister;
     private javax.swing.JButton btnSignIn;
@@ -859,9 +908,11 @@ public class CheckAvailability extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JSeparator jSeparator2;
     private com.toedter.calendar.JDateChooser jdateCheckIn;
     private com.toedter.calendar.JDateChooser jdateCheckOut;
     private javax.swing.JFrame jframeLogin;
+    private javax.swing.JLabel lblStaff;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JTextField txtAvailability;
     private javax.swing.JTextField txtNoOfDays;

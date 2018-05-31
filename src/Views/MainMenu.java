@@ -66,6 +66,11 @@ public class MainMenu extends javax.swing.JFrame {
         }
         lblStaff.setVisible(false);
         populateRoomTypeDropDown();
+        
+        if(!loggedInUser.getIsLoggedIn())
+        {
+            btnControlPanel.setVisible(false);
+        }
     }
     
     public void clearUnassignedBookingsOnStartup()
@@ -444,6 +449,7 @@ public class MainMenu extends javax.swing.JFrame {
             btnSignIn.setEnabled(true);
             btnRegister.setText("Register");
             lblStaff.setVisible(false);
+            btnControlPanel.setVisible(false);
         } else
         {
             CustomerRegister rForm = new CustomerRegister();
@@ -464,6 +470,7 @@ public class MainMenu extends javax.swing.JFrame {
             btnRegister.setText("Logout");
             txtUsername.setText("");
             txtPassword.setText("");
+            btnControlPanel.setVisible(true);
             jframeLogin.dispose();
             if(loggedInUser.getUserTypeID() == 3)
             {
@@ -479,6 +486,11 @@ public class MainMenu extends javax.swing.JFrame {
         if(loggedInUser.getUserTypeID() == 2)
         {
             CustomerHome rForm = new CustomerHome(loggedInUser);
+            this.dispose();
+            rForm.setVisible(true);
+        } else if(loggedInUser.getUserTypeID() == 3)
+        {
+            StaffHome rForm = new StaffHome(loggedInUser);
             this.dispose();
             rForm.setVisible(true);
         }

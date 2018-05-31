@@ -24,6 +24,10 @@ public class Room {
         this.roomID = roomID;
         this.roomTypeID = roomTypeID;
     }
+    
+    public Room(int roomTypeID) {
+        this.roomTypeID = roomTypeID;
+    }
 
     public int getRoomID() {
         return roomID;

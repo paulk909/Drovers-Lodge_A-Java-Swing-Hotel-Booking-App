@@ -125,6 +125,11 @@ public class Cart extends javax.swing.JFrame {
         {
             lblStaff.setVisible(true);
         }
+        
+        if(!loggedInUser.getIsLoggedIn())
+        {
+            btnControlPanel.setVisible(false);
+        }
     }
     
     public void loadCart()
@@ -829,6 +834,7 @@ public class Cart extends javax.swing.JFrame {
             btnSignIn.setEnabled(true);
             btnRegister.setText("Register");
             lblStaff.setVisible(false);
+            btnControlPanel.setVisible(false);
             clearCart();
             loadCart();
         }
@@ -862,6 +868,7 @@ public class Cart extends javax.swing.JFrame {
             btnRegister.setText("Logout");
             txtUsername.setText("");
             txtPassword.setText("");
+            btnControlPanel.setVisible(true);
             jframeLogin.dispose();
             
             Customer ccheck = db.getCustomerFromUsername(loggedInUser.getUsername());
@@ -1029,6 +1036,11 @@ public class Cart extends javax.swing.JFrame {
         if(loggedInUser.getUserTypeID() == 2)
         {
             CustomerHome rForm = new CustomerHome(loggedInUser);
+            this.dispose();
+            rForm.setVisible(true);
+        } else if(loggedInUser.getUserTypeID() == 3)
+        {
+            StaffHome rForm = new StaffHome(loggedInUser);
             this.dispose();
             rForm.setVisible(true);
         }

@@ -35,6 +35,21 @@ public class Staff {
         this.email = email;
         this.staffRoleID = staffRoleID;
     }
+        
+    public Staff(String username, String password, String firstName, String lastName, String email, int staffRoleID) {
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.staffRoleID = staffRoleID;
+    }
+    
+    public Staff(String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
 
     public int getStaffID() {
         return staffID;

@@ -83,6 +83,11 @@ public class CustomerRegister extends javax.swing.JFrame {
         jLabel15.setText("Mobile");
 
         btnClose.setText("Close");
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
 
         jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel16.setText("Date of Birth");
@@ -96,6 +101,11 @@ public class CustomerRegister extends javax.swing.JFrame {
         });
 
         btnClear.setText("Clear");
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(51, 0, 0));
@@ -299,6 +309,26 @@ public class CustomerRegister extends javax.swing.JFrame {
     private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPasswordActionPerformed
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        txtUsername.setText("");
+        txtPassword.setText("");
+        txtFirstName.setText("");
+        txtLastName.setText("");
+        Date today = new Date();
+        jdateDateOfBirth.setDate(today);
+        txtEmail.setText("");
+        txtHouse.setText("");
+        txtStreet.setText("");
+        txtTown.setText("");
+        txtPostcode.setText("");
+        txtTelephone.setText("");
+        txtMobile.setText("");
+    }//GEN-LAST:event_btnClearActionPerformed
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCloseActionPerformed
 
     /**
      * @param args the command line arguments

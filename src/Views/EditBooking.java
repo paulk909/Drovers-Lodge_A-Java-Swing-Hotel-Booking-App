@@ -90,6 +90,8 @@ public class EditBooking extends javax.swing.JFrame {
         {
             lblStaff.setVisible(true);
         }
+        
+        btnConfirm.setVisible(false);
     }
     
     public void loadCart()
@@ -122,15 +124,8 @@ public class EditBooking extends javax.swing.JFrame {
         }
         else
         {
-            if(loggedInUser.getUserTypeID() == 2)
-            {
-                comboCustomer.setSelectedItem(loggedInUser.getUsername());
+                comboCustomer.setSelectedItem(db.getCustomerFromCustomerID(currentBooking.getCustomerID()).getUsername());
                 comboCustomer.setEnabled(false);
-            } 
-            else if(loggedInUser.getUserTypeID() == 3)
-            {
-                comboCustomer.setEnabled(true);
-            }
         }
     }
     
@@ -174,18 +169,6 @@ public class EditBooking extends javax.swing.JFrame {
     }
     
     
-//    public void populateCardTypeDropDown()
-//    {
-//        comboCardType.removeAllItems();
-//        DBManager db = new DBManager();        
-//        HashMap<Integer, CardType> cardTypes = new HashMap<Integer, CardType>();
-//        cardTypes = db.getCardTypes(); 
-//        comboCardType.addItem("--Please Select--");
-//        for (Map.Entry<Integer, CardType> cardTypeEntry : cardTypes.entrySet())
-//        {
-//            comboCardType.addItem(cardTypeEntry.getValue().getCardType());
-//        }
-//    }
     
     public void populateCustomerDropDown()
     {
@@ -470,9 +453,9 @@ public class EditBooking extends javax.swing.JFrame {
                     .addComponent(jdateCheckOut, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jframeEditBookingLineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16)
-                    .addComponent(jLabel17))
+                .addGroup(jframeEditBookingLineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel17)
+                    .addComponent(jLabel16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jframeEditBookingLineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(comboRoomType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -585,7 +568,7 @@ public class EditBooking extends javax.swing.JFrame {
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(comboPaymentType, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
@@ -605,7 +588,7 @@ public class EditBooking extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 0, 0)
                         .addComponent(btnConfirm)
                         .addGap(26, 26, 26))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -761,7 +744,7 @@ public class EditBooking extends javax.swing.JFrame {
                     .addComponent(btnEdit))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         pack();
@@ -778,8 +761,16 @@ public class EditBooking extends javax.swing.JFrame {
             int bookingLineID = Integer.parseInt(String.valueOf(model.getValueAt(tblBookingLines.getSelectedRow(),0)));
             int rowIndex = tblBookingLines.getSelectedRow();
             DBManager db = new DBManager();
-            db.removeBookingLine(bookingLineID);
+            BookingLine bookingLineToBeRemoved = db.getBookingLineFromBookingLineID(bookingLineID);
+            int bookingID = bookingLineToBeRemoved.getBookingID();
+            double deletedBookingLineCost = 0 - bookingLineToBeRemoved.getLineCost();
+            db.editBookingRemoveBookingLine(bookingLineID);
             refreshCart(rowIndex);
+            
+            currentBooking = db.getBookingFromBookingID(bookingID);        
+            currentBooking.populateBookingLines();
+            clearCart();
+            loadCart();
         }
     }//GEN-LAST:event_btnRemoveActionPerformed
 
@@ -788,35 +779,6 @@ public class EditBooking extends javax.swing.JFrame {
     }//GEN-LAST:event_comboPaymentTypeActionPerformed
 
     private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
-//        DBManager db = new DBManager();
-//
-//        int paymentTypeID = db.getPaymentTypeIDFromPaymentType(String.valueOf(comboPaymentType.getSelectedItem()));
-//        int customerID = 0;
-//        if(loggedInUser.getUserTypeID() == 2)
-//        {
-//            customerID = db.getCustomerFromUsername(loggedInUser.getUsername()).getCustomerID();
-//        }
-//        else if(loggedInUser.getUserTypeID() == 3)
-//        {
-//            customerID = db.getCustomerFromUsername(String.valueOf(comboCustomer.getSelectedItem())).getCustomerID();
-//        }
-//        int bookingID = currentBooking.getBookingID();
-//
-//        if(paymentTypeID == 1)
-//        {
-//            db.confirmBookingPayAtCheckIn(loggedInUser, bookingID, customerID);
-//        }
-//        else if(paymentTypeID == 2)
-//        {
-//            jframePayment.setVisible(true);
-//            jframePayment.setSize(440,600);
-//            jframePayment.getContentPane().setBackground(Color.white);
-//            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-//            jframePayment.setLocation(dim.width/2-jframePayment.getSize().width/2, dim.height/2-jframePayment.getSize().height/2);
-//            jframePayment.setVisible(true);
-//            populateCardTypeDropDown();
-//            txtPaymentTotalCost.setText("£" + String.format("%.02f",(currentBooking.getTotalCost())));
-//        }
 
     }//GEN-LAST:event_btnConfirmActionPerformed
 
@@ -846,6 +808,11 @@ public class EditBooking extends javax.swing.JFrame {
         if(loggedInUser.getUserTypeID() == 2)
         {
             CustomerHome rForm = new CustomerHome(loggedInUser);
+            this.dispose();
+            rForm.setVisible(true);
+        } else if(loggedInUser.getUserTypeID() == 3)
+        {
+            StaffHome rForm = new StaffHome(loggedInUser);
             this.dispose();
             rForm.setVisible(true);
         }
@@ -896,7 +863,37 @@ public class EditBooking extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnEditSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditSubmitActionPerformed
-        // TODO add your handling code here:
+        int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
+        DBManager db = new DBManager();
+        int bookingID = db.getBookingLineFromBookingLineID(bookingLineID).getBookingID();        
+        double originalLineCost = db.getBookingLineCostFromBookingLineID(bookingLineID);
+        
+        Date editCheckIn = jdateCheckIn.getDate();
+        Date editCheckOut = jdateCheckOut.getDate();
+        int editRoomTypeID = comboRoomType.getSelectedIndex();
+        String editRoomType = db.getRoomTypeFromRoomTypeID(editRoomTypeID);
+        boolean editBreakfast = checkBreakfast.isSelected();
+        boolean editLunch = checkLunch.isSelected();
+        boolean editEveningMeal = checkEveningMeal.isSelected();
+        boolean[] editMeals = new boolean[3];
+        editMeals[0] = editBreakfast;
+        editMeals[1] = editLunch;
+        editMeals[2] = editEveningMeal;
+        
+        int editRoomID = db.getEditAvailableRoomID(bookingLineID, editCheckIn, editCheckOut, editRoomType);
+        long lengthOfStay = getLengthOfStay(editCheckIn, editCheckOut);
+        double editLineCost = calculatePrice(lengthOfStay, editMeals, getRoomTypeID(editRoomType));
+        double changeInCost = editLineCost - originalLineCost;
+        
+        BookingLine newBookingLineDetails = new BookingLine(editCheckIn, editCheckOut, bookingID, editRoomID, editMeals, editLineCost);
+        db.updateBookingLine(bookingLineID, newBookingLineDetails, changeInCost);
+        currentBooking = db.getBookingFromBookingID(bookingID);        
+        currentBooking.populateBookingLines();
+
+        int tblBookingLinesSelectedRow = tblBookingLines.getSelectedRow();
+        clearCart();
+        loadCart();
+        tblBookingLines.setRowSelectionInterval(tblBookingLinesSelectedRow, tblBookingLinesSelectedRow);
     }//GEN-LAST:event_btnEditSubmitActionPerformed
 
     private void btnEditClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditClearActionPerformed
@@ -910,8 +907,13 @@ public class EditBooking extends javax.swing.JFrame {
         boolean breakfast = editableBookingLine.getBreakfast();
         boolean lunch = editableBookingLine.getLunch();
         boolean eveningMeal = editableBookingLine.getEveningMeal();
+        boolean[] meals = new boolean[3];
+        meals[0] = breakfast;
+        meals[1] = lunch;
+        meals[2] = eveningMeal;
         populateRoomTypeDropDown();
         int roomTypeID = db.getRoomTypeIDFromRoomID(editableBookingLine.getRoomID());
+        String roomType = db.getRoomTypeFromRoomTypeID(roomTypeID);
         
         txtBookingLineID.setText(String.valueOf(bookingLineID));
         txtBookingLineID.setEnabled(false);
@@ -921,9 +923,41 @@ public class EditBooking extends javax.swing.JFrame {
         checkLunch.setSelected(lunch);
         checkEveningMeal.setSelected(eveningMeal);
         comboRoomType.setSelectedIndex(roomTypeID);
+        txtChangeInCost.setText("");
+        
+        updateEditBookingLine(bookingLineID, checkIn, checkOut, roomType, meals);
     }//GEN-LAST:event_btnEditClearActionPerformed
 
     private void btnEditCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditCloseActionPerformed
+        BookingLine editableBookingLine = new BookingLine();
+        int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
+        DBManager db = new DBManager();
+        editableBookingLine = db.getBookingLineFromBookingLineID(bookingLineID);
+        
+        Date checkIn = editableBookingLine.getCheckInDate();
+        Date checkOut = editableBookingLine.getCheckOutDate();
+        boolean breakfast = editableBookingLine.getBreakfast();
+        boolean lunch = editableBookingLine.getLunch();
+        boolean eveningMeal = editableBookingLine.getEveningMeal();
+        boolean[] meals = new boolean[3];
+        meals[0] = breakfast;
+        meals[1] = lunch;
+        meals[2] = eveningMeal;
+        populateRoomTypeDropDown();
+        int roomTypeID = db.getRoomTypeIDFromRoomID(editableBookingLine.getRoomID());
+        String roomType = db.getRoomTypeFromRoomTypeID(roomTypeID);
+        
+        txtBookingLineID.setText(String.valueOf(bookingLineID));
+        txtBookingLineID.setEnabled(false);
+        jdateCheckIn.setDate(checkIn);
+        jdateCheckOut.setDate(checkOut);
+        checkBreakfast.setSelected(breakfast);
+        checkLunch.setSelected(lunch);
+        checkEveningMeal.setSelected(eveningMeal);
+        comboRoomType.setSelectedIndex(roomTypeID);
+        txtChangeInCost.setText("");
+        
+        updateEditBookingLine(bookingLineID, checkIn, checkOut, roomType, meals);
         jframeEditBookingLine.dispose();
     }//GEN-LAST:event_btnEditCloseActionPerformed
 

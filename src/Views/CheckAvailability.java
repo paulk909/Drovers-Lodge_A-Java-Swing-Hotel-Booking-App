@@ -80,6 +80,10 @@ public class CheckAvailability extends javax.swing.JFrame {
             ex.printStackTrace();
             System.err.println("Custom font not loaded.");
         }
+        if(!loggedInUser.getIsLoggedIn())
+        {
+            btnControlPanel.setVisible(false);
+        }
         lblStaff.setVisible(false);   
         populateRoomTypeDropDown();        
     }
@@ -792,6 +796,7 @@ public class CheckAvailability extends javax.swing.JFrame {
             btnSignIn.setEnabled(true);
             btnRegister.setText("Register");
             lblStaff.setVisible(false);
+            btnControlPanel.setVisible(false);
         }
     }//GEN-LAST:event_btnRegisterActionPerformed
 
@@ -822,6 +827,7 @@ public class CheckAvailability extends javax.swing.JFrame {
             btnRegister.setText("Logout");
             txtUsername.setText("");
             txtPassword.setText("");
+            btnControlPanel.setVisible(true);
             jframeLogin.dispose();
             if(loggedInUser.getUserTypeID() == 3)
             {
@@ -838,6 +844,11 @@ public class CheckAvailability extends javax.swing.JFrame {
         if(loggedInUser.getUserTypeID() == 2)
         {
             CustomerHome rForm = new CustomerHome(loggedInUser);
+            this.dispose();
+            rForm.setVisible(true);
+        } else if(loggedInUser.getUserTypeID() == 3)
+        {
+            StaffHome rForm = new StaffHome(loggedInUser);
             this.dispose();
             rForm.setVisible(true);
         }

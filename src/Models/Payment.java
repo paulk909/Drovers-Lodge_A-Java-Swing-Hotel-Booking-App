@@ -20,11 +20,12 @@ public class Payment {
     private Date expiryDate;
     private int cardTypeID;
     private double totalCost;
+    private int bookingID;
 
     public Payment() {
     }
 
-    public Payment(int paymentID, Date datePaid, String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost) {
+    public Payment(int paymentID, Date datePaid, String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost, int bookingID) {
         this.paymentID = paymentID;
         this.datePaid = datePaid;
         this.payeeName = payeeName;
@@ -33,6 +34,7 @@ public class Payment {
         this.expiryDate = expiryDate;
         this.cardTypeID = cardTypeID;
         this.totalCost = totalCost;
+        this.bookingID = bookingID;
     }
 
     public Payment(String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost) {
@@ -42,6 +44,16 @@ public class Payment {
         this.expiryDate = expiryDate;
         this.cardTypeID = cardTypeID;
         this.totalCost = totalCost;
+    }
+    
+    public Payment(String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost, int bookingID) {
+        this.payeeName = payeeName;
+        this.cardNo = cardNo;
+        this.securityNo = securityNo;
+        this.expiryDate = expiryDate;
+        this.cardTypeID = cardTypeID;
+        this.totalCost = totalCost;
+        this.bookingID = bookingID;
     }
     
     public int getPaymentID() {
@@ -76,6 +88,12 @@ public class Payment {
         return totalCost;
     }
 
+    public int getBookingID() {
+        return bookingID;
+    }
+    
+    
+
     
     public void setPaymentID(int paymentID) {
         this.paymentID = paymentID;
@@ -108,6 +126,11 @@ public class Payment {
     public void setTotalCost(double totalCost) {
         this.totalCost = totalCost;
     }
+
+    public void setBookingID(int bookingID) {
+        this.bookingID = bookingID;
+    }
+    
     
     
 }

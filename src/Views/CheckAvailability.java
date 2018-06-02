@@ -45,7 +45,8 @@ public class CheckAvailability extends javax.swing.JFrame {
     
 
     
-    public CheckAvailability(Date checkIn, Date checkOut, String roomType) {
+    public CheckAvailability(Date checkIn, Date checkOut, String roomType, LoggedInUser loggedInUser) {
+        getUser(loggedInUser);
         loadFrame();
         updateAvailability(checkIn, checkOut, roomType);
         currentBooking.populateBookingLines();
@@ -53,7 +54,8 @@ public class CheckAvailability extends javax.swing.JFrame {
         txtAvailability.setText(String.valueOf(db.getAvailability(checkIn, checkOut, roomType)));
     }
     
-    public CheckAvailability() {
+    public CheckAvailability(LoggedInUser loggedInUser) {
+        getUser(loggedInUser);
         loadFrame();
         currentBooking.populateBookingLines();
     }
@@ -84,22 +86,27 @@ public class CheckAvailability extends javax.swing.JFrame {
         {
             btnControlPanel.setVisible(false);
         }
-        lblStaff.setVisible(false);   
+        else
+        {
+            btnSignIn.setText("Logged in as " + this.loggedInUser.getUsername());
+            btnSignIn.setEnabled(false);
+            btnRegister.setText("Logout");
+            txtUsername.setText("");
+            txtPassword.setText("");
+            btnControlPanel.setVisible(true);
+            lblStaff.setVisible(false); 
+            if(loggedInUser.getUserTypeID() == 3)
+            {
+                lblStaff.setVisible(true);
+            }
+        }  
         populateRoomTypeDropDown();        
     }
     
     
-    public void getUser(String username)
+    public void getUser(LoggedInUser loggedInUser)
     {
-        DBManager db= new DBManager();        
-        loggedInUser = db.getValidUser(username);       
-        btnSignIn.setText("Logged in as " + loggedInUser.getUsername());
-        btnSignIn.setEnabled(false);
-        btnRegister.setText("Logout");
-        if(loggedInUser.getUserTypeID() == 3)
-        {
-            lblStaff.setVisible(true);
-        }
+        this.loggedInUser = loggedInUser; 
     }
     
     
@@ -822,6 +829,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         if(db.checkLoginDetails(username, password))
         {
             loggedInUser = db.getValidUser(username);
+            loggedInUser.setIsLoggedIn(true);
             btnSignIn.setText("Logged in as " + loggedInUser.getUsername());
             btnSignIn.setEnabled(false);
             btnRegister.setText("Logout");

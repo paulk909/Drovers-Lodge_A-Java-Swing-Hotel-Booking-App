@@ -815,11 +815,7 @@ public class Cart extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRemoveActionPerformed
 
     private void btnAddMoreRoomsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddMoreRoomsActionPerformed
-        CheckAvailability rForm = new CheckAvailability();
-        if(loggedInUser.getIsLoggedIn())
-        {
-            rForm.getUser(loggedInUser.getUsername());
-        }
+        CheckAvailability rForm = new CheckAvailability(loggedInUser);
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnAddMoreRoomsActionPerformed
@@ -862,6 +858,7 @@ public class Cart extends javax.swing.JFrame {
         if(db.checkLoginDetails(username, password))
         {
             loggedInUser = db.getValidUser(username);
+            loggedInUser.setIsLoggedIn(true);
             getCurrentBooking();
             btnSignIn.setText("Logged in as " + loggedInUser.getUsername());
             btnSignIn.setEnabled(false);

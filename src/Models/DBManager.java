@@ -594,7 +594,7 @@ public class DBManager {
     {
         try {
             Statement stmt = dbCon.createStatement();
-            String sql = "UPDATE Bookings SET OutstandingPayment = 0.00, IsPaid = true WHERE ID = " + bookingID;
+            String sql = "UPDATE Bookings SET OutstandingBalance = 0.00, IsPaid = true WHERE ID = " + bookingID;
             stmt.execute(sql);
         } catch (SQLException ex) {
             Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -725,6 +725,43 @@ public class DBManager {
         }            
         return bookings;
     }
+    
+    public HashMap<Integer, Booking> getBookingsBetweenDates(Date dateFrom, Date dateUntil)
+    {
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        try 
+        {
+            String sqlString = "select * from Bookings";
+            Statement st = dbCon.createStatement();
+            ResultSet rs = null;
+            rs = st.executeQuery(sqlString);
+            while(rs.next())        
+            {
+                Date dateBooked = rs.getDate("DateBooked");
+                if(!(dateBooked.before(dateFrom)) &&
+                        !(dateBooked.after(dateUntil)))
+                {
+                    Booking bookingToAdd = new Booking();
+                    bookingToAdd.setBookingID(rs.getInt("ID"));
+                    bookingToAdd.setDateBooked(rs.getDate("DateBooked"));
+                    bookingToAdd.setOutstandingBalance(rs.getDouble("OutstandingBalance"));
+                    bookingToAdd.setTotalCost(rs.getInt("TotalCost"));
+                    bookingToAdd.setIsConfirmed(rs.getBoolean("IsConfirmed"));
+                    bookingToAdd.setIsPaid(rs.getBoolean("IsPaid"));
+                    bookingToAdd.setPaymentTypeID(rs.getInt("PaymentTypeID"));  
+                    bookingToAdd.setPaymentID(rs.getInt("PaymentID"));  
+                    bookingToAdd.setCustomerTypeID(rs.getInt("CustomerTypeID"));  
+                    bookingToAdd.setStaffID(rs.getInt("StaffID"));  
+                    bookingToAdd.setCustomerID(rs.getInt("CustomerID"));      
+                    bookings.put(bookingToAdd.getBookingID(), bookingToAdd);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }            
+        return bookings;
+    }
+    
     
     public HashMap<Integer, Booking> getBookingsForCustomerID(int customerID)
     {
@@ -1348,6 +1385,42 @@ public class DBManager {
         return bookingLines;
     }
     
+    
+    public HashMap<Integer, BookingLine> getBookingLinesBetweenDates(Date dateFrom, Date dateUntil)
+    {
+        HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
+        try 
+        {
+            String sqlString = "select * from BookingLines";
+            Statement st = dbCon.createStatement();
+            ResultSet rs = null;
+            rs = st.executeQuery(sqlString);
+            while(rs.next())        
+            {
+                if(!(rs.getDate("CheckInDate").before(dateFrom)) &&
+                        !(rs.getDate("CheckOutDate").after(dateUntil)))
+                {
+                    BookingLine bookingLineToAdd = new BookingLine();
+                    bookingLineToAdd.setBookingLineID(rs.getInt("ID"));
+                    bookingLineToAdd.setCheckInDate(rs.getDate("CheckInDate"));
+                    bookingLineToAdd.setCheckOutDate(rs.getDate("CheckOutDate"));
+                    bookingLineToAdd.setBookingID(rs.getInt("BookingID"));
+                    bookingLineToAdd.setRoomID(rs.getInt("RoomID"));
+                    boolean breakfast = (rs.getBoolean("Breakfast"));
+                    boolean lunch = (rs.getBoolean("Lunch"));
+                    boolean eveningMeal = (rs.getBoolean("EveningMeal"));
+                    boolean[] meals = {breakfast, lunch, eveningMeal};
+                    bookingLineToAdd.setMeals(meals);
+                    bookingLineToAdd.setLineCost(rs.getDouble("LineCost"));      
+                    bookingLines.put(bookingLineToAdd.getBookingLineID(), bookingLineToAdd);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }            
+        return bookingLines;
+    }
+    
     public HashMap<Integer, BookingLine> getBookingLinesOfRoomType(String roomType)
     {
         HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
@@ -1477,6 +1550,22 @@ public class DBManager {
             }
         }
         return paymentTypeID;
+    }
+    
+    public String getPaymentTypeFromPaymentTypeID(int paymentTypeID)
+    {
+        HashMap<Integer, PaymentType> paymentTypes = new HashMap<Integer, PaymentType>();
+        paymentTypes = getPaymentTypes();
+        String paymentType = "";
+
+        for (Map.Entry<Integer, PaymentType> paymentTypeEntry : paymentTypes.entrySet())
+        {
+            if(paymentTypeEntry.getValue().getPaymentTypeID() == paymentTypeID)
+            {
+                return paymentTypeEntry.getValue().getPaymentType();
+            }
+        }
+        return paymentType;
     }
     
     public int getCardTypeIDFromCardType(String cardType)
@@ -1872,6 +1961,21 @@ public class DBManager {
                 Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    
+    public void truncBookingsBookLinesPayments()
+    {
+        try {
+                Statement stmt = dbCon.createStatement();
+                String sql = "DELETE from Bookings";
+                stmt.execute(sql);
+                String sql2 = "DELETE from BookingLines";
+                stmt.execute(sql2);
+                String sql3 = "DELETE from Payments";
+                stmt.execute(sql3);
+            } catch (SQLException ex) {
+                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }
        
 }

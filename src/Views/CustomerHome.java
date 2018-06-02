@@ -195,6 +195,7 @@ public class CustomerHome extends javax.swing.JFrame {
         btnPayBooking = new javax.swing.JButton();
         btnNewBooking = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        btnCustomerBookingReport = new javax.swing.JButton();
 
         jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(51, 0, 0));
@@ -920,6 +921,8 @@ public class CustomerHome extends javax.swing.JFrame {
 
         jLabel1.setText("My Bookings");
 
+        btnCustomerBookingReport.setText("Export Booking Report");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -941,19 +944,23 @@ public class CustomerHome extends javax.swing.JFrame {
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(btnEditDetails, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(btnChangePassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnCustomerBookingReport)
+                                        .addGap(15, 15, 15))
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(32, 32, 32))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnPayBooking)
-                .addGap(52, 52, 52)
+                .addGap(34, 34, 34)
                 .addComponent(btnEditBooking)
-                .addGap(37, 37, 37)
+                .addGap(35, 35, 35)
                 .addComponent(btnDeleteBooking)
-                .addGap(48, 48, 48))
+                .addGap(52, 52, 52))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -963,22 +970,26 @@ public class CustomerHome extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(11, 11, 11)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(59, 59, 59)
                         .addComponent(btnEditDetails)
                         .addGap(34, 34, 34)
                         .addComponent(btnChangePassword)
                         .addGap(31, 31, 31)
-                        .addComponent(btnNewBooking)))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnNewBooking))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnCustomerBookingReport)
+                            .addComponent(jLabel1))
+                        .addGap(15, 15, 15)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnEditBooking)
                     .addComponent(btnDeleteBooking)
                     .addComponent(btnPayBooking))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addGap(26, 26, 26))
         );
 
         pack();
@@ -1006,8 +1017,7 @@ public class CustomerHome extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCartActionPerformed
 
     private void btnNewBookingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewBookingActionPerformed
-        CheckAvailability rForm = new CheckAvailability();
-        rForm.getUser(loggedInUser.getUsername());
+        CheckAvailability rForm = new CheckAvailability(loggedInUser);
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnNewBookingActionPerformed
@@ -1419,6 +1429,7 @@ public class CustomerHome extends javax.swing.JFrame {
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnClosePassword;
     private javax.swing.JButton btnControlPanel;
+    private javax.swing.JButton btnCustomerBookingReport;
     private javax.swing.JButton btnDeleteBooking;
     private javax.swing.JButton btnEditBooking;
     private javax.swing.JButton btnEditDetails;

@@ -7,7 +7,9 @@ package Views;
 
 import Models.Booking;
 import Models.CardType;
+import Models.Customer;
 import Models.DBManager;
+import Models.ExcelWriter;
 import Models.LoggedInUser;
 import Models.Payment;
 import java.awt.Color;
@@ -15,7 +17,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
@@ -88,7 +93,7 @@ public class StaffViewBookings extends javax.swing.JFrame {
                 bookings.entrySet())
         {
             Booking currentBooking = bookingEntry.getValue();            
-            model.addRow(new Object[]{currentBooking.getBookingID(), currentBooking.getIsPaid(), String.format("%.02f",currentBooking.getOutstandingBalance()), 
+            model.addRow(new Object[]{currentBooking.getBookingID(), currentBooking.getCustomerID(), currentBooking.getIsPaid(), String.format("%.02f",currentBooking.getOutstandingBalance()), 
                 String.format("%.02f",currentBooking.getTotalCost()), dateFormat.format(currentBooking.getDateBooked()) });
         }
     }
@@ -181,6 +186,7 @@ public class StaffViewBookings extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblBookings = new javax.swing.JTable();
         lblStaff = new javax.swing.JLabel();
+        btnStaffExportBookingReport = new javax.swing.JButton();
 
         btnPaymentSubmit.setText("Submit");
         btnPaymentSubmit.addActionListener(new java.awt.event.ActionListener() {
@@ -594,14 +600,14 @@ public class StaffViewBookings extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Booking ID", "Is Paid", "Outstanding Balance", "Total Cost", "Date Booked"
+                "Booking ID", "Customer ID", "Is Paid", "Outstanding Balance", "Total Cost", "Date Booked"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, true, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -621,21 +627,29 @@ public class StaffViewBookings extends javax.swing.JFrame {
         lblStaff.setText("STAFF");
         lblStaff.setOpaque(true);
 
+        btnStaffExportBookingReport.setText("Export Booking Report");
+        btnStaffExportBookingReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStaffExportBookingReportActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnPayBooking)
-                .addGap(52, 52, 52)
-                .addComponent(btnEditBooking)
-                .addGap(37, 37, 37)
-                .addComponent(btnDeleteBooking)
-                .addGap(48, 48, 48))
             .addGroup(layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnStaffExportBookingReport)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnPayBooking)
+                        .addGap(52, 52, 52)
+                        .addComponent(btnEditBooking)
+                        .addGap(37, 37, 37)
+                        .addComponent(btnDeleteBooking)
+                        .addGap(48, 48, 48))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -668,7 +682,9 @@ public class StaffViewBookings extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnEditBooking)
                     .addComponent(btnDeleteBooking)
-                    .addComponent(btnPayBooking))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnPayBooking)
+                        .addComponent(btnStaffExportBookingReport)))
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
@@ -930,6 +946,42 @@ public class StaffViewBookings extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnControlPanelActionPerformed
 
+    private void btnStaffExportBookingReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStaffExportBookingReportActionPerformed
+        int bookingID = (Integer)tblBookings.getValueAt(tblBookings.getSelectedRow(), 0);
+        DBManager db = new DBManager();
+        Booking selectedBooking = db.getBookingFromBookingID(bookingID);
+        Customer bookingCustomer = db.getCustomerFromCustomerID(selectedBooking.getCustomerID());
+        String strBookingID = String.valueOf(selectedBooking.getBookingID());        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");       
+        SimpleDateFormat fileFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String dateBooked = dateFormat.format(selectedBooking.getDateBooked());
+        String outstandingBalance = String.valueOf(selectedBooking.getOutstandingBalance());
+        String totalCost = String.valueOf(selectedBooking.getTotalCost());
+        String customerName = bookingCustomer.getFirstName() + " " + bookingCustomer.getLastName();
+        Date today = new Date();
+        String todaysDate = fileFormat.format(today);
+        
+        Object rowData[][] = { { strBookingID, dateBooked, outstandingBalance, totalCost, customerName } };
+        Object columnNames[] = { "Booking ID", "Date Booked", "Outstanding Balance", "Total Cost", "Customer Name"};
+        JTable tblBookingData = new JTable(rowData, columnNames);
+        
+        
+        ExcelWriter export = new ExcelWriter();
+                
+        export.newExcelFile(strBookingID + "_" + todaysDate);
+        File file = new File("src\\reports\\Booking\\staff\\Booking_Report_Booking_ID_" + strBookingID + "_" + todaysDate + ".xls");
+       
+        try
+        {
+            export.getExcelBookingData(tblBookingData, file);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(StaffViewBookings.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_btnStaffExportBookingReportActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -979,6 +1031,7 @@ public class StaffViewBookings extends javax.swing.JFrame {
     private javax.swing.JButton btnRefundSubmit;
     private javax.swing.JButton btnRegister;
     private javax.swing.JButton btnSignIn;
+    private javax.swing.JButton btnStaffExportBookingReport;
     private javax.swing.JComboBox<String> comboCardType;
     private javax.swing.JComboBox<String> comboRefundCardType;
     private javax.swing.JButton jButton2;

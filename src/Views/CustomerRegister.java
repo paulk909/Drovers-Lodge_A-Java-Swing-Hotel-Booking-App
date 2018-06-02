@@ -7,6 +7,7 @@ package Views;
 
 import Models.Customer;
 import Models.DBManager;
+import Models.Email;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -300,6 +301,8 @@ public class CustomerRegister extends javax.swing.JFrame {
         Customer customerToBeAdded = new Customer(username, password, firstName, lastName, dateOfBirth, email, house, street, town, postcode, telephone, mobile);
         DBManager db = new DBManager();
         db.addCustomerToDb(customerToBeAdded);
+        Email registeredEmail = new Email();
+        registeredEmail.registerEmail(email, firstName);
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed

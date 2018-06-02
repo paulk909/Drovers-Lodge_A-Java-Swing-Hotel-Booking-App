@@ -5,7 +5,11 @@
  */
 package Views;
 
+import Models.Booking;
+import Models.BookingLine;
+import Models.Customer;
 import Models.DBManager;
+import Models.ExcelWriter;
 import Models.LoggedInUser;
 import Models.Staff;
 import java.awt.Color;
@@ -13,9 +17,22 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 
 /**
  *
@@ -96,6 +113,15 @@ public class StaffHome extends javax.swing.JFrame {
         btnEditSubmit = new javax.swing.JButton();
         btnEditClear = new javax.swing.JButton();
         btnEditClose = new javax.swing.JButton();
+        jframeStaffReports = new javax.swing.JFrame();
+        jLabel2 = new javax.swing.JLabel();
+        jdateDateFrom = new com.toedter.calendar.JDateChooser();
+        jdateDateUntil = new com.toedter.calendar.JDateChooser();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        btnStaffBookingReport = new javax.swing.JButton();
+        btnStaffIncomeReport = new javax.swing.JButton();
+        btnStaffClose = new javax.swing.JButton();
         lblTitle = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
@@ -113,6 +139,8 @@ public class StaffHome extends javax.swing.JFrame {
         btnStaffViewCustomers = new javax.swing.JButton();
         btnStaffViewRooms = new javax.swing.JButton();
         btnStaffViewStaff = new javax.swing.JButton();
+        btnStaffReports = new javax.swing.JButton();
+        btnTrunc = new javax.swing.JButton();
 
         jLabel14.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
         jLabel14.setForeground(new java.awt.Color(51, 0, 0));
@@ -305,6 +333,85 @@ public class StaffHome extends javax.swing.JFrame {
                 .addGap(38, 38, 38))
         );
 
+        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(51, 0, 0));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Export Reports");
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel3.setText("From");
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel4.setText("Until");
+
+        btnStaffBookingReport.setText("Export Booking Report");
+        btnStaffBookingReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStaffBookingReportActionPerformed(evt);
+            }
+        });
+
+        btnStaffIncomeReport.setText("Export Income Report");
+        btnStaffIncomeReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStaffIncomeReportActionPerformed(evt);
+            }
+        });
+
+        btnStaffClose.setText("Close");
+
+        javax.swing.GroupLayout jframeStaffReportsLayout = new javax.swing.GroupLayout(jframeStaffReports.getContentPane());
+        jframeStaffReports.getContentPane().setLayout(jframeStaffReportsLayout);
+        jframeStaffReportsLayout.setHorizontalGroup(
+            jframeStaffReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jframeStaffReportsLayout.createSequentialGroup()
+                .addGroup(jframeStaffReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jframeStaffReportsLayout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addGroup(jframeStaffReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jframeStaffReportsLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(77, 77, 77))
+                            .addGroup(jframeStaffReportsLayout.createSequentialGroup()
+                                .addGroup(jframeStaffReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jframeStaffReportsLayout.createSequentialGroup()
+                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jdateDateFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(btnStaffBookingReport))
+                                .addGap(35, 35, 35)
+                                .addGroup(jframeStaffReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jframeStaffReportsLayout.createSequentialGroup()
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jdateDateUntil, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(btnStaffIncomeReport)))))
+                    .addGroup(jframeStaffReportsLayout.createSequentialGroup()
+                        .addGap(206, 206, 206)
+                        .addComponent(btnStaffClose)))
+                .addContainerGap(77, Short.MAX_VALUE))
+        );
+        jframeStaffReportsLayout.setVerticalGroup(
+            jframeStaffReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jframeStaffReportsLayout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(jLabel2)
+                .addGap(41, 41, 41)
+                .addGroup(jframeStaffReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jdateDateFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jdateDateUntil, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4))
+                .addGap(48, 48, 48)
+                .addGroup(jframeStaffReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnStaffBookingReport)
+                    .addComponent(btnStaffIncomeReport))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addComponent(btnStaffClose)
+                .addGap(29, 29, 29))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         lblTitle.setBackground(new java.awt.Color(255, 255, 255));
@@ -408,25 +515,25 @@ public class StaffHome extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnNewBooking)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(btnStaffEditDetails, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnStaffChangePassword, javax.swing.GroupLayout.Alignment.LEADING)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
                 .addComponent(btnStaffEditDetails)
                 .addGap(34, 34, 34)
                 .addComponent(btnStaffChangePassword)
                 .addGap(31, 31, 31)
                 .addComponent(btnNewBooking)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         lblStaff.setBackground(new java.awt.Color(255, 255, 51));
@@ -466,20 +573,29 @@ public class StaffHome extends javax.swing.JFrame {
             }
         });
 
+        btnStaffReports.setText("Reports");
+        btnStaffReports.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStaffReportsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(36, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(37, 37, 37)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnStaffViewBookings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnStaffViewCustomers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnStaffViewCustomers))
                 .addGap(32, 32, 32)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnStaffViewStaff, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-                    .addComponent(btnStaffViewRooms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(30, 30, 30))
+                    .addComponent(btnStaffViewStaff, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnStaffViewRooms, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(32, 32, 32)
+                .addComponent(btnStaffReports, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(33, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -487,13 +603,22 @@ public class StaffHome extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnStaffViewBookings, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnStaffViewStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(btnStaffViewStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnStaffReports, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(19, 19, 19)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnStaffViewRooms, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnStaffViewCustomers, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
+
+        btnTrunc.setText("trunc");
+        btnTrunc.setEnabled(false);
+        btnTrunc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTruncActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -503,34 +628,40 @@ public class StaffHome extends javax.swing.JFrame {
                 .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(103, 103, 103)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(35, 35, 35))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(165, 165, 165)
+                        .addComponent(btnTrunc)
+                        .addGap(108, 108, 108)
                         .addComponent(lblTitle)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
                         .addComponent(lblStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(35, 35, 35))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblStaff))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblStaff)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(btnTrunc)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pack();
@@ -598,8 +729,7 @@ public class StaffHome extends javax.swing.JFrame {
     }//GEN-LAST:event_btnStaffChangePasswordActionPerformed
 
     private void btnNewBookingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewBookingActionPerformed
-        CheckAvailability rForm = new CheckAvailability();
-        rForm.getUser(loggedInUser.getUsername());
+        CheckAvailability rForm = new CheckAvailability(loggedInUser);
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnNewBookingActionPerformed
@@ -685,6 +815,125 @@ public class StaffHome extends javax.swing.JFrame {
         rForm.setVisible(true);
     }//GEN-LAST:event_btnStaffViewRoomsActionPerformed
 
+    private void btnTruncActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTruncActionPerformed
+        DBManager db = new DBManager();
+        db.truncBookingsBookLinesPayments();
+    }//GEN-LAST:event_btnTruncActionPerformed
+
+    private void btnStaffBookingReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStaffBookingReportActionPerformed
+        Date dateFrom = jdateDateFrom.getDate();
+        Date dateUntil = jdateDateUntil.getDate();
+        HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
+        DBManager db = new DBManager();
+        bookingLines = db.getBookingLinesBetweenDates(dateFrom, dateUntil);     
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");       
+        SimpleDateFormat fileFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String strDateFrom = fileFormat.format(dateFrom);
+        String strDateUntil = fileFormat.format(dateUntil);
+        String strAvailability = strDateFrom + "_until_" + strDateUntil;   
+        Date today = new Date();
+        String todaysDate = fileFormat.format(today);
+        
+        String colNames[] = {"Booking ID", "RoomID", "Check In", "Check Out", "Customer ID"};
+        Object[][] tableData = new Object[bookingLines.keySet().size()][5];
+        int index = 0;
+        for (Integer key : bookingLines.keySet())
+        {
+            BookingLine currentBookingLine = bookingLines.get(key);
+            tableData[index][0] = currentBookingLine.getBookingID();
+            tableData[index][1] = currentBookingLine.getRoomID();
+            tableData[index][2] = dateFormat.format(currentBookingLine.getCheckInDate());
+            tableData[index][3] = dateFormat.format(currentBookingLine.getCheckOutDate());
+            tableData[index][4] = db.getBookingFromBookingID(currentBookingLine.getBookingID()).getCustomerID();
+            index++;
+        }
+        DefaultTableModel dtm = new DefaultTableModel(tableData,colNames);
+        JTable tblBookingReport = new JTable(dtm);
+    
+        ExcelWriter export = new ExcelWriter();
+                
+        export.newExcelFile(strAvailability + "_" + todaysDate);
+        File file = new File("src\\reports\\Availability\\Availability_Report_" + strAvailability + "_" + todaysDate + ".xls");
+       
+        try
+        {
+            export.getExcelBookingData(tblBookingReport, file);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(StaffViewBookings.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_btnStaffBookingReportActionPerformed
+
+    private void btnStaffIncomeReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStaffIncomeReportActionPerformed
+        Date dateFrom = jdateDateFrom.getDate();
+        Date dateUntil = jdateDateUntil.getDate();
+        HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
+        DBManager db = new DBManager();
+        bookings = db.getBookingsBetweenDates(dateFrom, dateUntil);     
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");       
+        SimpleDateFormat fileFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String strDateFrom = fileFormat.format(dateFrom);
+        String strDateUntil = fileFormat.format(dateUntil);
+        String strAvailability = strDateFrom + "_until_" + strDateUntil;   
+        Date today = new Date();
+        String todaysDate = fileFormat.format(today);
+        double totalCost = 0;
+        double totalOutstanding = 0;
+        
+        String colNames[] = {"Booking ID", "Date Booked", "Outstanding Balance", "Total Cost", "Payment Type", "Customer Name"};
+        Object[][] tableData = new Object[(bookings.keySet().size())+1][6];
+        int index = 0;
+        for (Integer key : bookings.keySet())
+        {
+            Booking currentBooking = bookings.get(key);
+            tableData[index][0] = currentBooking.getBookingID();
+            tableData[index][1] = dateFormat.format(currentBooking.getDateBooked());
+            tableData[index][2] = currentBooking.getOutstandingBalance();
+            totalOutstanding = totalOutstanding + currentBooking.getOutstandingBalance();
+            tableData[index][3] = currentBooking.getTotalCost();
+            totalCost = totalCost + currentBooking.getTotalCost();
+            tableData[index][4] = db.getPaymentTypeFromPaymentTypeID(currentBooking.getPaymentTypeID());
+            Customer customer = db.getCustomerFromCustomerID(currentBooking.getCustomerID());
+            String customerName = customer.getFirstName() + " " + customer.getLastName();
+            tableData[index][5] = customerName;
+            index++;
+        }
+        tableData[index][0] = "";
+        tableData[index][1] = "";
+        tableData[index][2] = totalOutstanding;
+        tableData[index][3] = totalCost;
+        tableData[index][4] = "";
+        tableData[index][5] = "";
+        DefaultTableModel dtm = new DefaultTableModel(tableData,colNames);
+        JTable tblBookingReport = new JTable(dtm);
+    
+        ExcelWriter export = new ExcelWriter();
+                
+        export.newExcelFile(strAvailability + "_" + todaysDate);
+        File file = new File("src\\reports\\Income\\Income_Report_" + strAvailability + "_" + todaysDate + ".xls");
+       
+        try
+        {
+            export.getExcelBookingData(tblBookingReport, file);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(StaffViewBookings.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnStaffIncomeReportActionPerformed
+
+    private void btnStaffReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStaffReportsActionPerformed
+        jframeStaffReports.setVisible(true);
+        jframeStaffReports.setSize(640,400); 
+        jframeStaffReports.getContentPane().setBackground(Color.white); 
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        jframeStaffReports.setLocation(dim.width/2-jframeStaffReports.getSize().width/2, dim.height/2-jframeStaffReports.getSize().height/2);
+    }//GEN-LAST:event_btnStaffReportsActionPerformed
+
 
     
     
@@ -733,13 +982,18 @@ public class StaffHome extends javax.swing.JFrame {
     private javax.swing.JButton btnNewBooking;
     private javax.swing.JButton btnRegister;
     private javax.swing.JButton btnSignIn;
+    private javax.swing.JButton btnStaffBookingReport;
     private javax.swing.JButton btnStaffChangePassword;
+    private javax.swing.JButton btnStaffClose;
     private javax.swing.JButton btnStaffEditDetails;
+    private javax.swing.JButton btnStaffIncomeReport;
+    private javax.swing.JButton btnStaffReports;
     private javax.swing.JButton btnStaffViewBookings;
     private javax.swing.JButton btnStaffViewCustomers;
     private javax.swing.JButton btnStaffViewRooms;
     private javax.swing.JButton btnStaffViewStaff;
     private javax.swing.JButton btnSubmitPassword;
+    private javax.swing.JButton btnTrunc;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -747,14 +1001,20 @@ public class StaffHome extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private com.toedter.calendar.JDateChooser jdateDateFrom;
+    private com.toedter.calendar.JDateChooser jdateDateUntil;
     private javax.swing.JFrame jframeEditStaffDetails;
     private javax.swing.JFrame jframeStaffChangePassword;
+    private javax.swing.JFrame jframeStaffReports;
     private javax.swing.JLabel lblStaff;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JPasswordField txtConfirmPassword;

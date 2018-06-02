@@ -71,6 +71,11 @@ public class MainMenu extends javax.swing.JFrame {
         {
             btnControlPanel.setVisible(false);
         }
+        Date today = new Date();
+        jdateCheckIn.setMinSelectableDate(today);
+        jdateCheckIn.getComponent(1).setEnabled(false);
+        jdateCheckOut.setMinSelectableDate(today);
+        
     }
     
     public void clearUnassignedBookingsOnStartup()
@@ -420,12 +425,8 @@ public class MainMenu extends javax.swing.JFrame {
         Date checkin = jdateCheckIn.getDate();
         Date checkout = jdateCheckOut.getDate();
         String roomType = String.valueOf(comboRoomType.getSelectedItem());
-        CheckAvailability rForm = new CheckAvailability(checkin, checkout, roomType);
-        if(loggedInUser.getIsLoggedIn())
-        {
-            rForm.getUser(loggedInUser.getUsername());
-        }
-        
+        CheckAvailability rForm = new CheckAvailability(checkin, checkout, roomType, loggedInUser);
+       
         this.dispose();
         rForm.setVisible(true);
     }//GEN-LAST:event_btnFindRoomsActionPerformed
@@ -465,6 +466,7 @@ public class MainMenu extends javax.swing.JFrame {
         if(db.checkLoginDetails(username, password))
         {
             loggedInUser = db.getValidUser(username);
+            loggedInUser.setIsLoggedIn(true);
             btnSignIn.setText("Logged in as " + loggedInUser.getUsername());
             btnSignIn.setEnabled(false);
             btnRegister.setText("Logout");

@@ -10,16 +10,26 @@ import Models.DBManager;
 import Models.LoggedInUser;
 import Models.Room;
 import Models.RoomType;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
@@ -139,6 +149,9 @@ public class StaffViewRooms extends javax.swing.JFrame {
         btnSignIn = new javax.swing.JButton();
         btnCart = new javax.swing.JButton();
         btnControlPanel = new javax.swing.JButton();
+        btnStaffRoomReport = new javax.swing.JButton();
+        txtFileNamePDF = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
 
         jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(51, 0, 0));
@@ -353,6 +366,15 @@ public class StaffViewRooms extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        btnStaffRoomReport.setText("Export Room Report");
+        btnStaffRoomReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStaffRoomReportActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("File name:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -360,29 +382,34 @@ public class StaffViewRooms extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 668, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnAddRoom)
-                        .addGap(49, 49, 49)
-                        .addComponent(btnEditRoom)
-                        .addGap(39, 39, 39)
-                        .addComponent(btnDeleteRoom)
-                        .addGap(36, 36, 36))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblTitle)
-                                .addGap(102, 102, 102)
-                                .addComponent(lblStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(27, 27, 27))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(btnStaffRoomReport)
+                                .addGap(59, 59, 59)
+                                .addComponent(btnAddRoom)
+                                .addGap(37, 37, 37)
+                                .addComponent(btnEditRoom)
+                                .addGap(29, 29, 29)
+                                .addComponent(btnDeleteRoom)
+                                .addGap(36, 36, 36))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(lblTitle)
+                                        .addGap(102, 102, 102)
+                                        .addComponent(lblStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(27, 27, 27))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 668, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtFileNamePDF, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -400,11 +427,15 @@ public class StaffViewRooms extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddRoom)
                     .addComponent(btnEditRoom)
-                    .addComponent(btnDeleteRoom))
+                    .addComponent(btnDeleteRoom)
+                    .addComponent(btnStaffRoomReport)
+                    .addComponent(txtFileNamePDF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26))
         );
 
@@ -511,6 +542,52 @@ public class StaffViewRooms extends javax.swing.JFrame {
         comboRoomType.setSelectedIndex(roomTypeID);
     }//GEN-LAST:event_btnClearActionPerformed
 
+    private void btnStaffRoomReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStaffRoomReportActionPerformed
+        if (txtFileNamePDF.getText().isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "Please give the pdf file a name");
+        }
+        else{
+            try {
+                String fileName = txtFileNamePDF.getText();
+                String path = "";
+                JFileChooser j = new JFileChooser();
+                j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int x = j.showSaveDialog(this);
+                
+                if(x==JFileChooser.APPROVE_OPTION)
+                {
+                    path = j.getSelectedFile().getPath();
+                }
+                Document doc = new Document();
+                
+                PdfWriter.getInstance(doc, new FileOutputStream(path +"/" +fileName +".pdf"));
+                doc.open();
+                PdfPTable tbl = new PdfPTable(2);
+
+                tbl.addCell("Room ID");
+                tbl.addCell("Room Type");
+
+                for (int i = 0; i < tblRooms.getRowCount(); i++)
+                {
+                    String roomID = tblRooms.getValueAt(i, 0).toString();
+                    tbl.addCell(roomID);
+                    String roomType = tblRooms.getValueAt(i, 1).toString();
+                    tbl.addCell(roomType);
+                }
+                doc.add(tbl);
+                JOptionPane.showMessageDialog(null, "Successfully Exported");
+                
+                
+                doc.close();
+            } catch (DocumentException ex) {
+                Logger.getLogger(StaffViewRooms.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(StaffViewRooms.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btnStaffRoomReportActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -556,6 +633,7 @@ public class StaffViewRooms extends javax.swing.JFrame {
     private javax.swing.JButton btnEditRoom;
     private javax.swing.JButton btnRegister;
     private javax.swing.JButton btnSignIn;
+    private javax.swing.JButton btnStaffRoomReport;
     private javax.swing.JButton btnSubmit;
     private javax.swing.JComboBox<String> comboRoomType;
     private javax.swing.JButton jButton2;
@@ -563,12 +641,14 @@ public class StaffViewRooms extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JFrame jframeStaffEditRoom;
     private javax.swing.JLabel lblStaff;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JTable tblRooms;
+    private javax.swing.JTextField txtFileNamePDF;
     private javax.swing.JTextField txtRoomID;
     // End of variables declaration//GEN-END:variables
 }

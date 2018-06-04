@@ -37,7 +37,7 @@ import javax.swing.JOptionPane;
  * @author Paul
  */
 public class CheckAvailability extends javax.swing.JFrame {
-    
+    //user and booking details being passed
     private LoggedInUser loggedInUser = new LoggedInUser();
     private Booking currentBooking = new Booking(); 
 
@@ -46,7 +46,13 @@ public class CheckAvailability extends javax.swing.JFrame {
      */
     
 
-    
+    /**
+     * check availability for booking line details
+     * @param checkIn
+     * @param checkOut
+     * @param roomType
+     * @param loggedInUser 
+     */
     public CheckAvailability(Date checkIn, Date checkOut, String roomType, LoggedInUser loggedInUser) {
         getUser(loggedInUser);
         loadFrame();
@@ -62,6 +68,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         currentBooking.populateBookingLines();
     }
     
+    //load intitial compnents in frame
     public void loadFrame()
     {
         initComponents();
@@ -121,13 +128,13 @@ public class CheckAvailability extends javax.swing.JFrame {
         jdateCheckOut.setMaxSelectableDate(maxDate);
     }
     
-    
+    //pass user into view
     public void getUser(LoggedInUser loggedInUser)
     {
         this.loggedInUser = loggedInUser; 
     }
     
-    
+    //refresh the availability based on change in details
     public void refreshAvailability()
     {
         Date checkIn = jdateCheckIn.getDate();
@@ -136,7 +143,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         updateAvailability(checkIn, checkOut, roomType);
     }
     
-    
+    //update the price and length of stay based on current details
     public void updateAvailability(Date checkIn, Date checkOut, String roomType)
     {
         jdateCheckIn.setDate(checkIn);
@@ -155,7 +162,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         txtAvailability.setText(String.valueOf(db.getAvailability(checkIn, checkOut, roomType)));
     }
     
-    
+    //calcaulte meal cost
     public double getMealPrice(boolean[] meals)
     {
         double mealPrice  = 0;
@@ -198,6 +205,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         return mealPrice;
     }
     
+    //get room id from string
     public int getRoomTypeID(String roomType)
     {
         int roomTypeID = 0;
@@ -215,7 +223,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         return roomTypeID;
     }
     
-    
+    //calculate price of booking line
     public double calculatePrice(long lengthOfStay, boolean[] meals, int roomTypeID)
     {
         double totalPrice = 0;
@@ -239,6 +247,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         return totalPrice;
     }
     
+    //add room types to drop down
     public void populateRoomTypeDropDown()
     {
         comboRoomType.removeAllItems();
@@ -252,6 +261,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         }
     }
         
+    //get length of stay in days
     public long getLengthOfStay(Date checkIn, Date checkOut)
     {
         SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");

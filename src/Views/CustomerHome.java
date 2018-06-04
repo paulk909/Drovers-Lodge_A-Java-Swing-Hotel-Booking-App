@@ -39,7 +39,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * Home screen for customers to edit their personal details or bookings
  * @author Paul
  */
 public class CustomerHome extends javax.swing.JFrame {
@@ -58,7 +58,9 @@ public class CustomerHome extends javax.swing.JFrame {
         loadFrame();
     }
     
-    
+    /**
+     * load up panels initial components
+     */
     public void loadFrame()
     {
         initComponents();
@@ -91,6 +93,9 @@ public class CustomerHome extends javax.swing.JFrame {
         btnCustomerBookingReport.setVisible(false);
     }
     
+    /**
+     * load the table of bookings
+     */
     public void loadBookingTable()
     {
         tblBookings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);        
@@ -202,6 +207,16 @@ public class CustomerHome extends javax.swing.JFrame {
         jLabel29 = new javax.swing.JLabel();
         jMonthRefundExpiry = new com.toedter.calendar.JMonthChooser();
         jYearRefundExpiry = new com.toedter.calendar.JYearChooser();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel34 = new javax.swing.JLabel();
+        jLabel35 = new javax.swing.JLabel();
+        jLabel36 = new javax.swing.JLabel();
+        jLabel37 = new javax.swing.JLabel();
+        txtPaymentHouse1 = new javax.swing.JTextField();
+        txtPaymentStreet1 = new javax.swing.JTextField();
+        txtPaymentTown1 = new javax.swing.JTextField();
+        txtPaymentPostcode1 = new javax.swing.JTextField();
+        checkSameAddress1 = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         btnAbout = new javax.swing.JButton();
         btnRegister = new javax.swing.JButton();
@@ -802,6 +817,81 @@ public class CustomerHome extends javax.swing.JFrame {
                 .addGap(23, 23, 23))
         );
 
+        jPanel6.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Payee's Address"));
+
+        jLabel34.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel34.setText("Address 1");
+
+        jLabel35.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel35.setText("Address 2");
+
+        jLabel36.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel36.setText("Town");
+
+        jLabel37.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel37.setText("Postcode");
+
+        checkSameAddress1.setText("Same as account address");
+        checkSameAddress1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkSameAddress1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel34, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtPaymentHouse1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel36, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtPaymentTown1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel37, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtPaymentPostcode1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel35, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtPaymentStreet1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(26, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(checkSameAddress1)
+                .addGap(54, 54, 54))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel34)
+                    .addComponent(txtPaymentHouse1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel35)
+                    .addComponent(txtPaymentStreet1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel36)
+                    .addComponent(txtPaymentTown1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel37)
+                    .addComponent(txtPaymentPostcode1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addComponent(checkSameAddress1)
+                .addGap(23, 23, 23))
+        );
+
         javax.swing.GroupLayout jframeRefundLayout = new javax.swing.GroupLayout(jframeRefund.getContentPane());
         jframeRefund.getContentPane().setLayout(jframeRefundLayout);
         jframeRefundLayout.setHorizontalGroup(
@@ -811,37 +901,41 @@ public class CustomerHome extends javax.swing.JFrame {
                 .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jframeRefundLayout.createSequentialGroup()
                         .addGap(75, 75, 75)
-                        .addComponent(jLabel28))
-                    .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jframeRefundLayout.createSequentialGroup()
-                            .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel25)
-                                .addGroup(jframeRefundLayout.createSequentialGroup()
-                                    .addGap(10, 10, 10)
-                                    .addComponent(txtRefundSecurityNo, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel28)
+                        .addContainerGap(539, Short.MAX_VALUE))
+                    .addGroup(jframeRefundLayout.createSequentialGroup()
+                        .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jframeRefundLayout.createSequentialGroup()
+                                .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel25)
+                                    .addGroup(jframeRefundLayout.createSequentialGroup()
+                                        .addGap(10, 10, 10)
+                                        .addComponent(txtRefundSecurityNo, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel23)
+                                        .addComponent(jLabel22)))
+                                .addGap(32, 32, 32)
+                                .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtRefundPayeeName, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtRefundCardNo, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jframeRefundLayout.createSequentialGroup()
+                                .addComponent(btnRefundSubmit)
+                                .addGap(54, 54, 54)
+                                .addComponent(btnRefundClear)
+                                .addGap(61, 61, 61)
+                                .addComponent(btnRefundClose))
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jframeRefundLayout.createSequentialGroup()
                                 .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel23)
-                                    .addComponent(jLabel22)))
-                            .addGap(32, 32, 32)
-                            .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtRefundPayeeName, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtRefundCardNo, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jframeRefundLayout.createSequentialGroup()
-                            .addComponent(btnRefundSubmit)
-                            .addGap(54, 54, 54)
-                            .addComponent(btnRefundClear)
-                            .addGap(61, 61, 61)
-                            .addComponent(btnRefundClose))
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jframeRefundLayout.createSequentialGroup()
-                            .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel26)
-                                .addComponent(jLabel27))
-                            .addGap(32, 32, 32)
-                            .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(txtRefundTotalRefund, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(comboRefundCardType, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(66, Short.MAX_VALUE))
+                                    .addComponent(jLabel26)
+                                    .addComponent(jLabel27))
+                                .addGap(32, 32, 32)
+                                .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(txtRefundTotalRefund, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(comboRefundCardType, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(89, 89, 89))))
         );
         jframeRefundLayout.setVerticalGroup(
             jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -849,31 +943,34 @@ public class CustomerHome extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addComponent(jLabel28)
                 .addGap(49, 49, 49)
-                .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel22)
-                    .addComponent(txtRefundPayeeName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtRefundCardNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel23))
                 .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jframeRefundLayout.createSequentialGroup()
+                        .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel22)
+                            .addComponent(txtRefundPayeeName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jframeRefundLayout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addComponent(jLabel25)
+                        .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtRefundCardNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel23))
+                        .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jframeRefundLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jframeRefundLayout.createSequentialGroup()
+                                .addGap(45, 45, 45)
+                                .addComponent(jLabel25)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtRefundSecurityNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtRefundSecurityNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel26)
-                    .addComponent(comboRefundCardType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel27)
-                    .addComponent(txtRefundTotalRefund, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(44, 44, 44)
+                        .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel26)
+                            .addComponent(comboRefundCardType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(26, 26, 26)
+                        .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel27)
+                            .addComponent(txtRefundTotalRefund, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(jframeRefundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRefundSubmit)
                     .addComponent(btnRefundClear)
@@ -1004,7 +1101,7 @@ public class CustomerHome extends javax.swing.JFrame {
             }
         });
 
-        btnEditBooking.setText("Edit Booking");
+        btnEditBooking.setText("View Booking");
         btnEditBooking.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditBookingActionPerformed(evt);
@@ -1080,10 +1177,10 @@ public class CustomerHome extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addComponent(btnPayBooking)
-                                .addGap(35, 35, 35)
-                                .addComponent(btnEditBooking)
-                                .addGap(26, 26, 26)
-                                .addComponent(btnDeleteBooking)))
+                                .addGap(36, 36, 36)
+                                .addComponent(btnDeleteBooking)
+                                .addGap(29, 29, 29)
+                                .addComponent(btnEditBooking)))
                         .addGap(32, 32, 32))))
         );
         layout.setVerticalGroup(
@@ -1153,7 +1250,7 @@ public class CustomerHome extends javax.swing.JFrame {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         jframeEditDetails.setLocation(dim.width/2-jframeEditDetails.getSize().width/2, dim.height/2-jframeEditDetails.getSize().height/2);
         jframeEditDetails.setVisible(true);
-        
+        //make today the maximum date which date of birth can be set to
         Date today = new Date();
         jdateDateOfBirth.setMaxSelectableDate(today);
         jdateDateOfBirth.getComponent(1).setEnabled(false);
@@ -1166,7 +1263,7 @@ public class CustomerHome extends javax.swing.JFrame {
         loggedInCustomer = db.getCustomerFromUsername(loggedInUser.getUsername());
         int customerID = loggedInCustomer.getCustomerID();
         Date checkDate = jdateDateOfBirth.getDate();
-        
+        //check that all required fields are not empty
         if(txtUsername.getText().isEmpty() || 
             txtFirstName.getText().isEmpty() || txtLastName.getText().isEmpty() || txtEmail.getText().isEmpty() || 
             txtHouse.getText().isEmpty() || txtTown.getText().isEmpty() || checkDate == null ||
@@ -1186,7 +1283,7 @@ public class CustomerHome extends javax.swing.JFrame {
             String postcode = txtPostcode.getText();
             String telephone = txtTelephone.getText();
             String mobile = txtMobile.getText();
-
+            //update customer details on db
             Customer updateCustomerDetails = new Customer(firstName, lastName, dateOfBirth, email, house, street, town, postcode, telephone, mobile);
             db.updateCustomerDetails(customerID, updateCustomerDetails);            
             JOptionPane.showMessageDialog(null, "Details updated");
@@ -1208,12 +1305,12 @@ public class CustomerHome extends javax.swing.JFrame {
 
     private void btnChangePasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangePasswordActionPerformed
         jframeChangePassword.setVisible(true);
-        jframeChangePassword.setSize(400,400); 
+        jframeChangePassword.setSize(840,400); 
         jframeChangePassword.getContentPane().setBackground(Color.white); 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         jframeChangePassword.setLocation(dim.width/2-jframeChangePassword.getSize().width/2, dim.height/2-jframeChangePassword.getSize().height/2);
         jframeChangePassword.setVisible(true);
-        
+        //sets the username field and disables it
         txtUsername1.setText(loggedInUser.getUsername());
         txtUsername1.setEnabled(false);
     }//GEN-LAST:event_btnChangePasswordActionPerformed
@@ -1234,6 +1331,7 @@ public class CustomerHome extends javax.swing.JFrame {
             }
             else
             {
+                //update password in db if correct
                 newPassword = txtPassword.getText();
                 db.updateCustomerPassword(customerID, newPassword);
                 JOptionPane.showMessageDialog(null, "Password changed");
@@ -1261,11 +1359,11 @@ public class CustomerHome extends javax.swing.JFrame {
         Booking selectedBooking = db.getBookingFromBookingID(bookingID);
         if(selectedBooking.getOutstandingBalance() < 0)
         {
-            refundDue = selectedBooking.getTotalCost() - selectedBooking.getOutstandingBalance();
+            refundDue = selectedBooking.getOutstandingBalance();
             refundBookingID = selectedBooking.getBookingID();
-            
+            //load refund panel if amount less than 0
             jframeRefund.setVisible(true);
-            jframeRefund.setSize(440,600); 
+            jframeRefund.setSize(840,600); 
             jframeRefund.getContentPane().setBackground(Color.white); 
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
             jframeRefund.setLocation(dim.width/2-jframeRefund.getSize().width/2, dim.height/2-jframeRefund.getSize().height/2);
@@ -1276,7 +1374,7 @@ public class CustomerHome extends javax.swing.JFrame {
         {
             amountDue = selectedBooking.getOutstandingBalance();
             paymentBookingID = selectedBooking.getBookingID();
-            
+            //load payment panel if payment greater than zero
             jframePayment.setVisible(true);
             jframePayment.setSize(840,600); 
             jframePayment.getContentPane().setBackground(Color.white); 
@@ -1289,7 +1387,7 @@ public class CustomerHome extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPayBookingActionPerformed
 
     private void btnDeleteBookingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteBookingActionPerformed
-        
+        //get booking details from db for selected booking
         int bookingID = (Integer)tblBookings.getValueAt(tblBookings.getSelectedRow(), 0);
         DBManager db = new DBManager();
         Booking selectedBooking = db.getBookingFromBookingID(bookingID);
@@ -1298,9 +1396,10 @@ public class CustomerHome extends javax.swing.JFrame {
             refundDue = selectedBooking.getTotalCost() - selectedBooking.getOutstandingBalance();
             refundBookingID = selectedBooking.getBookingID();
             db.removeBooking(bookingID);
-            
+            JOptionPane.showMessageDialog(null, "Booking deleted");
+            //load the refund panel if money due to be repaid
             jframeRefund.setVisible(true);
-            jframeRefund.setSize(440,600); 
+            jframeRefund.setSize(840,600); 
             jframeRefund.getContentPane().setBackground(Color.white); 
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
             jframeRefund.setLocation(dim.width/2-jframeRefund.getSize().width/2, dim.height/2-jframeRefund.getSize().height/2);
@@ -1311,15 +1410,16 @@ public class CustomerHome extends javax.swing.JFrame {
         {
             double totalCost = selectedBooking.getTotalCost();
             double outstandingBalance = selectedBooking.getOutstandingBalance();
-            
+            //load the refund panel if money due to be repaid
             if((totalCost - outstandingBalance) > 0)
             {
                 refundDue = totalCost - outstandingBalance;
                 refundBookingID = selectedBooking.getBookingID();
                 db.removeBooking(bookingID);
+                JOptionPane.showMessageDialog(null, "Booking deleted");
 
                 jframeRefund.setVisible(true);
-                jframeRefund.setSize(440,600); 
+                jframeRefund.setSize(840,600); 
                 jframeRefund.getContentPane().setBackground(Color.white); 
                 Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
                 jframeRefund.setLocation(dim.width/2-jframeRefund.getSize().width/2, dim.height/2-jframeRefund.getSize().height/2);
@@ -1329,6 +1429,7 @@ public class CustomerHome extends javax.swing.JFrame {
             } else 
             {
                 db.removeBooking(bookingID);
+                JOptionPane.showMessageDialog(null, "Booking deleted");
             }
         }
     }//GEN-LAST:event_btnDeleteBookingActionPerformed
@@ -1422,22 +1523,55 @@ public class CustomerHome extends javax.swing.JFrame {
                     Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 int cardTypeID = db.getCardTypeIDFromCardType(String.valueOf(comboCardType.getSelectedItem()));
-
-                Payment payment = new Payment(payeeName, cardNo, securityNo, expiryDate, cardTypeID, amountDue, paymentBookingID);
+                
+                String paymentHouse = txtPaymentHouse.getText();
+                String paymentStreet = txtPaymentStreet.getText();
+                String paymentTown = txtPaymentTown.getText();
+                String paymentPostcode = txtPaymentPostcode.getText();
+                //create payment object with details to be uploaded to db
+                Payment payment = new Payment(payeeName, cardNo, securityNo, expiryDate, cardTypeID, amountDue, paymentBookingID, paymentHouse, paymentStreet, paymentTown, paymentPostcode);
                 db.takePayment(payment);
                 db.setOutstandingPaymentZeroIsPaidTrue(paymentBookingID);
                 amountDue = 0;
                 paymentBookingID = 0;
+                txtPayeeName.setText("");
+                txtCardNo.setText("");
+                txtSecurityNo.setText("");
+                comboCardType.setSelectedIndex(0);
+                checkSameAddress.setSelected(false);
+                txtPaymentHouse.setText("");
+                txtPaymentStreet.setText("");
+                txtPaymentTown.setText("");
+                txtPaymentPostcode.setText("");
                 jframePayment.dispose();
+                JOptionPane.showMessageDialog(null, "Payment successful");
+                clearBookingTable();
                 loadBookingTable();
             }
         }      
     }//GEN-LAST:event_btnPaymentSubmitActionPerformed
-
+    //cears old data from bookings table
+    public void clearBookingTable()
+    {
+        DefaultTableModel model = (DefaultTableModel)tblBookings.getModel(); 
+        int rows = model.getRowCount(); 
+        for(int i = rows - 1; i >=0; i--)
+        {
+           model.removeRow(i); 
+        }
+    }
+    
+    
     private void btnPaymentClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaymentClearActionPerformed
         txtPayeeName.setText("");
         txtCardNo.setText("");
         txtSecurityNo.setText("");
+        comboCardType.setSelectedIndex(0);
+        checkSameAddress.setSelected(false);
+        txtPaymentHouse.setText("");
+        txtPaymentStreet.setText("");
+        txtPaymentTown.setText("");
+        txtPaymentPostcode.setText("");
     }//GEN-LAST:event_btnPaymentClearActionPerformed
 
     private void btnPaymentCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaymentCloseActionPerformed
@@ -1445,67 +1579,107 @@ public class CustomerHome extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPaymentCloseActionPerformed
 
     private void btnRefundSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefundSubmitActionPerformed
-        DBManager db = new DBManager();
-        String refundPayeeName = txtRefundPayeeName.getText();
-        String refundCardNo = txtRefundCardNo.getText();
-        String refundSecurityNo = txtRefundSecurityNo.getText();
-        int refundExpiryMonth = jMonthRefundExpiry.getMonth();
-        String refundMonthString;
-        switch (refundExpiryMonth) {
-            case 0:  refundMonthString = "Jan";
-            break;
-            case 1:  refundMonthString = "Feb";
-            break;
-            case 2:  refundMonthString = "Mar";
-            break;
-            case 3:  refundMonthString = "Apr";
-            break;
-            case 4:  refundMonthString = "May";
-            break;
-            case 5:  refundMonthString = "Jun";
-            break;
-            case 6:  refundMonthString = "Jul";
-            break;
-            case 7:  refundMonthString = "Aug";
-            break;
-            case 8:  refundMonthString = "Sep";
-            break;
-            case 9: refundMonthString = "Oct";
-            break;
-            case 10: refundMonthString = "Nov";
-            break;
-            case 11: refundMonthString = "Dec";
-            break;
-            default: refundMonthString = "Invalid month";
-            break;
-        }
-        int refundExpiryYear = jYearRefundExpiry.getYear();
-        Date refundExpiryDate = new Date();
-        try
+        if(txtRefundPayeeName.getText().isEmpty() || txtRefundCardNo.getText().isEmpty() || txtRefundSecurityNo.getText().isEmpty() ||
+                comboRefundCardType.getSelectedIndex()==0 || txtPaymentHouse1.getText().isEmpty() ||
+                txtPaymentTown1.getText().isEmpty() || txtPaymentPostcode1.getText().isEmpty())
         {
-            SimpleDateFormat refundDateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-            refundExpiryDate = refundDateFormat.parse(refundExpiryYear + "-" + refundMonthString + "-01 00:00:00");
+                JOptionPane.showMessageDialog(null, "Please fill in all payment fields");
         }
-        catch (ParseException ex)
+        else
         {
-            Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        int cardTypeID = db.getCardTypeIDFromCardType(String.valueOf(comboCardType.getSelectedItem()));
-        double totalRefund = 0 - refundDue;
+            int length = txtRefundCardNo.getText().length();
+            if(length < 10)
+            {
+                JOptionPane.showMessageDialog(null, "Card number must be at least 10 digits");
+            }
+            else
+            { 
+                DBManager db = new DBManager();
+                String refundPayeeName = txtRefundPayeeName.getText();
+                String refundCardNo = txtRefundCardNo.getText();
+                String refundSecurityNo = txtRefundSecurityNo.getText();
+                int refundExpiryMonth = jMonthRefundExpiry.getMonth();
+                String refundMonthString;
+                switch (refundExpiryMonth) {
+                    case 0:  refundMonthString = "Jan";
+                    break;
+                    case 1:  refundMonthString = "Feb";
+                    break;
+                    case 2:  refundMonthString = "Mar";
+                    break;
+                    case 3:  refundMonthString = "Apr";
+                    break;
+                    case 4:  refundMonthString = "May";
+                    break;
+                    case 5:  refundMonthString = "Jun";
+                    break;
+                    case 6:  refundMonthString = "Jul";
+                    break;
+                    case 7:  refundMonthString = "Aug";
+                    break;
+                    case 8:  refundMonthString = "Sep";
+                    break;
+                    case 9: refundMonthString = "Oct";
+                    break;
+                    case 10: refundMonthString = "Nov";
+                    break;
+                    case 11: refundMonthString = "Dec";
+                    break;
+                    default: refundMonthString = "Invalid month";
+                    break;
+                }
+                int refundExpiryYear = jYearRefundExpiry.getYear();
+                Date refundExpiryDate = new Date();
+                try
+                {
+                    SimpleDateFormat refundDateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+                    refundExpiryDate = refundDateFormat.parse(refundExpiryYear + "-" + refundMonthString + "-01 00:00:00");
+                }
+                catch (ParseException ex)
+                {
+                    Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                int cardTypeID = db.getCardTypeIDFromCardType(String.valueOf(comboCardType.getSelectedItem()));
+                double totalRefund = refundDue;
 
-        Payment refund = new Payment(refundPayeeName, refundCardNo, refundSecurityNo, refundExpiryDate, cardTypeID, totalRefund, refundBookingID);
-        db.takePayment(refund);
-        refundDue = 0;
-        refundBookingID = 0;
-        
-        jframeRefund.dispose();
-        loadFrame();
+                String paymentHouse = txtPaymentHouse1.getText();
+                String paymentStreet = txtPaymentStreet1.getText();
+                String paymentTown = txtPaymentTown1.getText();
+                String paymentPostcode = txtPaymentPostcode1.getText();
+                //create payment object with details of refund to be uploaded to db
+                Payment refund = new Payment(refundPayeeName, refundCardNo, refundSecurityNo, refundExpiryDate, cardTypeID, totalRefund, refundBookingID, paymentHouse, paymentStreet, paymentTown, paymentPostcode);
+                db.takePayment(refund);
+                db.setOutstandingPaymentZeroIsPaidTrue(refundBookingID);
+                refundDue = 0;
+                refundBookingID = 0;
+                txtRefundPayeeName.setText("");
+                txtRefundCardNo.setText("");
+                txtRefundSecurityNo.setText("");
+                comboRefundCardType.setSelectedIndex(0);
+                checkSameAddress1.setSelected(false);
+                txtPaymentHouse1.setText("");
+                txtPaymentStreet1.setText("");
+                txtPaymentTown1.setText("");
+                txtPaymentPostcode1.setText("");
+                //close refund panel and show success message
+                jframeRefund.dispose();
+                JOptionPane.showMessageDialog(null, "Refund successful");    
+                clearBookingTable();
+                loadBookingTable();
+            }
+        }
     }//GEN-LAST:event_btnRefundSubmitActionPerformed
 
     private void btnRefundClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefundClearActionPerformed
-        txtPayeeName.setText("");
-        txtCardNo.setText("");
-        txtSecurityNo.setText("");
+        txtRefundPayeeName.setText("");
+        txtRefundCardNo.setText("");
+        txtRefundSecurityNo.setText("");
+        comboRefundCardType.setSelectedIndex(0);
+        checkSameAddress1.setSelected(false);
+        txtPaymentHouse1.setText("");
+        txtPaymentStreet1.setText("");
+        txtPaymentTown1.setText("");
+        txtPaymentPostcode1.setText("");
     }//GEN-LAST:event_btnRefundClearActionPerformed
 
     private void btnRefundCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefundCloseActionPerformed
@@ -1540,16 +1714,16 @@ public class CustomerHome extends javax.swing.JFrame {
         String customerName = bookingCustomer.getFirstName() + " " + bookingCustomer.getLastName();
         Date today = new Date();
         String todaysDate = fileFormat.format(today);
-        
+        //try creating pdf booking report
             try {
                 String fileName = strBookingID + "_" + todaysDate;
-
+                
                 Document doc = new Document();
                 
                 PdfWriter.getInstance(doc, new FileOutputStream("src\\reports\\Booking\\customer\\Booking_Report_Booking_ID_" +fileName +".pdf"));
                 doc.open();
 
-
+                //load booking details into pdf
                 Paragraph heading1 = new Paragraph();
                 heading1.add("Booking Report");
                 heading1.setAlignment(Element.ALIGN_CENTER);
@@ -1575,7 +1749,7 @@ public class CustomerHome extends javax.swing.JFrame {
                 doc.add(heading5);
                 doc.add(heading6);
                 doc.close();
-
+                //success message
                 JOptionPane.showMessageDialog(null, "Successfully Exported");
                 
                 
@@ -1612,7 +1786,7 @@ public class CustomerHome extends javax.swing.JFrame {
             
             btnEditBooking.setVisible(true);
             btnCustomerBookingReport.setVisible(true);
-            
+            //check if booking is payable or deletable and show button if necessary
             if(selectedBooking.getOutstandingBalance() > 0)
             {                
                 btnPayBooking.setText("Pay For Booking");
@@ -1644,7 +1818,7 @@ public class CustomerHome extends javax.swing.JFrame {
         DBManager db = new DBManager();
         Customer paymentCustomer = new Customer();
         paymentCustomer = db.getCustomerFromUsername(loggedInUser.getUsername());
-        
+        //load address details if box checked
         txtPaymentHouse.setText(paymentCustomer.getHouse());
         txtPaymentStreet.setText(paymentCustomer.getStreet());
         txtPaymentTown.setText(paymentCustomer.getTown());
@@ -1652,12 +1826,24 @@ public class CustomerHome extends javax.swing.JFrame {
 
     }//GEN-LAST:event_checkSameAddressActionPerformed
 
+    private void checkSameAddress1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkSameAddress1ActionPerformed
+        DBManager db = new DBManager();
+        Customer paymentCustomer = new Customer();
+        paymentCustomer = db.getCustomerFromUsername(loggedInUser.getUsername());
+        //load address details if box checked
+        txtPaymentHouse1.setText(paymentCustomer.getHouse());
+        txtPaymentStreet1.setText(paymentCustomer.getStreet());
+        txtPaymentTown1.setText(paymentCustomer.getTown());
+        txtPaymentPostcode1.setText(paymentCustomer.getPostcode());
+
+    }//GEN-LAST:event_checkSameAddress1ActionPerformed
+
     public void loadCustomerDetails()
     {
         DBManager db = new DBManager();
         Customer loggedInCustomer = new Customer();
         loggedInCustomer = db.getCustomerFromUsername(loggedInUser.getUsername());
-        
+        //get customer details from db and populate form
         String username = loggedInCustomer.getUsername();
         String firstName = loggedInCustomer.getFirstName();
         String lastName = loggedInCustomer.getLastName();
@@ -1744,6 +1930,7 @@ public class CustomerHome extends javax.swing.JFrame {
     private javax.swing.JButton btnSubmitPassword;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JCheckBox checkSameAddress;
+    private javax.swing.JCheckBox checkSameAddress1;
     private javax.swing.JComboBox<String> comboCardType;
     private javax.swing.JComboBox<String> comboRefundCardType;
     private javax.swing.JLabel jLabel1;
@@ -1773,6 +1960,10 @@ public class CustomerHome extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel34;
+    private javax.swing.JLabel jLabel35;
+    private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -1785,6 +1976,7 @@ public class CustomerHome extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private com.toedter.calendar.JYearChooser jYearExpiry;
     private com.toedter.calendar.JYearChooser jYearRefundExpiry;
@@ -1807,10 +1999,14 @@ public class CustomerHome extends javax.swing.JFrame {
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtPayeeName;
     private javax.swing.JTextField txtPaymentHouse;
+    private javax.swing.JTextField txtPaymentHouse1;
     private javax.swing.JTextField txtPaymentPostcode;
+    private javax.swing.JTextField txtPaymentPostcode1;
     private javax.swing.JTextField txtPaymentStreet;
+    private javax.swing.JTextField txtPaymentStreet1;
     private javax.swing.JTextField txtPaymentTotalCost;
     private javax.swing.JTextField txtPaymentTown;
+    private javax.swing.JTextField txtPaymentTown1;
     private javax.swing.JTextField txtPostcode;
     private javax.swing.JTextField txtRefundCardNo;
     private javax.swing.JTextField txtRefundPayeeName;

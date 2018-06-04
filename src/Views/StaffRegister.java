@@ -14,6 +14,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -217,15 +218,32 @@ public class StaffRegister extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
-        String username = txtUsername.getText();
-        String password = txtPassword.getText();
-        String firstName = txtFirstName.getText();
-        String lastName = txtLastName.getText();
-        String email = txtEmail.getText();
-        int staffRoleID = comboStaffRole.getSelectedIndex();
-        Staff staffToBeAdded = new Staff(username, password, firstName, lastName, email, staffRoleID);
-        DBManager db = new DBManager();
-        db.addStaffToDb(staffToBeAdded);
+        if(txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty() || txtConfirmPassword.getText().isEmpty() ||
+                txtFirstName.getText().isEmpty() || txtLastName.getText().isEmpty() || txtEmail.getText().isEmpty() ||
+                comboStaffRole.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(null, "Please fill in all fields");
+        }
+        else
+        {
+            if(!txtPassword.getText().equals(txtConfirmPassword.getText()))
+            {
+                JOptionPane.showMessageDialog(null, "Passwords don't match");
+            }
+            else
+            {
+                String username = txtUsername.getText();
+                String password = txtPassword.getText();
+                String firstName = txtFirstName.getText();
+                String lastName = txtLastName.getText();
+                String email = txtEmail.getText();
+                int staffRoleID = comboStaffRole.getSelectedIndex();
+                Staff staffToBeAdded = new Staff(username, password, firstName, lastName, email, staffRoleID);
+                DBManager db = new DBManager();
+                db.addStaffToDb(staffToBeAdded);
+                JOptionPane.showMessageDialog(null, "New staff member added");
+            }
+        }
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed

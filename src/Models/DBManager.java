@@ -22,15 +22,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author 30211275
+ * DBManager class for managing DB Connection and transfer of data from db to program
+ * @author Paul
  */
 public class DBManager {
     
+    //DBConnection declared as global variable
     private Connection dbCon;
     private String conString="jdbc:ucanaccess://src/Db/DroversLodgeDb.accdb";
     
-    
+    /**
+     * Initialise DB connection in constructor
+     */
     public DBManager()
     {
         try {
@@ -41,7 +44,11 @@ public class DBManager {
         }
     }
     
-    
+    /**
+     * Adds new customer details to the db
+     * @param customerToAdd - customer object which holds new customer details
+     * @return boolean set to true if upload is successful
+     */
     public boolean addCustomerToDb(Customer customerToAdd)
     {      
         try {
@@ -98,7 +105,11 @@ public class DBManager {
         return true;
     }
     
-    
+    /**
+     * adds staff member to db
+     * @param staffToAdd - staff object holding new staff details
+     * @return boolean set to true if successful
+     */
     public boolean addStaffToDb(Staff staffToAdd)
     {      
         try {
@@ -142,6 +153,12 @@ public class DBManager {
         return true;
     }
     
+    /**
+     * add new room details to db
+     * @param roomToAdd room object with new room details
+     * @return boolean true if successful
+     * @throws SQLException 
+     */
     public boolean addRoomToDb(Room roomToAdd) throws SQLException
     {      
         int roomTypeID = roomToAdd.getRoomTypeID();
@@ -164,6 +181,11 @@ public class DBManager {
         return true;
     }
     
+    /**
+     * add new booking details to db
+     * @param loggedInUser details of user who made the booking
+     * @param bookingToAdd booking object holding new booking details
+     */
     public void addBookingToDb(LoggedInUser loggedInUser, Booking bookingToAdd)
     {
         if(loggedInUser.getIsLoggedIn() == false)
@@ -260,6 +282,11 @@ public class DBManager {
         }
     }
     
+    /**
+     * add new booking line details to db
+     * @param loggedInUser user who added the booking line
+     * @param bookingLineToAdd booking line details
+     */
     public void addBookingLineToDb(LoggedInUser loggedInUser, BookingLine bookingLineToAdd)
     {
         if(loggedInUser.getIsLoggedIn() == false)
@@ -456,6 +483,12 @@ public class DBManager {
     }
     
 
+    /**
+     * sets boolean isConfirmed on a booking to true and adds cost to outstanding balance
+     * @param loggedInUser user who confirmed the booking
+     * @param bookingID id of booking being confirmed
+     * @param customerID id of customer who booking belongs to
+     */
     public void confirmBookingPayAtCheckIn(LoggedInUser loggedInUser, int bookingID, int customerID)
     {
         try {
@@ -476,7 +509,10 @@ public class DBManager {
         }
     }
     
-    
+    /**
+     * checks db for a booking which is not assigned to a user
+     * @return returns true if unassigned booking found
+     */
     public boolean checkForUnassignedBooking()
     {
         HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
@@ -496,6 +532,10 @@ public class DBManager {
         return isFound;
     }
     
+    /**
+     * adds user id to unassigned booking
+     * @param loggedInUser details of user who booking is being assigned to
+     */
     public void assignUnassignedBookingToUser(LoggedInUser loggedInUser)
     {
         HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
@@ -537,6 +577,9 @@ public class DBManager {
     }
     
     
+    /**
+     * deletes any unassigned bookings when program loads for the first time
+     */
     public void clearUnassignedBookingsOnStartup()
     {
         int bookingID = 0;
@@ -563,7 +606,10 @@ public class DBManager {
         }        
     }
     
-    
+    /**
+     * uploads new payment details
+     * @param payment payment object which holds payment details
+     */
     public void takePayment(Payment payment)
     {
         try {
@@ -602,6 +648,10 @@ public class DBManager {
         }
     }
     
+    /**
+     * sets boolean is paid to true and outstanding balance to zero for a booking
+     * @param bookingID booking being updated
+     */
     public void setOutstandingPaymentZeroIsPaidTrue(int bookingID)
     {
         try {
@@ -613,6 +663,14 @@ public class DBManager {
         }
     }
     
+    /**
+     * sets boolean isconfirmed on a booking to true uploads new payment details
+     * sets ispaid to true and sets outstanding balance to zero
+     * @param loggedInUser the user confirming the booking
+     * @param bookingID the booking being confirmed
+     * @param customerID the customer who the booking is assigned to
+     * @param payment the payment details
+     */
     public void confirmBookingPayNow(LoggedInUser loggedInUser, int bookingID, int customerID, Payment payment)
     {
         try 
@@ -666,7 +724,11 @@ public class DBManager {
         }
     }
     
-    
+    /**
+     * returns the id of the most recently booked payment
+     * @param dateBooked date of most recent payment
+     * @return int id of payment
+     */
     public int getMostRecentPaymentIDFromDateBooked(Date dateBooked)
     {
         HashMap<Integer, Payment> payments = new HashMap<Integer, Payment>();
@@ -685,7 +747,10 @@ public class DBManager {
         return paymentID;
     }
 
-    
+    /**
+     * get all payments in db
+     * @return hashmap of payment objects
+     */
     public HashMap<Integer, Payment> getPayments()
     {
         HashMap<Integer, Payment> payments = new HashMap<Integer, Payment>();
@@ -718,7 +783,10 @@ public class DBManager {
         return payments;
     }
     
-    
+    /**
+     * get all bookings from db
+     * @return hashmap of booking objects
+     */
     public HashMap<Integer, Booking> getBookings()
     {
         HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
@@ -750,7 +818,11 @@ public class DBManager {
         return bookings;
     }
     
-    
+    /**
+     * checks customer and staff tables to see if username is already used
+     * @param username username to be checked
+     * @return true if username already exists
+     */
     public boolean checkIfUserNameExists(String username)
     {
         boolean exists = false;
@@ -776,6 +848,12 @@ public class DBManager {
         return false;
     }
     
+    /**
+     * returns all bookings booked between two dates
+     * @param dateFrom - 1st date
+     * @param dateUntil - 2nd date
+     * @return  hashmap of booking objects
+     */
     public HashMap<Integer, Booking> getBookingsBetweenDates(Date dateFrom, Date dateUntil)
     {
         HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
@@ -812,7 +890,11 @@ public class DBManager {
         return bookings;
     }
     
-    
+    /**
+     * get all bookings from db assigned to customer id
+     * @param customerID customer who bookings are assigned to
+     * @return hashmap of booking objects
+     */
     public HashMap<Integer, Booking> getBookingsForCustomerID(int customerID)
     {
         HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
@@ -831,6 +913,11 @@ public class DBManager {
         return bookingsForCustomerID;
     }
     
+    /**
+     * returns a booking from db with specific booking id
+     * @param bookingID booking id to be checked
+     * @return booking object
+     */
     public Booking getBookingFromBookingID(int bookingID)
     {
      HashMap<Integer, Booking> bookings = new HashMap<Integer, Booking>();
@@ -847,7 +934,11 @@ public class DBManager {
      return booking;
     }
     
-    
+    /**
+     * gets a booking line from db with specific booking line id
+     * @param bookingLineID booking line id to check
+     * @return booking line object
+     */
     public BookingLine getBookingLineFromBookingLineID(int bookingLineID)
     {
      HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
@@ -864,7 +955,11 @@ public class DBManager {
      return bookingLine;
     }
     
-    
+    /**
+     * gets cost of booking line from db with specific booking line id
+     * @param bookingLineID booking line id to check
+     * @return booking line object
+     */
     public double getBookingLineCostFromBookingLineID(int bookingLineID)
     {
      HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
@@ -881,7 +976,10 @@ public class DBManager {
      return bookingLineCost;
     }
     
-    
+    /**
+     * get all customers from db
+     * @return hashmap of customer objects
+     */
     public HashMap<Integer, Customer> getCustomers()
     {
         HashMap<Integer, Customer> customers = new HashMap<Integer, Customer>();
@@ -915,6 +1013,11 @@ public class DBManager {
         return customers;
     }
     
+    /**
+     * gets customer from db with specific username
+     * @param username username to check
+     * @return customer object with details from db
+     */
     public Customer getCustomerFromUsername(String username)
     {
         Customer customer = new Customer();
@@ -931,7 +1034,11 @@ public class DBManager {
         return customer;
     }
     
-    
+    /**
+     * gets customer from db with specific id
+     * @param customerID id to check
+     * @return customer object
+     */
     public Customer getCustomerFromCustomerID(int customerID)
     {
         Customer customer = new Customer();
@@ -948,7 +1055,10 @@ public class DBManager {
         return customer;
     }
     
-    
+    /**
+     * gets all staff from db
+     * @return hashmap of staff objects with details from db
+     */
     public HashMap<Integer, Staff> getStaff()
     {
         HashMap<Integer, Staff> staff = new HashMap<Integer, Staff>();
@@ -976,7 +1086,10 @@ public class DBManager {
         return staff;
     }
     
-    
+    /**
+     * get all staffroles from db
+     * @return hashmap of staffrole objects
+     */
     public HashMap<Integer, StaffRole> getStaffRoles()
     {
         HashMap<Integer, StaffRole> staffRoles = new HashMap<Integer, StaffRole>();
@@ -999,7 +1112,11 @@ public class DBManager {
         return staffRoles;
     }
     
-    
+    /**
+     * gets staff from db with specific username
+     * @param username username to be checked
+     * @return staff object
+     */
     public Staff getStaffFromUsername(String username)
     {
         Staff staffMember = new Staff();
@@ -1016,7 +1133,11 @@ public class DBManager {
         return staffMember;
     }
     
-    
+    /**
+     * get staff from db with specific id
+     * @param staffID id to be checked
+     * @return staff object
+     */
     public Staff getStaffFromStaffID(int staffID)
     {
         Staff staffMember = new Staff();
@@ -1033,7 +1154,11 @@ public class DBManager {
         return staffMember;
     }
     
-    
+    /**
+     * get staffrole from db with specific staffrole id
+     * @param staffRoleID id to be checked
+     * @return string staffrole name
+     */
     public String getStaffRoleFromStaffRoleID(int staffRoleID)
     {
         String staffRole="";
@@ -1050,7 +1175,12 @@ public class DBManager {
         return staffRole;
     }
     
-    
+    /**
+     * checks username and password strings against details in the db
+     * @param username
+     * @param password
+     * @return boolean true if matching set exists
+     */
     public boolean checkLoginDetails(String username, String password)
     {
         boolean isValidLogin = false;
@@ -1083,7 +1213,11 @@ public class DBManager {
         return isValidLogin;
     }
     
-    
+    /**
+     * gets user details for specific username
+     * @param username username to be checked
+     * @return loggedinuser object with user details from db
+     */
     public LoggedInUser getValidUser(String username)
     {
         LoggedInUser loggedInUser = new LoggedInUser();
@@ -1116,7 +1250,10 @@ public class DBManager {
     }
     
     
-    
+    /**
+     * get all room details from db
+     * @return hashmap of room objects
+     */
     public HashMap<Integer, Room> getRooms()
     {
         HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
@@ -1141,6 +1278,11 @@ public class DBManager {
         return rooms;
     }
     
+    /**
+     * get all rooms from db which have specific type attribute
+     * @param roomTypeID id of room type
+     * @return hashmap of room objects
+     */
     public HashMap<Integer, Room> getRoomsOfRoomType(int roomTypeID)
     {
         HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
@@ -1165,7 +1307,11 @@ public class DBManager {
         return rooms;
     }
     
-    
+    /**
+     * get room from db with specific id
+     * @param roomID id to check
+     * @return room object
+     */
     public Room getRoomFromRoomID(int roomID)
     {
         Room room = new Room();
@@ -1182,7 +1328,11 @@ public class DBManager {
         return room;
     }
     
-    
+    /**
+     * get room from db with specific name
+     * @param roomName name to check
+     * @return room object
+     */
     public Room getRoomFromRoomName(String roomName)
     {
         Room room = new Room();
@@ -1199,6 +1349,13 @@ public class DBManager {
         return room;
     }
     
+    /**
+     * get id of first room of specific type which is available on these dates
+     * @param checkIn date 1
+     * @param checkOut date 2
+     * @param roomType type of room
+     * @return id of available room
+     */
     public int getAvailableRoomID(Date checkIn, Date checkOut, String roomType)
     {
         int roomID = 0;
@@ -1216,6 +1373,14 @@ public class DBManager {
         return roomID;
     }
     
+    /**
+     * get id of first room of specific type which is available on these dates
+     * @param bookingLineID id of booking line being edited
+     * @param checkIn date 1
+     * @param checkOut date 2
+     * @param roomType type of room
+     * @return id of available room
+     */
     public int getEditAvailableRoomID(int bookingLineID, Date checkIn, Date checkOut, String roomType)
     {
         int roomID = 0;
@@ -1233,6 +1398,11 @@ public class DBManager {
         return roomID;
     }
     
+    /**
+     * returns the total number of rooms of specific type
+     * @param roomType type to be checked
+     * @return int number of rooms
+     */
     public int getTotalRoomsOfRoomType(String roomType)
     {
         HashMap<Integer, Room> rooms = new HashMap<Integer, Room>();
@@ -1250,7 +1420,13 @@ public class DBManager {
         return available;
     }
     
-    
+    /**
+     * get number of rooms available of specific type on certain dates
+     * @param checkIn check in date
+     * @param checkOut check out date
+     * @param roomType type of room
+     * @return int no of rooms
+     */
     public int getAvailability(Date checkIn, Date checkOut, String roomType)
     {
         int available = getTotalRoomsOfRoomType(roomType);
@@ -1291,7 +1467,14 @@ public class DBManager {
         return available;
     }
     
-    
+    /**
+     * get number of rooms available of specific type on certain dates
+     * @param bookingLineID booking line being edited
+     * @param checkIn check in date
+     * @param checkOut check out date
+     * @param roomType type of room
+     * @return int no of rooms
+     */
     public int getEditAvailability(int bookingLineID, Date checkIn, Date checkOut, String roomType)
     {
         int available = getTotalRoomsOfRoomType(roomType);
@@ -1343,7 +1526,13 @@ public class DBManager {
         return available;
     }
     
-    
+    /**
+     * return boolean true is there is an available room
+     * @param checkIn
+     * @param checkOut
+     * @param roomID
+     * @return boolean
+     */
     public boolean isAvailable(Date checkIn, Date checkOut, int roomID)
     {
         HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
@@ -1379,6 +1568,14 @@ public class DBManager {
         return true;
     }
     
+    /**
+     * boolean true is room is available
+     * @param bookingLineID
+     * @param checkIn
+     * @param checkOut
+     * @param roomID
+     * @return 
+     */
     public boolean isEditAvailable(int bookingLineID, Date checkIn, Date checkOut, int roomID)
     {
         HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
@@ -1425,6 +1622,10 @@ public class DBManager {
         return true;
     }
     
+    /**
+     * get all booking lines from db
+     * @return  hashmap of bookingline objects
+     */
     public HashMap<Integer, BookingLine> getBookingLines()
     {
         HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
@@ -1458,7 +1659,12 @@ public class DBManager {
         return bookingLines;
     }
     
-    
+    /**
+     * get all booking lines with check in between two dates
+     * @param dateFrom
+     * @param dateUntil
+     * @return hashmap of bookingline objects
+     */
     public HashMap<Integer, BookingLine> getBookingLinesBetweenDates(Date dateFrom, Date dateUntil)
     {
         HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
@@ -1496,6 +1702,11 @@ public class DBManager {
         return bookingLines;
     }
     
+    /**
+     * get all booking lines from db which are of spcific room type
+     * @param roomType
+     * @return hashmap of bookingline objects
+     */
     public HashMap<Integer, BookingLine> getBookingLinesOfRoomType(String roomType)
     {
         HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
@@ -1516,7 +1727,11 @@ public class DBManager {
         return bookingLinesOfRoomType;
     }
     
-    
+    /**
+     * get all booking lines from db for a specific room id
+     * @param roomID
+     * @return hashmap of booking llines
+     */
     public HashMap<Integer, BookingLine> getBookingLinesOfRoomID(int roomID)
     {
         HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
@@ -1537,6 +1752,11 @@ public class DBManager {
         return bookingLinesOfRoomID;
     }
     
+    /**
+     * get room tyoe id of specific room
+     * @param roomID
+     * @return int room type id
+     */
     public int getRoomTypeIDFromRoomID(int roomID)
     {
         int roomTypeID = 0;
@@ -1553,6 +1773,11 @@ public class DBManager {
         return roomTypeID;
     }
     
+    /**
+     * get the room type string from the room type id
+     * @param roomTypeID
+     * @return string 
+     */
     public String getRoomTypeFromRoomTypeID(int roomTypeID)
     {
      HashMap<Integer, RoomType> roomTypes = new HashMap<Integer, RoomType>();
@@ -1569,7 +1794,11 @@ public class DBManager {
      return roomType;
     }
     
-    
+    /**
+     * get the room type id from the room type string
+     * @param roomType
+     * @return room type id
+     */
     public int getRoomTypeIDFromString(String roomType)
     {
      HashMap<Integer, RoomType> roomTypes = new HashMap<Integer, RoomType>();
@@ -1586,6 +1815,10 @@ public class DBManager {
      return roomTypeID;
     }
     
+    /**
+     * get all room types from db
+     * @return hashmap of room type objects
+     */
     public HashMap<Integer, RoomType> getRoomTypes()
     {
         HashMap<Integer, RoomType> roomTypes = new HashMap<Integer, RoomType>();
@@ -1609,6 +1842,10 @@ public class DBManager {
         return roomTypes;
     }
     
+    /**
+     * get all payment types from db
+     * @return hashmap of payment types
+     */
     public HashMap<Integer, PaymentType> getPaymentTypes()
     {
         HashMap<Integer, PaymentType> paymentTypes = new HashMap<Integer, PaymentType>();
@@ -1631,7 +1868,11 @@ public class DBManager {
         return paymentTypes;
     }
     
-    
+    /**
+     * get payment type id from payment type string
+     * @param paymentType
+     * @return int id
+     */
     public int getPaymentTypeIDFromPaymentType(String paymentType)
     {
         HashMap<Integer, PaymentType> paymentTypes = new HashMap<Integer, PaymentType>();
@@ -1648,6 +1889,11 @@ public class DBManager {
         return paymentTypeID;
     }
     
+    /**
+     * get payment type string from payment type id
+     * @param paymentTypeID
+     * @return string payment type
+     */
     public String getPaymentTypeFromPaymentTypeID(int paymentTypeID)
     {
         HashMap<Integer, PaymentType> paymentTypes = new HashMap<Integer, PaymentType>();
@@ -1664,6 +1910,11 @@ public class DBManager {
         return paymentType;
     }
     
+    /**
+     * get card type id from card type string
+     * @param cardType
+     * @return int id
+     */
     public int getCardTypeIDFromCardType(String cardType)
     {
         HashMap<Integer, CardType> cardTypes = new HashMap<Integer, CardType>();
@@ -1680,6 +1931,10 @@ public class DBManager {
         return cardTypeID;
     }
     
+    /**
+     * get all card types from db
+     * @return hashmap of card types
+     */
     public HashMap<Integer, CardType> getCardTypes()
     {
         HashMap<Integer, CardType> cardTypes = new HashMap<Integer, CardType>();
@@ -1702,7 +1957,10 @@ public class DBManager {
         return cardTypes;
     }
     
-    
+    /**
+     * get all meal types from db
+     * @return hashmap of meal types
+     */
     public HashMap<Integer, MealType> getMealTypes()
     {
         HashMap<Integer, MealType> meals = new HashMap<Integer, MealType>();
@@ -1726,7 +1984,11 @@ public class DBManager {
         return meals;
     }
     
-    
+    /**
+     * update details of existing customer record
+     * @param customerID - id of customer to be edited
+     * @param newCustomerDetails customer object holding new details
+     */
     public void updateCustomerDetails(int customerID, Customer newCustomerDetails)
     {        
         String firstName = newCustomerDetails.getFirstName();
@@ -1760,6 +2022,11 @@ public class DBManager {
         }
     }
     
+    /**
+     * update existing staff record in db
+     * @param staffID staff id to be edited
+     * @param newStaffDetails new staff details
+     */
     public void updateStaffDetails(int staffID, Staff newStaffDetails)
     {        
         String firstName = newStaffDetails.getFirstName();
@@ -1778,6 +2045,11 @@ public class DBManager {
         }
     }
     
+    /**
+     * update existing room record
+     * @param roomID room id
+     * @param newRoomDetails new details 
+     */
     public void updateRoomDetails(int roomID, Room newRoomDetails)
     {        
         int roomTypeID = newRoomDetails.getRoomTypeID();
@@ -1794,6 +2066,11 @@ public class DBManager {
         }
     }
     
+    /**
+     * update password attribute of existing customer
+     * @param customerID customer to be updated
+     * @param newPassword new password
+     */
     public void updateCustomerPassword(int customerID, String newPassword)
     {        
         try {
@@ -1805,6 +2082,11 @@ public class DBManager {
         }
     }
     
+    /**
+     * update password attribute of existing staff record
+     * @param staffID staff to update
+     * @param newPassword new password
+     */
     public void updateStaffPassword(int staffID, String newPassword)
     {        
         try {
@@ -1816,7 +2098,11 @@ public class DBManager {
         }
     }
     
-    
+    /**
+     * update total cost attribute of existing booking
+     * @param bookingID booking to update
+     * @param costToBeAdded new total cost
+     */
     public void updateBookingTotalCost(int bookingID, double costToBeAdded)
     {        
         try {
@@ -1828,7 +2114,11 @@ public class DBManager {
         }
     }
     
-    
+    /**
+     * update total cost attribute of existing booking 
+     * @param bookingID booking id
+     * @param costToBeAdded new cost
+     */
     public void editBookingLineUpdateBookingTotalCost(int bookingID, double costToBeAdded)
     {        
         Booking bookingToBeUpdated = getBookingFromBookingID(bookingID);
@@ -1876,6 +2166,12 @@ public class DBManager {
         }
     }
     
+    /**
+     * update existing booking line record with new details
+     * @param bookingLineID id of booking line being updated
+     * @param updatedBookingLineDetails new details
+     * @param changeInCost change to cost attribute
+     */
     public void updateBookingLine(int bookingLineID, BookingLine updatedBookingLineDetails, double changeInCost)
     {
         Date checkIn = updatedBookingLineDetails.getCheckInDate();
@@ -1914,7 +2210,11 @@ public class DBManager {
         }
     }
     
-    
+    /**
+     * update the checked in attribute of existing booking line
+     * @param bookingLineID
+     * @param isCheckedIn boolean true if checked in
+     */
     public void updateBookingLineCheckIn(int bookingLineID, boolean isCheckedIn)
     {
         try {
@@ -1927,7 +2227,11 @@ public class DBManager {
         }
     }
     
-    
+    /**
+     * update the checked out attribute of existing booking line
+     * @param bookingLineID
+     * @param isCheckedOut boolean checked out true if checked out
+     */
         public void updateBookingLineCheckOut(int bookingLineID, boolean isCheckedOut)
     {
         try {
@@ -1940,7 +2244,11 @@ public class DBManager {
         }
     }   
     
-    
+    /**
+     * reduce total cost of booking record
+     * @param bookingID booking being updated
+     * @param costToBeTakenOff cost being taken off total
+     */
     public void reduceBookingTotalCost(int bookingID, double costToBeTakenOff)
     {        
         try {
@@ -1952,7 +2260,10 @@ public class DBManager {
         }
     }
     
-    
+    /**
+     * remove booking line record
+     * @param bookingLineID id of booking line
+     */
     public void editBookingRemoveBookingLine(int bookingLineID)
     {
         int bookingID = 0;
@@ -1999,6 +2310,10 @@ public class DBManager {
         }
     }
     
+    /**
+     * remove booking record
+     * @param bookingID 
+     */
     public void removeBooking(int bookingID)
     {
         try {
@@ -2012,6 +2327,10 @@ public class DBManager {
             }
     }
     
+    /**
+     * remove customer record
+     * @param customerID 
+     */
     public void removeCustomer(int customerID)
     {
         try {
@@ -2023,6 +2342,10 @@ public class DBManager {
             }
     }
     
+    /**
+     * remove staff record
+     * @param staffID 
+     */
     public void removeStaff(int staffID)
     {
         try {
@@ -2034,6 +2357,10 @@ public class DBManager {
             }
     }
     
+    /**
+     * remove room record
+     * @param roomID 
+     */
     public void removeRoom(int roomID)
     {
         try {
@@ -2045,7 +2372,10 @@ public class DBManager {
             }
     }
     
-    
+    /**
+     * remove booking line record
+     * @param bookingLineID 
+     */
     public void removeBookingLine(int bookingLineID)
     {
         int bookingID = 0;
@@ -2092,6 +2422,9 @@ public class DBManager {
         }
     }
     
+    /**
+     * delete all records from booking, booking line and payment
+     */
     public void truncBookingsBookLinesPayments()
     {
         try {

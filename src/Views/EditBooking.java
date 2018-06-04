@@ -25,21 +25,24 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * view for showing booking details with options to edit or remove booking lines
+ * staff may also check in/out customers
  * @author Paul
  */
 public class EditBooking extends javax.swing.JFrame {
-    
+    //user and booking details being passed between forms
     private LoggedInUser loggedInUser = new LoggedInUser();
     private Booking currentBooking = new Booking();
 
@@ -56,7 +59,7 @@ public class EditBooking extends javax.swing.JFrame {
     }
     
     
-    
+    //initialise components in frame
     public void loadFrame()
     {
         initComponents();
@@ -86,15 +89,29 @@ public class EditBooking extends javax.swing.JFrame {
             btnSignIn.setEnabled(false);
             btnRegister.setText("Logout");
         }
+        
+        btnCheckIn.setVisible(false);
+        btnCheckOut.setVisible(false);
+        btnEdit.setVisible(false);
+        btnRemove.setVisible(false);
+        
+        
+        //set check in/out buttons to show if staff logged in
         lblStaff.setVisible(false);
         if(loggedInUser.getUserTypeID() == 3)
         {
             lblStaff.setVisible(true);
+            btnCheckIn.setVisible(true);
+            btnCheckOut.setVisible(true);
+            
         }
         
         btnConfirm.setVisible(false);
     }
     
+    /**
+     * load booking details
+     */
     public void loadCart()
     {
         tblBookingLines.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);        
@@ -131,7 +148,10 @@ public class EditBooking extends javax.swing.JFrame {
         }
     }
     
-    
+    /**
+     * refresh details in booking lines table
+     * @param rowIndex - row to be refreshed
+     */
     public void refreshCart(int rowIndex)
     {
         ((DefaultTableModel)tblBookingLines.getModel()).removeRow(rowIndex);
@@ -146,6 +166,7 @@ public class EditBooking extends javax.swing.JFrame {
         txtTotalCost.setText("£" + String.format("%.02f",(currentBooking.getTotalCost())));
     }
     
+    //clear all old lines from booking lines table
     public void clearCart()
     {
         DefaultTableModel model = (DefaultTableModel)tblBookingLines.getModel(); 
@@ -156,7 +177,7 @@ public class EditBooking extends javax.swing.JFrame {
         }
     }
     
-    
+    //load payment types into drop down
     public void populatePaymentTypeDropDown()
     {
         comboPaymentType.removeAllItems();
@@ -170,8 +191,7 @@ public class EditBooking extends javax.swing.JFrame {
         }
     }
     
-    
-    
+    //load customer types into drop down    
     public void populateCustomerDropDown()
     {
         comboCustomer.removeAllItems();
@@ -513,6 +533,11 @@ public class EditBooking extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tblBookingLines.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblBookingLinesMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblBookingLines);
 
         btnRemove.setText("Remove Booking Line");
@@ -850,13 +875,14 @@ public class EditBooking extends javax.swing.JFrame {
         int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
         DBManager db = new DBManager();
         editableBookingLine = db.getBookingLineFromBookingLineID(bookingLineID);
-        
+
+
         jframeEditBookingLine.setVisible(true);
         jframeEditBookingLine.setSize(370,620);
         jframeEditBookingLine.getContentPane().setBackground(Color.white);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         jframeEditBookingLine.setLocation(dim.width/2-jframeEditBookingLine.getSize().width/2, dim.height/2-jframeEditBookingLine.getSize().height/2);
-        
+
         Date checkIn = editableBookingLine.getCheckInDate();
         Date checkOut = editableBookingLine.getCheckOutDate();
         boolean breakfast = editableBookingLine.getBreakfast();
@@ -864,7 +890,7 @@ public class EditBooking extends javax.swing.JFrame {
         boolean eveningMeal = editableBookingLine.getEveningMeal();
         populateRoomTypeDropDown();
         int roomTypeID = db.getRoomTypeIDFromRoomID(editableBookingLine.getRoomID());
-        
+
         txtBookingLineID.setText(String.valueOf(bookingLineID));
         txtBookingLineID.setEnabled(false);
         jdateCheckIn.setDate(checkIn);
@@ -873,7 +899,7 @@ public class EditBooking extends javax.swing.JFrame {
         checkLunch.setSelected(lunch);
         checkEveningMeal.setSelected(eveningMeal);
         comboRoomType.setSelectedIndex(roomTypeID);
-        
+
         Date editCheckIn = jdateCheckIn.getDate();
         Date editCheckOut = jdateCheckOut.getDate();
         int editRoomTypeID = comboRoomType.getSelectedIndex();
@@ -885,48 +911,71 @@ public class EditBooking extends javax.swing.JFrame {
         editMeals[0] = editBreakfast;
         editMeals[1] = editLunch;
         editMeals[2] = editEveningMeal;
+
+        updateEditBookingLine(bookingLineID, editCheckIn, editCheckOut, editRoomType, editMeals); 
         
-        updateEditBookingLine(bookingLineID, editCheckIn, editCheckOut, editRoomType, editMeals);
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnEditSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditSubmitActionPerformed
-        int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
-        DBManager db = new DBManager();
-        int bookingID = db.getBookingLineFromBookingLineID(bookingLineID).getBookingID();        
-        double originalLineCost = db.getBookingLineCostFromBookingLineID(bookingLineID);
-        
-        Date editCheckIn = jdateCheckIn.getDate();
-        Date editCheckOut = jdateCheckOut.getDate();
-        int editRoomTypeID = comboRoomType.getSelectedIndex();
-        String editRoomType = db.getRoomTypeFromRoomTypeID(editRoomTypeID);
-        boolean editBreakfast = checkBreakfast.isSelected();
-        boolean editLunch = checkLunch.isSelected();
-        boolean editEveningMeal = checkEveningMeal.isSelected();
-        boolean[] editMeals = new boolean[3];
-        editMeals[0] = editBreakfast;
-        editMeals[1] = editLunch;
-        editMeals[2] = editEveningMeal;
-        
-        int editRoomID = db.getEditAvailableRoomID(bookingLineID, editCheckIn, editCheckOut, editRoomType);
-        long lengthOfStay = getLengthOfStay(editCheckIn, editCheckOut);
-        double editLineCost = calculatePrice(lengthOfStay, editMeals, getRoomTypeID(editRoomType));
-        double changeInCost = editLineCost - originalLineCost;
-        
-        BookingLine newBookingLineDetails = new BookingLine(editCheckIn, editCheckOut, bookingID, editRoomID, editMeals, editLineCost);
-        db.updateBookingLine(bookingLineID, newBookingLineDetails, changeInCost);
-        currentBooking = db.getBookingFromBookingID(bookingID);        
-        currentBooking.populateBookingLines();
-        
-        int customerID = currentBooking.getCustomerID();
-        String email = db.getCustomerFromCustomerID(customerID).getEmail();
-        Email bookingEmail = new Email();
-        bookingEmail.updateBookingEmail(email, currentBooking);
-        
+        if(jdateCheckIn.getDate() == null || jdateCheckOut.getDate() == null || comboRoomType.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(null, "Please ensure the following are selected:\n - Check in date\n - Check out date\n - Type of room");
+        }
+        else
+        {
+            int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
+            DBManager db = new DBManager();
+            int bookingID = db.getBookingLineFromBookingLineID(bookingLineID).getBookingID();        
+            double originalLineCost = db.getBookingLineCostFromBookingLineID(bookingLineID);
 
-        int tblBookingLinesSelectedRow = tblBookingLines.getSelectedRow();
-        clearCart();
-        loadCart();
-        tblBookingLines.setRowSelectionInterval(tblBookingLinesSelectedRow, tblBookingLinesSelectedRow);
+            Date editCheckIn = jdateCheckIn.getDate();
+            Date editCheckOut = jdateCheckOut.getDate();
+            int editRoomTypeID = comboRoomType.getSelectedIndex();
+            String editRoomType = db.getRoomTypeFromRoomTypeID(editRoomTypeID);
+            boolean editBreakfast = checkBreakfast.isSelected();
+            boolean editLunch = checkLunch.isSelected();
+            boolean editEveningMeal = checkEveningMeal.isSelected();
+            boolean[] editMeals = new boolean[3];
+            editMeals[0] = editBreakfast;
+            editMeals[1] = editLunch;
+            editMeals[2] = editEveningMeal;
+
+            int editRoomID = db.getEditAvailableRoomID(bookingLineID, editCheckIn, editCheckOut, editRoomType);
+            long lengthOfStay = getLengthOfStay(editCheckIn, editCheckOut);
+            double editLineCost = calculatePrice(lengthOfStay, editMeals, getRoomTypeID(editRoomType));
+            double changeInCost = editLineCost - originalLineCost;
+
+            BookingLine newBookingLineDetails = new BookingLine(editCheckIn, editCheckOut, bookingID, editRoomID, editMeals, editLineCost);
+            db.updateBookingLine(bookingLineID, newBookingLineDetails, changeInCost);
+            currentBooking = db.getBookingFromBookingID(bookingID);        
+            currentBooking.populateBookingLines();
+            //check that there is availability before updating booking line
+            if(db.getAvailability(editCheckIn, editCheckOut, editRoomType) > 0)
+            {
+                if(("£" + String.format("%.02f",editLineCost)).equals(txtEditTotalCost.getText()))
+                {
+                    int customerID = currentBooking.getCustomerID();
+                    String email = db.getCustomerFromCustomerID(customerID).getEmail();
+                    Email bookingEmail = new Email();
+                    bookingEmail.updateBookingEmail(email, currentBooking);
+
+                    //refresh booking line table rows
+                    int tblBookingLinesSelectedRow = tblBookingLines.getSelectedRow();
+                    clearCart();
+                    loadCart();
+                    tblBookingLines.setRowSelectionInterval(tblBookingLinesSelectedRow, tblBookingLinesSelectedRow);   
+                }
+                else
+                {
+                JOptionPane.showMessageDialog(null, "Please click update to show correct price");
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "There are no " + editRoomType + " rooms available for the selected dates");
+            }
+        }                       
+        
     }//GEN-LAST:event_btnEditSubmitActionPerformed
 
     private void btnEditClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditClearActionPerformed
@@ -934,7 +983,7 @@ public class EditBooking extends javax.swing.JFrame {
         int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
         DBManager db = new DBManager();
         editableBookingLine = db.getBookingLineFromBookingLineID(bookingLineID);
-        
+        //get details of selected booking line
         Date checkIn = editableBookingLine.getCheckInDate();
         Date checkOut = editableBookingLine.getCheckOutDate();
         boolean breakfast = editableBookingLine.getBreakfast();
@@ -947,7 +996,7 @@ public class EditBooking extends javax.swing.JFrame {
         populateRoomTypeDropDown();
         int roomTypeID = db.getRoomTypeIDFromRoomID(editableBookingLine.getRoomID());
         String roomType = db.getRoomTypeFromRoomTypeID(roomTypeID);
-        
+        //load selected booking line details
         txtBookingLineID.setText(String.valueOf(bookingLineID));
         txtBookingLineID.setEnabled(false);
         jdateCheckIn.setDate(checkIn);
@@ -957,7 +1006,7 @@ public class EditBooking extends javax.swing.JFrame {
         checkEveningMeal.setSelected(eveningMeal);
         comboRoomType.setSelectedIndex(roomTypeID);
         txtChangeInCost.setText("");
-        
+        //
         updateEditBookingLine(bookingLineID, checkIn, checkOut, roomType, meals);
     }//GEN-LAST:event_btnEditClearActionPerformed
 
@@ -966,7 +1015,7 @@ public class EditBooking extends javax.swing.JFrame {
         int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
         DBManager db = new DBManager();
         editableBookingLine = db.getBookingLineFromBookingLineID(bookingLineID);
-        
+        //reload existing customer data before closing
         Date checkIn = editableBookingLine.getCheckInDate();
         Date checkOut = editableBookingLine.getCheckOutDate();
         boolean breakfast = editableBookingLine.getBreakfast();
@@ -1028,17 +1077,48 @@ public class EditBooking extends javax.swing.JFrame {
 
     private void btnCheckInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckInActionPerformed
         int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
+        int selectedRow = tblBookingLines.getSelectedRow();
         DBManager db = new DBManager();
         db.updateBookingLineCheckIn(bookingLineID, true);
+        DefaultTableModel model = (DefaultTableModel)tblBookingLines.getModel();
+        model.setValueAt(true, selectedRow, 9);
     }//GEN-LAST:event_btnCheckInActionPerformed
 
     private void btnCheckOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckOutActionPerformed
         int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
+        int selectedRow = tblBookingLines.getSelectedRow();
         DBManager db = new DBManager();
         db.updateBookingLineCheckOut(bookingLineID, true);
+        DefaultTableModel model = (DefaultTableModel)tblBookingLines.getModel();
+        model.setValueAt(true, selectedRow, 10);
     }//GEN-LAST:event_btnCheckOutActionPerformed
 
-    
+    private void tblBookingLinesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBookingLinesMouseClicked
+        int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
+        DBManager db = new DBManager();
+        BookingLine selectedBookingLine = db.getBookingLineFromBookingLineID(bookingLineID);
+        Date today = new Date();
+        Date checkIn = selectedBookingLine.getCheckInDate();
+        //check if check in date is in the past
+        if(today.before(checkIn))
+        {
+            btnEdit.setVisible(true);
+            btnRemove.setVisible(true);
+        }
+        else if(!today.before(checkIn))
+        {
+            btnEdit.setVisible(false);
+            btnRemove.setVisible(false);
+        }
+        //24hr rule
+        Date dateBooked = currentBooking.getDateBooked();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dateBooked);
+        cal.add(Calendar.DATE, 1);
+        Date bookingPlus24hr = cal.getTime();
+    }//GEN-LAST:event_tblBookingLinesMouseClicked
+
+    //update the booking line price to reflect change in details
     public void updateEditBookingLine(int bookingLineID, Date editCheckIn, Date editCheckOut, String editRoomType, boolean[] editMeals)
     {
         DBManager db = new DBManager();
@@ -1050,6 +1130,7 @@ public class EditBooking extends javax.swing.JFrame {
         txtRoomID.setText(String.valueOf(db.getEditAvailableRoomID(bookingLineID, editCheckIn, editCheckOut, editRoomType)));
     }
     
+    //calculate price of booking line
     public double calculatePrice(long lengthOfStay, boolean[] meals, int roomTypeID)
     {
         double totalPrice = 0;
@@ -1073,6 +1154,7 @@ public class EditBooking extends javax.swing.JFrame {
         return totalPrice;
     }
     
+    //calculate cost of meals
     public double getMealPrice(boolean[] meals)
     {
         double mealPrice  = 0;
@@ -1115,6 +1197,7 @@ public class EditBooking extends javax.swing.JFrame {
         return mealPrice;
     }
     
+    //get length of stay in days
     public long getLengthOfStay(Date checkIn, Date checkOut)
     {
         SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
@@ -1130,6 +1213,7 @@ public class EditBooking extends javax.swing.JFrame {
         return -1;
     }
     
+    //get room type id from string room type
     public int getRoomTypeID(String roomType)
     {
         int roomTypeID = 0;
@@ -1147,6 +1231,7 @@ public class EditBooking extends javax.swing.JFrame {
         return roomTypeID;
     }
     
+    //add room types to drop down
     public void populateRoomTypeDropDown()
     {
         comboRoomType.removeAllItems();

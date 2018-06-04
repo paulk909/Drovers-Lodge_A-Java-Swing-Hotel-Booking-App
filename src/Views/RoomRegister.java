@@ -27,18 +27,19 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Paul
  */
 public class RoomRegister extends javax.swing.JFrame {
-    
+    //initialise variables for file upload
     private String file = "";
     private String path = "";
 
     /**
-     * Creates new form RoomRegister
+     * form for adding new room to db
      */
     public RoomRegister() {
         initComponents();
@@ -48,9 +49,7 @@ public class RoomRegister extends javax.swing.JFrame {
         populateRoomTypeDropDown();
     }
     
-    
-    
-    
+    //add room types to drop down        
     public void populateRoomTypeDropDown()
     {
         comboRoomType.removeAllItems();
@@ -193,58 +192,67 @@ public class RoomRegister extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
-        try {
-            int roomTypeID = comboRoomType.getSelectedIndex();
-            String roomName = txtRoomName.getText();
-            String roomImage = file;
-            
-            
-            String path1 = path;
-            String filename = file;
-            String path2 = "E:\\GRADED UNIT\\DroversLodge\\src\\img\\rooms\\JPEG\\";
+       // check that name and room type have been filled in
+        if(txtRoomName.getText().isEmpty() || comboRoomType.getSelectedIndex() == 0)
+       {
+           JOptionPane.showMessageDialog(null, "Please enter Room Name and Room Type");
+       }
+       else
+       {
+            try {
+                int roomTypeID = comboRoomType.getSelectedIndex();
+                String roomName = txtRoomName.getText();
+                String roomImage = file;
 
-            File oldFile = new File( path1, filename );
-            File newFile = new File( path2, filename );
+                //create file chooser for setting room image
+                String path1 = path;
+                String filename = file;
+                String path2 = "E:\\GRADED UNIT\\DroversLodge\\src\\img\\rooms\\JPEG\\";
 
-            try
-            {
-                FileInputStream fis = new FileInputStream( oldFile );
-                FileOutputStream fos = new FileOutputStream( newFile );
+                File oldFile = new File( path1, filename );
+                File newFile = new File( path2, filename );
 
                 try
                 {
-                    int currentByte = fis.read();
-                    while( currentByte != -1 )
+                    FileInputStream fis = new FileInputStream( oldFile );
+                    FileOutputStream fos = new FileOutputStream( newFile );
+
+                    try
                     {
-                       fos.write( currentByte );
-                       currentByte = fis.read();
+                        int currentByte = fis.read();
+                        while( currentByte != -1 )
+                        {
+                           fos.write( currentByte );
+                           currentByte = fis.read();
+                        }
+                    }
+                    catch( IOException exception )
+                    {
+                        System.err.println( "IOException occurred!" );
+                        exception.printStackTrace();
+                    }
+                    finally
+                    {
+                        fis.close();
+                        fos.close();
+                        System.out.println( "Copied file!" );
                     }
                 }
                 catch( IOException exception )
                 {
-                    System.err.println( "IOException occurred!" );
+                    System.err.println( "Problems with files!" );
                     exception.printStackTrace();
-                }
-                finally
-                {
-                    fis.close();
-                    fos.close();
-                    System.out.println( "Copied file!" );
-                }
-            }
-            catch( IOException exception )
-            {
-                System.err.println( "Problems with files!" );
-                exception.printStackTrace();
-            }            
-            
-            
-            DBManager db = new DBManager();
-            Room roomToBeAdded = new Room(roomTypeID, roomName, roomImage);
-            db.addRoomToDb(roomToBeAdded);
-        } catch (SQLException ex) {
-            Logger.getLogger(RoomRegister.class.getName()).log(Level.SEVERE, null, ex);
-        }
+                }            
+
+                //add room details to db
+                DBManager db = new DBManager();
+                Room roomToBeAdded = new Room(roomTypeID, roomName, roomImage);
+                db.addRoomToDb(roomToBeAdded);
+                JOptionPane.showMessageDialog(null, "New room added");
+            } catch (SQLException ex) {
+                Logger.getLogger(RoomRegister.class.getName()).log(Level.SEVERE, null, ex);
+            }           
+       }
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
@@ -253,6 +261,8 @@ public class RoomRegister extends javax.swing.JFrame {
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         comboRoomType.setSelectedIndex(0);
+        txtRoomName.setText("");
+        txtRoomImage.setText("");
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnRoomImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRoomImageActionPerformed

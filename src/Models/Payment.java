@@ -74,6 +74,7 @@ public class Payment {
         this.bookingID = bookingID;
     }
 
+    
     public Payment(String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost) {
         this.payeeName = payeeName;
         this.cardNo = cardNo;
@@ -83,6 +84,20 @@ public class Payment {
         this.totalCost = totalCost;
     }
     
+    public Payment(String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost, String paymentHouse, String paymentStreet, String paymentTown, String paymentPostcode) {
+        this.payeeName = payeeName;
+        this.cardNo = cardNo;
+        this.securityNo = securityNo;
+        this.expiryDate = expiryDate;
+        this.cardTypeID = cardTypeID;
+        this.totalCost = totalCost;
+        this.paymentHouse = paymentHouse;
+        this.paymentStreet = paymentStreet;
+        this.paymentTown = paymentTown;
+        this.paymentPostcode = paymentPostcode;
+    }
+    
+        
     public Payment(String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost, int bookingID) {
         this.payeeName = payeeName;
         this.cardNo = cardNo;
@@ -92,6 +107,20 @@ public class Payment {
         this.totalCost = totalCost;
         this.bookingID = bookingID;
     }
+    
+    public Payment(String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost, int bookingID, String paymentHouse, String paymentStreet, String paymentTown, String paymentPostcode) {
+        this.payeeName = payeeName;
+        this.cardNo = cardNo;
+        this.securityNo = securityNo;
+        this.expiryDate = expiryDate;
+        this.cardTypeID = cardTypeID;
+        this.totalCost = totalCost;
+        this.bookingID = bookingID;
+        this.paymentHouse = paymentHouse;
+        this.paymentStreet = paymentStreet;
+        this.paymentTown = paymentTown;
+        this.paymentPostcode = paymentPostcode;
+    }    
     
     public int getPaymentID() {
         return paymentID;

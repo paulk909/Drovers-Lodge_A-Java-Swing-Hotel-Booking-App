@@ -46,19 +46,20 @@ import javax.swing.table.DefaultTableModel;
  * @author Paul
  */
 public class StaffViewRooms extends javax.swing.JFrame {
-
+    //initialise user and file path details
     private LoggedInUser loggedInUser = new LoggedInUser();
     private String file = "";
     private String path = "";
 
     /**
-     * Creates new form StaffViewRooms
+     * allows staff to view rooms and add/edit/remove rooms and export reports
      */
     public StaffViewRooms(LoggedInUser loggedInUser) {
         this.loggedInUser = loggedInUser;
         loadFrame();
     }
     
+    //initialise components in frame
     public void loadFrame()
     {
         initComponents();
@@ -88,6 +89,7 @@ public class StaffViewRooms extends javax.swing.JFrame {
         loadRoomsTable();
     }
 
+    //load table of room data
     public void loadRoomsTable()
     {
         tblRooms.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);        
@@ -105,6 +107,7 @@ public class StaffViewRooms extends javax.swing.JFrame {
         }
     }
     
+    //clear data from room table
     public void clearRoomsTable()
     {
         DefaultTableModel model = (DefaultTableModel)tblRooms.getModel(); 
@@ -115,6 +118,7 @@ public class StaffViewRooms extends javax.swing.JFrame {
         }
     }
     
+    //add room types to drop down
     public void populateRoomTypeDropDown()
     {
         comboRoomType.removeAllItems();
@@ -528,7 +532,7 @@ public class StaffViewRooms extends javax.swing.JFrame {
         int roomID = (Integer)tblRooms.getValueAt(tblRooms.getSelectedRow(), 0);
         DBManager db = new DBManager();
         editableRoom = db.getRoomFromRoomID(roomID);
-        
+        //load room edit panel
         jframeStaffEditRoom.setVisible(true);
         jframeStaffEditRoom.setSize(390,440);
         jframeStaffEditRoom.getContentPane().setBackground(Color.white);
@@ -545,7 +549,7 @@ public class StaffViewRooms extends javax.swing.JFrame {
         txtRoomID.setEnabled(false);
         comboRoomType.setSelectedIndex(roomTypeID);
         txtRoomName.setText(roomName);
-        txtRoomImage.setText(roomImage);
+        txtRoomImage.setText("E:\\GRADED UNIT\\DroversLodge\\src\\img\\rooms\\JPEG\\" + roomImage);
     }//GEN-LAST:event_btnEditRoomActionPerformed
 
     private void btnDeleteRoomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteRoomActionPerformed
@@ -553,62 +557,72 @@ public class StaffViewRooms extends javax.swing.JFrame {
         int roomID = (Integer)tblRooms.getValueAt(tblRooms.getSelectedRow(), 0);
         Room selectedRoom = db.getRoomFromRoomID(roomID);
         db.removeRoom(roomID);
+        JOptionPane.showMessageDialog(null, "Room deleted");
         this.clearRoomsTable();
         this.loadRoomsTable();
     }//GEN-LAST:event_btnDeleteRoomActionPerformed
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
-        int roomID = Integer.parseInt(txtRoomID.getText());
-        int roomTypeID = comboRoomType.getSelectedIndex();
-        String roomName = txtRoomName.getText();
-        String roomImage = file;
+       //check that room name and room type have been entered
+        if(txtRoomName.getText().isEmpty() || comboRoomType.getSelectedIndex() == 0)
+       {
+           JOptionPane.showMessageDialog(null, "Please enter Room Name and Room Type");
+       }
+       else
+       {
+            int roomID = Integer.parseInt(txtRoomID.getText());
+            int roomTypeID = comboRoomType.getSelectedIndex();
+            String roomName = txtRoomName.getText();
+            String roomImage = file;
 
+            //create file chooser for selecting room image
+            String path1 = path;
+            String filename = file;
+            String path2 = "E:\\GRADED UNIT\\DroversLodge\\src\\img\\rooms\\JPEG\\";
 
-        String path1 = path;
-        String filename = file;
-        String path2 = "E:\\GRADED UNIT\\DroversLodge\\src\\img\\rooms\\JPEG\\";
-
-        File oldFile = new File( path1, filename );
-        File newFile = new File( path2, filename );
-
-        try
-        {
-            FileInputStream fis = new FileInputStream( oldFile );
-            FileOutputStream fos = new FileOutputStream( newFile );
+            File oldFile = new File( path1, filename );
+            File newFile = new File( path2, filename );
 
             try
             {
-                int currentByte = fis.read();
-                while( currentByte != -1 )
+                FileInputStream fis = new FileInputStream( oldFile );
+                FileOutputStream fos = new FileOutputStream( newFile );
+
+                try
                 {
-                   fos.write( currentByte );
-                   currentByte = fis.read();
+                    int currentByte = fis.read();
+                    while( currentByte != -1 )
+                    {
+                       fos.write( currentByte );
+                       currentByte = fis.read();
+                    }
+                }
+                catch( IOException exception )
+                {
+                    System.err.println( "IOException occurred!" );
+                    exception.printStackTrace();
+                }
+                finally
+                {
+                    fis.close();
+                    fos.close();
+                    System.out.println( "Copied file!" );
                 }
             }
             catch( IOException exception )
             {
-                System.err.println( "IOException occurred!" );
+                System.err.println( "Problems with files!" );
                 exception.printStackTrace();
-            }
-            finally
-            {
-                fis.close();
-                fos.close();
-                System.out.println( "Copied file!" );
-            }
-        }
-        catch( IOException exception )
-        {
-            System.err.println( "Problems with files!" );
-            exception.printStackTrace();
-        }            
-        
-        Room roomToBeUpdated = new Room(roomTypeID, roomName, roomImage);
-        DBManager db = new DBManager();
-        db.updateRoomDetails(roomID, roomToBeUpdated);
-        this.jframeStaffEditRoom.dispose();
-        this.clearRoomsTable();
-        this.loadRoomsTable();
+            }            
+            //update room details
+            Room roomToBeUpdated = new Room(roomTypeID, roomName, roomImage);
+            DBManager db = new DBManager();
+            db.updateRoomDetails(roomID, roomToBeUpdated);
+            this.jframeStaffEditRoom.dispose();
+            JOptionPane.showMessageDialog(null, "Room details updated");
+            this.clearRoomsTable();
+            this.loadRoomsTable();
+       }
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
@@ -638,7 +652,7 @@ public class StaffViewRooms extends javax.swing.JFrame {
         SimpleDateFormat fileFormat = new SimpleDateFormat("dd_MM_yyyy");
         Date today = new Date();
         String todaysDate = fileFormat.format(today);
-        
+        //create table of rooms on the fly to load into report 
         String colNames[] = {"Room ID", "Room Type", "Room Name"};
         Object[][] tableData = new Object[(rooms.keySet().size())][6];
         int index = 0;
@@ -652,7 +666,7 @@ public class StaffViewRooms extends javax.swing.JFrame {
         }
         DefaultTableModel dtm = new DefaultTableModel(tableData,colNames);
         JTable tblRoomReport = new JTable(dtm);
-    
+        //create excel report of room details
         ExcelWriter export = new ExcelWriter();
                 
         export.newExcelFile(todaysDate);

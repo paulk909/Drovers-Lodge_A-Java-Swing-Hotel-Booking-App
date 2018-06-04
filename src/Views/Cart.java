@@ -1169,8 +1169,13 @@ public class Cart extends javax.swing.JFrame {
                 }
                 int cardTypeID = db.getCardTypeIDFromCardType(String.valueOf(comboCardType.getSelectedItem()));
                 double totalCost = currentBooking.getTotalCost();
-
-                Payment payment = new Payment(payeeName, cardNo, securityNo, expiryDate, cardTypeID, totalCost);
+                
+                String paymentHouse = txtPaymentHouse.getText();
+                String paymentStreet = txtPaymentStreet.getText();
+                String paymentTown = txtPaymentTown.getText();
+                String paymentPostcode = txtPaymentPostcode.getText();
+                
+                Payment payment = new Payment(payeeName, cardNo, securityNo, expiryDate, cardTypeID, totalCost, paymentHouse, paymentStreet, paymentTown, paymentPostcode);
 
                 int customerID = 0;
                 if(loggedInUser.getUserTypeID() == 2)

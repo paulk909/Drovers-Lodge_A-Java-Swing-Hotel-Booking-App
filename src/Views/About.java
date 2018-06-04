@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 /**
@@ -42,17 +43,18 @@ import javax.swing.JTextField;
  * @author Paul
  */
 public class About extends javax.swing.JFrame {
-    
+    //load user details
     LoggedInUser loggedInUser = new LoggedInUser();
 
     /**
-     * Creates new form About
+     * displays contact info and allows users to view room details
      */
     public About(LoggedInUser loggedInUser) {
         this.loggedInUser = loggedInUser;
         loadFrame();
     }
     
+    //initialise components in frame
     public void loadFrame()
     {
         initComponents();
@@ -105,6 +107,7 @@ public class About extends javax.swing.JFrame {
         populateRoomTypeDropDown();
     }
     
+    //add room types to drop down
     public void populateRoomTypeDropDown()
     {
         comboRoomType.removeAllItems();
@@ -119,6 +122,7 @@ public class About extends javax.swing.JFrame {
         populateRoomNameDropDown();
     }
     
+     //add room names to drop down
     public void populateRoomNameDropDown()
     {
         comboRoomName.removeAllItems();
@@ -182,6 +186,7 @@ public class About extends javax.swing.JFrame {
         });
     }
     
+    //load image of selected room
     public void loadRoomImage()
     {
         comboRoomName.addActionListener (new ActionListener () 
@@ -429,6 +434,17 @@ public class About extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("View Room"));
+
+        comboRoomName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                comboRoomNameMouseClicked(evt);
+            }
+        });
+        comboRoomName.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                comboRoomNamePropertyChange(evt);
+            }
+        });
 
         comboRoomType.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -717,7 +733,7 @@ public class About extends javax.swing.JFrame {
         String username  =  txtUsername.getText();
         String password  =  txtPassword.getText();
         DBManager db= new DBManager();
-
+        //check login details exist in db
         if(db.checkLoginDetails(username, password))
         {
             loggedInUser = db.getValidUser(username);
@@ -741,52 +757,59 @@ public class About extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void btnViewAvailabilityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewAvailabilityActionPerformed
-        jframeAvailability.setVisible(true);
-        jframeAvailability.setSize(410,440);
-        jframeAvailability.getContentPane().setBackground(Color.white);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        jframeAvailability.setLocation(dim.width/2-jframeAvailability.getSize().width/2, dim.height/2-jframeAvailability.getSize().height/2);
-        
-        String roomName = String.valueOf(comboRoomName.getSelectedItem());
-        DBManager db = new DBManager();
-        Room selectedRoom = db.getRoomFromRoomName(roomName);
-        txtAvailabilityTitle.setText("Availability of " + roomName);
-        
-        HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
-        bookingLines = db.getBookingLinesOfRoomID(selectedRoom.getRoomID());
-        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
-        List<Date> datesBooked = new ArrayList<Date>();
-        
-        for(Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+        //check that room is selected and load availability calendar
+        if(comboRoomName.getSelectedIndex() == 0)
         {
-            try 
-            {
-                Date checkIn = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckInDate()));
-                Date checkOut = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckOutDate()));
-                
-                for(Date date : getDaysBetweenDates(checkIn, checkOut))
-                {
-                    datesBooked.add(date);
-                }                
-                
-            } catch (ParseException ex) 
-            {
-                Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            JOptionPane.showMessageDialog(null, "Please select a room");
         }
-                for(Date date : datesBooked)
+        else
+        {
+            jframeAvailability.setVisible(true);
+            jframeAvailability.setSize(410,440);
+            jframeAvailability.getContentPane().setBackground(Color.white);
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            jframeAvailability.setLocation(dim.width/2-jframeAvailability.getSize().width/2, dim.height/2-jframeAvailability.getSize().height/2);
+        
+            String roomName = String.valueOf(comboRoomName.getSelectedItem());
+            DBManager db = new DBManager();
+            Room selectedRoom = db.getRoomFromRoomName(roomName);
+            txtAvailabilityTitle.setText("Availability of " + roomName);
+
+            HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
+            bookingLines = db.getBookingLinesOfRoomID(selectedRoom.getRoomID());
+            SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
+            List<Date> datesBooked = new ArrayList<Date>();
+
+            for(Map.Entry<Integer, BookingLine> bookingLineEntry : bookingLines.entrySet())
+            {
+                try 
                 {
-                    calendarAvailability.setSelectedDates(datesBooked);
-                    calendarAvailability.disable();
-                    for (Component c : calendarAvailability.getComponents()) 
+                    Date checkIn = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckInDate()));
+                    Date checkOut = fmt.parse(fmt.format(bookingLineEntry.getValue().getCheckOutDate()));
+
+                    for(Date date : getDaysBetweenDates(checkIn, checkOut))
                     {
-                        if (c instanceof JTextField) { 
-                           ((JTextField)c).setEnabled(false); 
-                           ((JTextField)c).setDisabledTextColor(Color.BLACK);
+                        datesBooked.add(date);
+                    }                
+
+                } catch (ParseException ex) 
+                {
+                    Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+                    for(Date date : datesBooked)
+                    {
+                        calendarAvailability.setSelectedDates(datesBooked);
+                        calendarAvailability.disable();
+                        for (Component c : calendarAvailability.getComponents()) 
+                        {
+                            if (c instanceof JTextField) { 
+                               ((JTextField)c).setEnabled(false); 
+                               ((JTextField)c).setDisabledTextColor(Color.BLACK);
+                            }
                         }
                     }
-                }
-        
+        }
     }//GEN-LAST:event_btnViewAvailabilityActionPerformed
 
     private void btnAvailabilityCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvailabilityCloseActionPerformed
@@ -798,55 +821,62 @@ public class About extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPricesCloseActionPerformed
 
     private void btnRoomPricesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRoomPricesActionPerformed
-        jframeRoomPrices.setVisible(true);
-        jframeRoomPrices.setSize(690,390);
-        jframeRoomPrices.getContentPane().setBackground(Color.white);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        jframeRoomPrices.setLocation(dim.width/2-jframeRoomPrices.getSize().width/2, dim.height/2-jframeRoomPrices.getSize().height/2);
-        
-        DBManager db = new DBManager();
-        Room roomSelected = db.getRoomFromRoomName(String.valueOf(comboRoomName.getSelectedItem()));
-        String roomName = roomSelected.getRoomName();
-        String roomType = db.getRoomTypeFromRoomTypeID(roomSelected.getRoomTypeID());
-        String roomPrice = "";
-        if(roomSelected.getRoomTypeID() == 1)
+        //check that room is selected and load room details
+        if(comboRoomName.getSelectedIndex() == 0)
         {
-            roomPrice = "£55.00 per night";
+            JOptionPane.showMessageDialog(null, "Please select a room");
         }
-        else if(roomSelected.getRoomTypeID() == 2)
-        {
-            roomPrice = "£75.00 per night";
-        }
-        else if(roomSelected.getRoomTypeID() == 3)
-        {
-            roomPrice = "£90.00 per night";
-        }
-        String roomDescription = "";
-        if(roomSelected.getRoomTypeID() == 1)
-        {
-            roomDescription = "A single room with a double bed \nwhich can sleep two people.";
-        }
-        else if(roomSelected.getRoomTypeID() == 2)
-        {
-            roomDescription = "A double room which has two \nsingle beds and a fold up sofa bed. \nThis can sleep up to three people.";
-        }
-        else if(roomSelected.getRoomTypeID() == 3)
-        {
-            roomDescription = "A family room with a double bed, \ntwo double beds, and a fold up \nsofa bed. This room can sleep up to five people.";
-        }
-        
-        txtRoomDetails.setText(
-        "Room Name: " + roomName + "\n" +
-        "Room Type: " + roomType + "\n" +
-        "Room Price: " + roomPrice + "\n" +
-        "Room Description: " + roomDescription + "\n\n" +
-        "Meal Prices \nBreakfast: £10.00 per day\nLunch: £9.50 per day\nEvening Meal: £25.00 per day"
-        );
-        txtRoomDetails.setWrapStyleWord(true);
+        else
+        {        
+            jframeRoomPrices.setVisible(true);
+            jframeRoomPrices.setSize(690,390);
+            jframeRoomPrices.getContentPane().setBackground(Color.white);
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            jframeRoomPrices.setLocation(dim.width/2-jframeRoomPrices.getSize().width/2, dim.height/2-jframeRoomPrices.getSize().height/2);
 
-        
-        ImageIcon roomImage = new ImageIcon("src\\img\\rooms\\JPEG\\" + roomSelected.getRoomImage());
-        lblRoomPic.setIcon(roomImage);
+            DBManager db = new DBManager();
+            Room roomSelected = db.getRoomFromRoomName(String.valueOf(comboRoomName.getSelectedItem()));
+            String roomName = roomSelected.getRoomName();
+            String roomType = db.getRoomTypeFromRoomTypeID(roomSelected.getRoomTypeID());
+            String roomPrice = "";
+            if(roomSelected.getRoomTypeID() == 1)
+            {
+                roomPrice = "£55.00 per night";
+            }
+            else if(roomSelected.getRoomTypeID() == 2)
+            {
+                roomPrice = "£75.00 per night";
+            }
+            else if(roomSelected.getRoomTypeID() == 3)
+            {
+                roomPrice = "£90.00 per night";
+            }
+            String roomDescription = "";
+            if(roomSelected.getRoomTypeID() == 1)
+            {
+                roomDescription = "A single room with a double bed \nwhich can sleep two people.";
+            }
+            else if(roomSelected.getRoomTypeID() == 2)
+            {
+                roomDescription = "A double room which has two \nsingle beds and a fold up sofa bed. \nThis can sleep up to three people.";
+            }
+            else if(roomSelected.getRoomTypeID() == 3)
+            {
+                roomDescription = "A family room with a double bed, \ntwo double beds, and a fold up \nsofa bed. This room can sleep up to five people.";
+            }
+
+            txtRoomDetails.setText(
+            "Room Name: " + roomName + "\n" +
+            "Room Type: " + roomType + "\n" +
+            "Room Price: " + roomPrice + "\n" +
+            "Room Description: " + roomDescription + "\n\n" +
+            "Meal Prices \nBreakfast: £10.00 per day\nLunch: £9.50 per day\nEvening Meal: £25.00 per day"
+            );
+            txtRoomDetails.setWrapStyleWord(true);
+
+            ImageIcon roomImage = new ImageIcon("src\\img\\rooms\\JPEG\\" + roomSelected.getRoomImage());
+            lblRoomPic.setIcon(roomImage);
+        }
     }//GEN-LAST:event_btnRoomPricesActionPerformed
 
     private void btnMakeABookingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMakeABookingActionPerformed
@@ -855,7 +885,20 @@ public class About extends javax.swing.JFrame {
         rForm.setVisible(true);
     }//GEN-LAST:event_btnMakeABookingActionPerformed
 
-    
+    private void comboRoomNamePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_comboRoomNamePropertyChange
+
+    }//GEN-LAST:event_comboRoomNamePropertyChange
+
+    private void comboRoomNameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_comboRoomNameMouseClicked
+
+    }//GEN-LAST:event_comboRoomNameMouseClicked
+
+    /**
+     * returns a list of dates between two dates
+     * @param startDate
+     * @param endDate
+     * @return list of dates
+     */
     public List<Date> getDaysBetweenDates(Date startDate, Date endDate)
     {
         List<Date> dates = new ArrayList<Date>();

@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
@@ -555,23 +556,34 @@ public class StaffViewStaff extends javax.swing.JFrame {
         int staffID = (Integer)tblStaff.getValueAt(tblStaff.getSelectedRow(), 0);
         Staff selectedStaff = db.getStaffFromStaffID(staffID);
         db.removeStaff(staffID);
+        JOptionPane.showMessageDialog(null, "Staff member deleted");
         this.clearStaffTable();
         this.loadStaffTable();
     }//GEN-LAST:event_btnDeleteStaffActionPerformed
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
-        int staffID = Integer.parseInt(txtStaffID.getText());
-        String username = txtUsername.getText();
-        String firstName = txtFirstName.getText();
-        String lastName = txtLastName.getText();
-        String email = txtEmail.getText();
-        int staffRoleID = comboStaffRole.getSelectedIndex();
-        Staff staffToBeUpdated = new Staff(firstName, lastName, email);
-        DBManager db = new DBManager();
-        db.updateStaffDetails(staffID, staffToBeUpdated);
-        this.jframeStaffEditStaff.dispose();
-        this.clearStaffTable();
-        this.loadStaffTable();
+        if(txtUsername.getText().isEmpty() ||
+                txtFirstName.getText().isEmpty() || txtLastName.getText().isEmpty() || txtEmail.getText().isEmpty() ||
+                comboStaffRole.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(null, "Please fill in all fields");
+        }
+        else
+        {
+            int staffID = Integer.parseInt(txtStaffID.getText());
+            String username = txtUsername.getText();
+            String firstName = txtFirstName.getText();
+            String lastName = txtLastName.getText();
+            String email = txtEmail.getText();
+            int staffRoleID = comboStaffRole.getSelectedIndex();
+            Staff staffToBeUpdated = new Staff(firstName, lastName, email);
+            DBManager db = new DBManager();
+            db.updateStaffDetails(staffID, staffToBeUpdated);
+            this.jframeStaffEditStaff.dispose();
+            JOptionPane.showMessageDialog(null, "Staff member details updated");
+            this.clearStaffTable();
+            this.loadStaffTable();
+        }
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed

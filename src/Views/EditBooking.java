@@ -10,6 +10,7 @@ import Models.BookingLine;
 import Models.CardType;
 import Models.Customer;
 import Models.DBManager;
+import Models.Email;
 import Models.LoggedInUser;
 import Models.MealType;
 import Models.PaymentType;
@@ -108,7 +109,8 @@ public class EditBooking extends javax.swing.JFrame {
             
             model.addRow(new Object[]{currentBookingLine.getBookingLineID(), dateFormat.format(currentBookingLine.getCheckInDate()), dateFormat.format(currentBookingLine.getCheckOutDate()),
                             currentBookingLine.getRoomID(), roomType, currentBookingLine.getBreakfast(), currentBookingLine.getLunch(), 
-                            currentBookingLine.getEveningMeal(), "£" + String.format("%.02f",currentBookingLine.getLineCost()) });
+                            currentBookingLine.getEveningMeal(), "£" + String.format("%.02f",currentBookingLine.getLineCost()),
+                            currentBookingLine.getIsCheckedIn(), currentBookingLine.getIsCheckedOut()});
         }
         txtBookingID.setText(String.valueOf(currentBooking.getBookingID()));
         txtTotalCost.setText("£" + String.format("%.02f",(currentBooking.getTotalCost())));
@@ -238,7 +240,7 @@ public class EditBooking extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         comboCustomer = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
+        btnAbout = new javax.swing.JButton();
         btnRegister = new javax.swing.JButton();
         btnSignIn = new javax.swing.JButton();
         btnCart = new javax.swing.JButton();
@@ -247,6 +249,8 @@ public class EditBooking extends javax.swing.JFrame {
         lblTitle = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         btnEdit = new javax.swing.JButton();
+        btnCheckIn = new javax.swing.JButton();
+        btnCheckOut = new javax.swing.JButton();
 
         jLabel5.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(51, 0, 0));
@@ -491,14 +495,14 @@ public class EditBooking extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Booking Line ID", "Check In", "Check Out", "Room ID", "Room Type", "Breakfast", "Lunch", "Evening Meal", "Cost"
+                "Booking Line ID", "Check In", "Check Out", "Room ID", "Room Type", "Breakfast", "Lunch", "Evening Meal", "Cost", "Checked In", "Checked Out"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                true, true, true, true, true, false, false, false, true
+                false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -568,7 +572,7 @@ public class EditBooking extends javax.swing.JFrame {
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(comboPaymentType, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
@@ -588,7 +592,6 @@ public class EditBooking extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
                         .addComponent(btnConfirm)
                         .addGap(26, 26, 26))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -609,7 +612,12 @@ public class EditBooking extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(224, 224, 224));
         jPanel2.setToolTipText("");
 
-        jButton2.setText("About Drovers Lodge");
+        btnAbout.setText("About Drovers Lodge");
+        btnAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAboutActionPerformed(evt);
+            }
+        });
 
         btnRegister.setText("Register");
         btnRegister.addActionListener(new java.awt.event.ActionListener() {
@@ -650,7 +658,7 @@ public class EditBooking extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton2)
+                .addComponent(btnAbout)
                 .addGap(18, 18, 18)
                 .addComponent(btnControlPanel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -666,7 +674,7 @@ public class EditBooking extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
+                    .addComponent(btnAbout)
                     .addComponent(btnSignIn)
                     .addComponent(btnRegister)
                     .addComponent(btnCart)
@@ -697,16 +705,24 @@ public class EditBooking extends javax.swing.JFrame {
             }
         });
 
+        btnCheckIn.setText("Check In");
+        btnCheckIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCheckInActionPerformed(evt);
+            }
+        });
+
+        btnCheckOut.setText("Check Out");
+        btnCheckOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCheckOutActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnEdit)
-                .addGap(18, 18, 18)
-                .addComponent(btnRemove)
-                .addGap(30, 30, 30))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
@@ -716,12 +732,21 @@ public class EditBooking extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(lblStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(20, 20, 20)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnCheckIn)
+                                .addGap(26, 26, 26)
+                                .addComponent(btnCheckOut)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnEdit)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnRemove)
+                                .addGap(11, 11, 11))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(19, 19, 19))
         );
         layout.setVerticalGroup(
@@ -741,7 +766,9 @@ public class EditBooking extends javax.swing.JFrame {
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRemove)
-                    .addComponent(btnEdit))
+                    .addComponent(btnEdit)
+                    .addComponent(btnCheckIn)
+                    .addComponent(btnCheckOut))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(31, Short.MAX_VALUE))
@@ -889,6 +916,12 @@ public class EditBooking extends javax.swing.JFrame {
         db.updateBookingLine(bookingLineID, newBookingLineDetails, changeInCost);
         currentBooking = db.getBookingFromBookingID(bookingID);        
         currentBooking.populateBookingLines();
+        
+        int customerID = currentBooking.getCustomerID();
+        String email = db.getCustomerFromCustomerID(customerID).getEmail();
+        Email bookingEmail = new Email();
+        bookingEmail.updateBookingEmail(email, currentBooking);
+        
 
         int tblBookingLinesSelectedRow = tblBookingLines.getSelectedRow();
         clearCart();
@@ -986,6 +1019,24 @@ public class EditBooking extends javax.swing.JFrame {
         double changeInCost = price - lineCost;
         txtChangeInCost.setText("£" + String.format("%.02f",changeInCost));
     }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAboutActionPerformed
+        About rForm = new About(loggedInUser);
+        this.dispose();
+        rForm.setVisible(true);
+    }//GEN-LAST:event_btnAboutActionPerformed
+
+    private void btnCheckInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckInActionPerformed
+        int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
+        DBManager db = new DBManager();
+        db.updateBookingLineCheckIn(bookingLineID, true);
+    }//GEN-LAST:event_btnCheckInActionPerformed
+
+    private void btnCheckOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckOutActionPerformed
+        int bookingLineID = (Integer)tblBookingLines.getValueAt(tblBookingLines.getSelectedRow(), 0);
+        DBManager db = new DBManager();
+        db.updateBookingLineCheckOut(bookingLineID, true);
+    }//GEN-LAST:event_btnCheckOutActionPerformed
 
     
     public void updateEditBookingLine(int bookingLineID, Date editCheckIn, Date editCheckOut, String editRoomType, boolean[] editMeals)
@@ -1146,7 +1197,10 @@ public class EditBooking extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAbout;
     private javax.swing.JButton btnCart;
+    private javax.swing.JButton btnCheckIn;
+    private javax.swing.JButton btnCheckOut;
     private javax.swing.JButton btnConfirm;
     private javax.swing.JButton btnControlPanel;
     private javax.swing.JButton btnEdit;
@@ -1163,7 +1217,6 @@ public class EditBooking extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> comboCustomer;
     private javax.swing.JComboBox<String> comboPaymentType;
     private javax.swing.JComboBox<String> comboRoomType;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

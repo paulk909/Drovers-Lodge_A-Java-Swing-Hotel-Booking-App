@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -85,6 +87,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         if(!loggedInUser.getIsLoggedIn())
         {
             btnControlPanel.setVisible(false);
+            lblStaff.setVisible(false);
         }
         else
         {
@@ -101,6 +104,21 @@ public class CheckAvailability extends javax.swing.JFrame {
             }
         }  
         populateRoomTypeDropDown();        
+        Date today = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(today);
+        cal.add(Calendar.DATE, 1);
+        Calendar cal4 = Calendar.getInstance();
+        cal4.setTime(today);
+        cal4.add(Calendar.YEAR, 2);
+        Date tomorrow = cal.getTime();
+        Date maxDate = cal4.getTime();
+        jdateCheckIn.setMinSelectableDate(today);
+        jdateCheckIn.setMaxSelectableDate(maxDate);
+        jdateCheckIn.getComponent(1).setEnabled(false);
+        jdateCheckOut.getComponent(1).setEnabled(false);
+        jdateCheckOut.setMinSelectableDate(tomorrow);
+        jdateCheckOut.setMaxSelectableDate(maxDate);
     }
     
     
@@ -292,7 +310,7 @@ public class CheckAvailability extends javax.swing.JFrame {
         txtAvailability = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
+        btnAbout = new javax.swing.JButton();
         btnRegister = new javax.swing.JButton();
         btnSignIn = new javax.swing.JButton();
         btnCart = new javax.swing.JButton();
@@ -604,7 +622,12 @@ public class CheckAvailability extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(224, 224, 224));
         jPanel2.setToolTipText("");
 
-        jButton2.setText("About Drovers Lodge");
+        btnAbout.setText("About Drovers Lodge");
+        btnAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAboutActionPerformed(evt);
+            }
+        });
 
         btnRegister.setText("Register");
         btnRegister.addActionListener(new java.awt.event.ActionListener() {
@@ -645,7 +668,7 @@ public class CheckAvailability extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton2)
+                .addComponent(btnAbout)
                 .addGap(18, 18, 18)
                 .addComponent(btnControlPanel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -661,7 +684,7 @@ public class CheckAvailability extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
+                    .addComponent(btnAbout)
                     .addComponent(btnSignIn)
                     .addComponent(btnRegister)
                     .addComponent(btnCart)
@@ -726,11 +749,29 @@ public class CheckAvailability extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jdateCheckInPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdateCheckInPropertyChange
-//        refreshAvailability();
+        Date checkIn = new Date();
+        if(jdateCheckIn.getDate() != null)
+        {
+            checkIn = jdateCheckIn.getDate();
+            Calendar cal3 = Calendar.getInstance();
+            cal3.setTime(checkIn);
+            cal3.add(Calendar.DATE, 1);        
+            Date dayAfter = cal3.getTime();
+            jdateCheckOut.setMinSelectableDate(dayAfter);
+        }
     }//GEN-LAST:event_jdateCheckInPropertyChange
 
     private void jdateCheckOutPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdateCheckOutPropertyChange
-//        refreshAvailability();
+        Date checkOut = new Date();
+        if(jdateCheckOut.getDate() != null)
+        {
+            checkOut = jdateCheckOut.getDate();
+            Calendar cal2 = Calendar.getInstance();
+            cal2.setTime(checkOut);
+            cal2.add(Calendar.DATE, -1);        
+            Date dayBefore = cal2.getTime();
+            jdateCheckIn.setMaxSelectableDate(dayBefore);
+        }
     }//GEN-LAST:event_jdateCheckOutPropertyChange
 
     private void comboRoomTypePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_comboRoomTypePropertyChange
@@ -750,48 +791,76 @@ public class CheckAvailability extends javax.swing.JFrame {
     }//GEN-LAST:event_checkEveningMealPropertyChange
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        refreshAvailability();
+        if(jdateCheckIn.getDate() == null || jdateCheckOut.getDate() == null || comboRoomType.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(null, "Please ensure the following are selected:\n - Check in date\n - Check out date\n - Type of room");
+        }
+        else
+        {
+            refreshAvailability();
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        Date checkIn = jdateCheckIn.getDate();
-        Date checkOut = jdateCheckOut.getDate();
-        int roomID = 0;
-        String roomType = String.valueOf(comboRoomType.getSelectedItem());
-        
-        DBManager db = new DBManager();
-        roomID = db.getAvailableRoomID(checkIn, checkOut, roomType);
-        
-        boolean[] meals = new boolean[3];
-        
-        if(checkBreakfast.isSelected())
+        if(jdateCheckIn.getDate() == null || jdateCheckOut.getDate() == null || comboRoomType.getSelectedIndex() == 0)
         {
-            meals[0] = true;
-        } else
-        {
-            meals[0] = false;
+            JOptionPane.showMessageDialog(null, "Please ensure the following are selected:\n - Check in date\n - Check out date\n - Type of room");
         }
-        if(checkLunch.isSelected())
+        else
         {
-            meals[1] = true;
-        } else
-        {
-            meals[1] = false;
+            Date checkIn = jdateCheckIn.getDate();
+            Date checkOut = jdateCheckOut.getDate();
+            int roomID = 0;
+            String roomType = String.valueOf(comboRoomType.getSelectedItem());
+
+            DBManager db = new DBManager();
+            roomID = db.getAvailableRoomID(checkIn, checkOut, roomType);
+
+            boolean[] meals = new boolean[3];
+
+            if(checkBreakfast.isSelected())
+            {
+                meals[0] = true;
+            } else
+            {
+                meals[0] = false;
+            }
+            if(checkLunch.isSelected())
+            {
+                meals[1] = true;
+            } else
+            {
+                meals[1] = false;
+            }
+            if(checkEveningMeal.isSelected())
+            {
+                meals[2] = true;
+            } else
+            {
+                meals[2] = false;
+            }
+            long lengthOfStay = getLengthOfStay(checkIn, checkOut);
+            double lineCost = calculatePrice(lengthOfStay, meals, db.getRoomTypeIDFromRoomID(roomID));
+
+            if(db.getAvailability(checkIn, checkOut, roomType) > 0)
+            {
+                if(("£" + String.format("%.02f",lineCost)).equals(txtPrice.getText()))
+                {
+                    BookingLine newBookingLine = new BookingLine(checkIn, checkOut, roomID, meals, lineCost);
+                    db.addBookingLineToDb(loggedInUser, newBookingLine);
+                    txtAvailability.setText(String.valueOf(db.getAvailability(checkIn, checkOut, roomType)));
+                    JOptionPane.showMessageDialog(null, roomType + " room added to cart");
+                }
+                else
+                {
+                JOptionPane.showMessageDialog(null, "Please click update to show correct price");
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "There are no " + roomType + " rooms available for the selected dates");
+            }
         }
-        if(checkEveningMeal.isSelected())
-        {
-            meals[2] = true;
-        } else
-        {
-            meals[2] = false;
-        }
-        long lengthOfStay = getLengthOfStay(checkIn, checkOut);
-        double lineCost = calculatePrice(lengthOfStay, meals, db.getRoomTypeIDFromRoomID(roomID));
-        
-        BookingLine newBookingLine = new BookingLine(checkIn, checkOut, roomID, meals, lineCost);
-        db.addBookingLineToDb(loggedInUser, newBookingLine);
-//        currentBooking = loggedInCustomer.getCurrentBooking();
-        txtAvailability.setText(String.valueOf(db.getAvailability(checkIn, checkOut, roomType)));
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
@@ -862,6 +931,12 @@ public class CheckAvailability extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnControlPanelActionPerformed
 
+    private void btnAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAboutActionPerformed
+        About rForm = new About(loggedInUser);
+        this.dispose();
+        rForm.setVisible(true);
+    }//GEN-LAST:event_btnAboutActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -898,6 +973,7 @@ public class CheckAvailability extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAbout;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnCart;
     private javax.swing.JButton btnClose;
@@ -910,7 +986,6 @@ public class CheckAvailability extends javax.swing.JFrame {
     private javax.swing.JCheckBox checkEveningMeal;
     private javax.swing.JCheckBox checkLunch;
     private javax.swing.JComboBox<String> comboRoomType;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

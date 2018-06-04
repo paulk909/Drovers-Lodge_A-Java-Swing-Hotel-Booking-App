@@ -84,11 +84,11 @@ public class BookingLine {
         return lineCost;
     }
 
-    public boolean isIsCheckedIn() {
+    public boolean getIsCheckedIn() {
         return isCheckedIn;
     }
 
-    public boolean isIsCheckedOut() {
+    public boolean getIsCheckedOut() {
         return isCheckedOut;
     }
 

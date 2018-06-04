@@ -10,18 +10,32 @@ import Models.Room;
 import Models.RoomType;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FileDialog;
+import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  *
  * @author Paul
  */
 public class RoomRegister extends javax.swing.JFrame {
+    
+    private String file = "";
+    private String path = "";
 
     /**
      * Creates new form RoomRegister
@@ -65,6 +79,11 @@ public class RoomRegister extends javax.swing.JFrame {
         btnSubmit = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        txtRoomName = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        btnRoomImage = new javax.swing.JButton();
+        txtRoomImage = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -97,10 +116,33 @@ public class RoomRegister extends javax.swing.JFrame {
             }
         });
 
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel5.setText("Room Name");
+
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel6.setText("Room Image");
+
+        btnRoomImage.setText("Choose File");
+        btnRoomImage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRoomImageActionPerformed(evt);
+            }
+        });
+
+        txtRoomImage.setEditable(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 69, Short.MAX_VALUE)
+                .addComponent(btnSubmit)
+                .addGap(46, 46, 46)
+                .addComponent(btnClear)
+                .addGap(46, 46, 46)
+                .addComponent(btnClose)
+                .addGap(58, 58, 58))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -108,18 +150,17 @@ public class RoomRegister extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(44, 44, 44)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6))
                         .addGap(18, 18, 18)
-                        .addComponent(comboRoomType, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtRoomName)
+                            .addComponent(comboRoomType, 0, 162, Short.MAX_VALUE)
+                            .addComponent(btnRoomImage)
+                            .addComponent(txtRoomImage))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 65, Short.MAX_VALUE)
-                .addComponent(btnSubmit)
-                .addGap(46, 46, 46)
-                .addComponent(btnClear)
-                .addGap(46, 46, 46)
-                .addComponent(btnClose)
-                .addGap(62, 62, 62))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -130,12 +171,22 @@ public class RoomRegister extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(comboRoomType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(33, 33, 33)
+                .addGap(27, 27, 27)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtRoomName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(btnRoomImage))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtRoomImage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSubmit)
                     .addComponent(btnClear)
                     .addComponent(btnClose))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addGap(55, 55, 55))
         );
 
         pack();
@@ -144,8 +195,52 @@ public class RoomRegister extends javax.swing.JFrame {
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
         try {
             int roomTypeID = comboRoomType.getSelectedIndex();
+            String roomName = txtRoomName.getText();
+            String roomImage = file;
+            
+            
+            String path1 = path;
+            String filename = file;
+            String path2 = "E:\\GRADED UNIT\\DroversLodge\\src\\img\\rooms\\JPEG\\";
+
+            File oldFile = new File( path1, filename );
+            File newFile = new File( path2, filename );
+
+            try
+            {
+                FileInputStream fis = new FileInputStream( oldFile );
+                FileOutputStream fos = new FileOutputStream( newFile );
+
+                try
+                {
+                    int currentByte = fis.read();
+                    while( currentByte != -1 )
+                    {
+                       fos.write( currentByte );
+                       currentByte = fis.read();
+                    }
+                }
+                catch( IOException exception )
+                {
+                    System.err.println( "IOException occurred!" );
+                    exception.printStackTrace();
+                }
+                finally
+                {
+                    fis.close();
+                    fos.close();
+                    System.out.println( "Copied file!" );
+                }
+            }
+            catch( IOException exception )
+            {
+                System.err.println( "Problems with files!" );
+                exception.printStackTrace();
+            }            
+            
+            
             DBManager db = new DBManager();
-            Room roomToBeAdded = new Room(roomTypeID);
+            Room roomToBeAdded = new Room(roomTypeID, roomName, roomImage);
             db.addRoomToDb(roomToBeAdded);
         } catch (SQLException ex) {
             Logger.getLogger(RoomRegister.class.getName()).log(Level.SEVERE, null, ex);
@@ -159,6 +254,15 @@ public class RoomRegister extends javax.swing.JFrame {
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         comboRoomType.setSelectedIndex(0);
     }//GEN-LAST:event_btnClearActionPerformed
+
+    private void btnRoomImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRoomImageActionPerformed
+        FileDialog dialog = new FileDialog((Frame)null, "Select File to Open");
+        dialog.setMode(FileDialog.LOAD);
+        dialog.setVisible(true);
+        file = dialog.getFile();
+        path = dialog.getDirectory();
+        txtRoomImage.setText(path + file);
+    }//GEN-LAST:event_btnRoomImageActionPerformed
 
     /**
      * @param args the command line arguments
@@ -198,9 +302,14 @@ public class RoomRegister extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnRoomImage;
     private javax.swing.JButton btnSubmit;
     private javax.swing.JComboBox<String> comboRoomType;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JTextField txtRoomImage;
+    private javax.swing.JTextField txtRoomName;
     // End of variables declaration//GEN-END:variables
 }

@@ -21,9 +21,46 @@ public class Payment {
     private int cardTypeID;
     private double totalCost;
     private int bookingID;
+    private String paymentHouse;
+    private String paymentStreet;
+    private String paymentTown;
+    private String paymentPostcode;
 
     public Payment() {
     }
+
+    public Payment(int paymentID, Date datePaid, String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost, int bookingID, String paymentHouse, String paymentStreet, String paymentTown, String paymentPostcode) {
+        this.paymentID = paymentID;
+        this.datePaid = datePaid;
+        this.payeeName = payeeName;
+        this.cardNo = cardNo;
+        this.securityNo = securityNo;
+        this.expiryDate = expiryDate;
+        this.cardTypeID = cardTypeID;
+        this.totalCost = totalCost;
+        this.bookingID = bookingID;
+        this.paymentHouse = paymentHouse;
+        this.paymentStreet = paymentStreet;
+        this.paymentTown = paymentTown;
+        this.paymentPostcode = paymentPostcode;
+    }
+
+    public Payment(Date datePaid, String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost, int bookingID, String paymentHouse, String paymentStreet, String paymentTown, String paymentPostcode) {
+        this.datePaid = datePaid;
+        this.payeeName = payeeName;
+        this.cardNo = cardNo;
+        this.securityNo = securityNo;
+        this.expiryDate = expiryDate;
+        this.cardTypeID = cardTypeID;
+        this.totalCost = totalCost;
+        this.bookingID = bookingID;
+        this.paymentHouse = paymentHouse;
+        this.paymentStreet = paymentStreet;
+        this.paymentTown = paymentTown;
+        this.paymentPostcode = paymentPostcode;
+    }
+    
+    
 
     public Payment(int paymentID, Date datePaid, String payeeName, String cardNo, String securityNo, Date expiryDate, int cardTypeID, double totalCost, int bookingID) {
         this.paymentID = paymentID;
@@ -91,6 +128,22 @@ public class Payment {
     public int getBookingID() {
         return bookingID;
     }
+
+    public String getPaymentHouse() {
+        return paymentHouse;
+    }
+
+    public String getPaymentStreet() {
+        return paymentStreet;
+    }
+
+    public String getPaymentTown() {
+        return paymentTown;
+    }
+
+    public String getPaymentPostcode() {
+        return paymentPostcode;
+    }
     
     
 
@@ -130,6 +183,23 @@ public class Payment {
     public void setBookingID(int bookingID) {
         this.bookingID = bookingID;
     }
+
+    public void setPaymentHouse(String paymentHouse) {
+        this.paymentHouse = paymentHouse;
+    }
+
+    public void setPaymentStreet(String paymentStreet) {
+        this.paymentStreet = paymentStreet;
+    }
+
+    public void setPaymentTown(String paymentTown) {
+        this.paymentTown = paymentTown;
+    }
+
+    public void setPaymentPostcode(String paymentPostcode) {
+        this.paymentPostcode = paymentPostcode;
+    }
+    
     
     
     

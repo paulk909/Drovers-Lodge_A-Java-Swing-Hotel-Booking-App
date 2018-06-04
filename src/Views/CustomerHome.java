@@ -12,12 +12,19 @@ import Models.Customer;
 import Models.DBManager;
 import Models.LoggedInUser;
 import Models.Payment;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
@@ -180,7 +188,7 @@ public class CustomerHome extends javax.swing.JFrame {
         jMonthRefundExpiry = new com.toedter.calendar.JMonthChooser();
         jYearRefundExpiry = new com.toedter.calendar.JYearChooser();
         jPanel2 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
+        btnAbout = new javax.swing.JButton();
         btnRegister = new javax.swing.JButton();
         btnSignIn = new javax.swing.JButton();
         btnCart = new javax.swing.JButton();
@@ -781,7 +789,12 @@ public class CustomerHome extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(224, 224, 224));
         jPanel2.setToolTipText("");
 
-        jButton2.setText("About Drovers Lodge");
+        btnAbout.setText("About Drovers Lodge");
+        btnAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAboutActionPerformed(evt);
+            }
+        });
 
         btnRegister.setText("Register");
         btnRegister.addActionListener(new java.awt.event.ActionListener() {
@@ -822,7 +835,7 @@ public class CustomerHome extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton2)
+                .addComponent(btnAbout)
                 .addGap(18, 18, 18)
                 .addComponent(btnControlPanel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -838,7 +851,7 @@ public class CustomerHome extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
+                    .addComponent(btnAbout)
                     .addComponent(btnSignIn)
                     .addComponent(btnRegister)
                     .addComponent(btnCart)
@@ -922,6 +935,11 @@ public class CustomerHome extends javax.swing.JFrame {
         jLabel1.setText("My Bookings");
 
         btnCustomerBookingReport.setText("Export Booking Report");
+        btnCustomerBookingReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCustomerBookingReportActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -951,16 +969,15 @@ public class CustomerHome extends javax.swing.JFrame {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(btnCustomerBookingReport)
                                         .addGap(15, 15, 15))
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnPayBooking)
+                                .addGap(35, 35, 35)
+                                .addComponent(btnEditBooking)
+                                .addGap(26, 26, 26)
+                                .addComponent(btnDeleteBooking)))
                         .addGap(32, 32, 32))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnPayBooking)
-                .addGap(34, 34, 34)
-                .addComponent(btnEditBooking)
-                .addGap(35, 35, 35)
-                .addComponent(btnDeleteBooking)
-                .addGap(52, 52, 52))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1355,6 +1372,73 @@ public class CustomerHome extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnControlPanelActionPerformed
 
+    private void btnCustomerBookingReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCustomerBookingReportActionPerformed
+        int bookingID = (Integer)tblBookings.getValueAt(tblBookings.getSelectedRow(), 0);
+        DBManager db = new DBManager();
+        Booking selectedBooking = db.getBookingFromBookingID(bookingID);
+        Customer bookingCustomer = db.getCustomerFromCustomerID(selectedBooking.getCustomerID());
+        String strBookingID = String.valueOf(selectedBooking.getBookingID());        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");       
+        SimpleDateFormat fileFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String dateBooked = dateFormat.format(selectedBooking.getDateBooked());
+        String outstandingBalance = String.valueOf(selectedBooking.getOutstandingBalance());
+        String totalCost = String.valueOf(selectedBooking.getTotalCost());
+        String customerName = bookingCustomer.getFirstName() + " " + bookingCustomer.getLastName();
+        Date today = new Date();
+        String todaysDate = fileFormat.format(today);
+        
+            try {
+                String fileName = strBookingID + "_" + todaysDate;
+
+                Document doc = new Document();
+                
+                PdfWriter.getInstance(doc, new FileOutputStream("src\\reports\\Booking\\customer\\Booking_Report_Booking_ID_" +fileName +".pdf"));
+                doc.open();
+
+
+                Paragraph heading1 = new Paragraph();
+                heading1.add("Booking Report");
+                heading1.setAlignment(Element.ALIGN_CENTER);
+                Paragraph heading2 = new Paragraph();
+                heading2.add("Booking ID " + bookingID);
+                heading2.setAlignment(Element.ALIGN_CENTER);
+                Paragraph heading3 = new Paragraph();
+                heading3.add("Date Booked " + dateBooked );
+                heading3.setAlignment(Element.ALIGN_CENTER);
+                Paragraph heading4 = new Paragraph();
+                heading4.add("Outstanding Balance " + outstandingBalance );
+                heading4.setAlignment(Element.ALIGN_CENTER);
+                Paragraph heading5 = new Paragraph();
+                heading5.add("Total Cost " + totalCost );
+                heading5.setAlignment(Element.ALIGN_CENTER);
+                Paragraph heading6 = new Paragraph();
+                heading6.add("Customer Name " + customerName );
+                heading6.setAlignment(Element.ALIGN_CENTER);
+                doc.add(heading1);
+                doc.add(heading2);
+                doc.add(heading3);
+                doc.add(heading4);
+                doc.add(heading5);
+                doc.add(heading6);
+                doc.close();
+
+                JOptionPane.showMessageDialog(null, "Successfully Exported");
+                
+                
+            } catch (DocumentException ex) {
+                Logger.getLogger(StaffViewRooms.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(StaffViewRooms.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+    }//GEN-LAST:event_btnCustomerBookingReportActionPerformed
+
+    private void btnAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAboutActionPerformed
+        About rForm = new About(loggedInUser);
+        this.dispose();
+        rForm.setVisible(true);
+    }//GEN-LAST:event_btnAboutActionPerformed
+
     public void loadCustomerDetails()
     {
         DBManager db = new DBManager();
@@ -1423,6 +1507,7 @@ public class CustomerHome extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAbout;
     private javax.swing.JButton btnCart;
     private javax.swing.JButton btnChangePassword;
     private javax.swing.JButton btnClear;
@@ -1447,7 +1532,6 @@ public class CustomerHome extends javax.swing.JFrame {
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> comboCardType;
     private javax.swing.JComboBox<String> comboRefundCardType;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

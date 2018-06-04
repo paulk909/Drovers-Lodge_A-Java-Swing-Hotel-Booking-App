@@ -18,11 +18,13 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -72,10 +74,20 @@ public class MainMenu extends javax.swing.JFrame {
             btnControlPanel.setVisible(false);
         }
         Date today = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(today);
+        cal.add(Calendar.DATE, 1);
+        Calendar cal4 = Calendar.getInstance();
+        cal4.setTime(today);
+        cal4.add(Calendar.YEAR, 2);
+        Date tomorrow = cal.getTime();
+        Date maxDate = cal4.getTime();
         jdateCheckIn.setMinSelectableDate(today);
+        jdateCheckIn.setMaxSelectableDate(maxDate);
         jdateCheckIn.getComponent(1).setEnabled(false);
-        jdateCheckOut.setMinSelectableDate(today);
-        
+        jdateCheckOut.getComponent(1).setEnabled(false);
+        jdateCheckOut.setMinSelectableDate(tomorrow);
+        jdateCheckOut.setMaxSelectableDate(maxDate);
     }
     
     public void clearUnassignedBookingsOnStartup()
@@ -128,7 +140,7 @@ public class MainMenu extends javax.swing.JFrame {
         jdateCheckIn = new com.toedter.calendar.JDateChooser();
         jdateCheckOut = new com.toedter.calendar.JDateChooser();
         jPanel2 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
+        btnAbout = new javax.swing.JButton();
         btnRegister = new javax.swing.JButton();
         btnSignIn = new javax.swing.JButton();
         btnCart = new javax.swing.JButton();
@@ -247,9 +259,19 @@ public class MainMenu extends javax.swing.JFrame {
 
         jdateCheckIn.setBackground(new java.awt.Color(255, 255, 255));
         jdateCheckIn.setFocusable(false);
+        jdateCheckIn.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdateCheckInPropertyChange(evt);
+            }
+        });
 
         jdateCheckOut.setBackground(new java.awt.Color(255, 255, 255));
         jdateCheckOut.setFocusable(false);
+        jdateCheckOut.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jdateCheckOutPropertyChange(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -300,7 +322,12 @@ public class MainMenu extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(224, 224, 224));
         jPanel2.setToolTipText("");
 
-        jButton2.setText("About Drovers Lodge");
+        btnAbout.setText("About Drovers Lodge");
+        btnAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAboutActionPerformed(evt);
+            }
+        });
 
         btnRegister.setText("Register");
         btnRegister.addActionListener(new java.awt.event.ActionListener() {
@@ -341,7 +368,7 @@ public class MainMenu extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton2)
+                .addComponent(btnAbout)
                 .addGap(18, 18, 18)
                 .addComponent(btnControlPanel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -357,7 +384,7 @@ public class MainMenu extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
+                    .addComponent(btnAbout)
                     .addComponent(btnSignIn)
                     .addComponent(btnRegister)
                     .addComponent(btnCart)
@@ -422,13 +449,20 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSignInActionPerformed
 
     private void btnFindRoomsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindRoomsActionPerformed
-        Date checkin = jdateCheckIn.getDate();
-        Date checkout = jdateCheckOut.getDate();
-        String roomType = String.valueOf(comboRoomType.getSelectedItem());
-        CheckAvailability rForm = new CheckAvailability(checkin, checkout, roomType, loggedInUser);
-       
-        this.dispose();
-        rForm.setVisible(true);
+        if(jdateCheckIn.getDate() == null || jdateCheckOut.getDate() == null || comboRoomType.getSelectedIndex() == 0)
+        {
+            JOptionPane.showMessageDialog(null, "Please ensure the following are selected:\n - Check in date\n - Check out date\n - Type of room");
+        }
+        else
+        {
+            Date checkin = jdateCheckIn.getDate();
+            Date checkout = jdateCheckOut.getDate();
+            String roomType = String.valueOf(comboRoomType.getSelectedItem());
+            CheckAvailability rForm = new CheckAvailability(checkin, checkout, roomType, loggedInUser);
+
+            this.dispose();
+            rForm.setVisible(true);
+        }
     }//GEN-LAST:event_btnFindRoomsActionPerformed
 
     private void btnCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartActionPerformed
@@ -498,6 +532,38 @@ public class MainMenu extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnControlPanelActionPerformed
 
+    private void btnAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAboutActionPerformed
+        About rForm = new About(loggedInUser);
+        this.dispose();
+        rForm.setVisible(true);
+    }//GEN-LAST:event_btnAboutActionPerformed
+
+    private void jdateCheckOutPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdateCheckOutPropertyChange
+        Date checkOut = new Date();
+        if(jdateCheckOut.getDate() != null)
+        {
+            checkOut = jdateCheckOut.getDate();
+            Calendar cal2 = Calendar.getInstance();
+            cal2.setTime(checkOut);
+            cal2.add(Calendar.DATE, -1);        
+            Date dayBefore = cal2.getTime();
+            jdateCheckIn.setMaxSelectableDate(dayBefore);
+        }
+    }//GEN-LAST:event_jdateCheckOutPropertyChange
+
+    private void jdateCheckInPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdateCheckInPropertyChange
+        Date checkIn = new Date();
+        if(jdateCheckIn.getDate() != null)
+        {
+            checkIn = jdateCheckIn.getDate();
+            Calendar cal3 = Calendar.getInstance();
+            cal3.setTime(checkIn);
+            cal3.add(Calendar.DATE, 1);        
+            Date dayAfter = cal3.getTime();
+            jdateCheckOut.setMinSelectableDate(dayAfter);
+        }
+    }//GEN-LAST:event_jdateCheckInPropertyChange
+
     /**
      * @param args the command line arguments
      */
@@ -534,6 +600,7 @@ public class MainMenu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAbout;
     private javax.swing.JButton btnCart;
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnControlPanel;
@@ -542,7 +609,6 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JButton btnRegister;
     private javax.swing.JButton btnSignIn;
     private javax.swing.JComboBox<String> comboRoomType;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

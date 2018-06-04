@@ -22,12 +22,13 @@ import javax.swing.JOptionPane;
 public class CustomerRegister extends javax.swing.JFrame {
 
     /**
-     * Creates new form CustomerRegister
+     * Creates new form to register customers
      */
     public CustomerRegister() {
         loadFrame();
     }
     
+    //initialise components in frame
     public void loadFrame()
     {
         initComponents();
@@ -292,6 +293,7 @@ public class CustomerRegister extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        //check that all required fields have been filled in
         Date checkDate = jdateDateOfBirth.getDate();
         if(txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty() || txtConfirmPassword.getText().isEmpty() || 
                 txtFirstName.getText().isEmpty() || txtLastName.getText().isEmpty() || txtEmail.getText().isEmpty() || 
@@ -302,6 +304,7 @@ public class CustomerRegister extends javax.swing.JFrame {
         }
         else
         {
+            //make sure passwords match
             if(!txtPassword.getText().equals(txtConfirmPassword.getText()))
             {
                 JOptionPane.showMessageDialog(null, "Passwords don't match");
@@ -315,6 +318,7 @@ public class CustomerRegister extends javax.swing.JFrame {
                 }
                 else
                 {
+                    //get customer details
                     String username = txtUsername.getText();
                     String password = txtPassword.getText();
                     String firstName = txtFirstName.getText();

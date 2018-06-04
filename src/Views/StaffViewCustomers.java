@@ -28,17 +28,18 @@ import javax.swing.table.DefaultTableModel;
  * @author Paul
  */
 public class StaffViewCustomers extends javax.swing.JFrame {
-
+    //user details to be passed in
     private LoggedInUser loggedInUser = new LoggedInUser();
 
     /**
-     * Creates new form StaffViewCustomers
+     * allows staff to view/add/remove/edit customers
      */
     public StaffViewCustomers(LoggedInUser loggedInUser) {
         this.loggedInUser = loggedInUser;
         loadFrame();
     }
     
+    //set initial components in frame
     public void loadFrame()
     {
         initComponents();        
@@ -68,6 +69,7 @@ public class StaffViewCustomers extends javax.swing.JFrame {
         loadCustomerTable();
     }
     
+    //load customer details into table
     public void loadCustomerTable()
     {
         tblCustomers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);        
@@ -85,6 +87,7 @@ public class StaffViewCustomers extends javax.swing.JFrame {
         }
     }
 
+    //clear old rows from customer table
     public void clearCustomersTable()
     {
         DefaultTableModel model = (DefaultTableModel)tblCustomers.getModel(); 
@@ -572,13 +575,13 @@ public class StaffViewCustomers extends javax.swing.JFrame {
         int customerID = (Integer)tblCustomers.getValueAt(tblCustomers.getSelectedRow(), 0);
         DBManager db = new DBManager();
         editableCustomer = db.getCustomerFromCustomerID(customerID);
-        
+        //load customer edit panel
         jframeStaffEditCustomer.setVisible(true);
         jframeStaffEditCustomer.setSize(720,480);
         jframeStaffEditCustomer.getContentPane().setBackground(Color.white);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         jframeStaffEditCustomer.setLocation(dim.width/2-jframeStaffEditCustomer.getSize().width/2, dim.height/2-jframeStaffEditCustomer.getSize().height/2);
-        
+        //get cusotmers details
         String username = editableCustomer.getUsername();
         String firstName = editableCustomer.getFirstName();
         String lastName = editableCustomer.getLastName();
@@ -643,7 +646,7 @@ public class StaffViewCustomers extends javax.swing.JFrame {
         int customerID = (Integer)tblCustomers.getValueAt(tblCustomers.getSelectedRow(), 0);
         DBManager db = new DBManager();
         editableCustomer = db.getCustomerFromCustomerID(customerID);
-        
+        //set customer details to details on record
         String username = editableCustomer.getUsername();
         String firstName = editableCustomer.getFirstName();
         String lastName = editableCustomer.getLastName();

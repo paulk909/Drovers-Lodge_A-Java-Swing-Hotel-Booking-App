@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
@@ -39,18 +40,18 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
  * @author Paul
  */
 public class StaffHome extends javax.swing.JFrame {
-    
+    //user details to be passed in
     private LoggedInUser loggedInUser = new LoggedInUser();
 
     /**
-     * Creates new form StaffHome
+     * home screen for staff to view bookings, rooms customers, and create reports
      */
     public StaffHome(LoggedInUser loggedInUser) {
         this.loggedInUser = loggedInUser;
         loadFrame();
     }
     
-    
+    //load initial components into frame
     public void loadFrame()
     {
         initComponents();
@@ -75,6 +76,20 @@ public class StaffHome extends javax.swing.JFrame {
         }       
         btnSignIn.setText("Logged in as " + loggedInUser.getUsername());
         btnSignIn.setEnabled(false);
+        btnStaffViewStaff.setVisible(false);
+        btnStaffViewRooms.setVisible(false);
+        btnStaffReports.setVisible(false);
+        
+        if(loggedInUser.getStaffTypeID() == 2 || loggedInUser.getStaffTypeID() == 3)
+        {
+            btnStaffViewStaff.setVisible(true);
+            btnStaffReports.setVisible(true);
+        }
+        if(loggedInUser.getStaffTypeID() == 2)
+        {
+            btnStaffViewRooms.setVisible(true);
+        }
+        
         btnRegister.setText("Logout");
     }
     
@@ -753,13 +768,27 @@ public class StaffHome extends javax.swing.JFrame {
         DBManager db = new DBManager();
         String newPassword = "";
         int staffID = db.getStaffFromUsername(loggedInUser.getUsername()).getStaffID();
-        if(txtPassword.getText().equals(txtConfirmPassword.getText()))
+        if(txtPassword.getText().isEmpty() || txtConfirmPassword.getText().isEmpty())
         {
-            newPassword = txtPassword.getText();
+            JOptionPane.showMessageDialog(null, "Please fill in all password fields");
+        }
+        else
+        {
+            if(!txtPassword.getText().equals(txtConfirmPassword.getText()))
+            {
+                JOptionPane.showMessageDialog(null, "Passwords don't match");
+            }
+            else
+            {
+                //update password in db if correct
+                newPassword = txtPassword.getText();
+            }            
         }
         db.updateStaffPassword(staffID, newPassword);
+        JOptionPane.showMessageDialog(null, "Password changed");
         txtPassword.setText("");
         txtConfirmPassword.setText("");
+        jframeStaffChangePassword.dispose();
     }//GEN-LAST:event_btnSubmitPasswordActionPerformed
 
     private void btnClosePasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClosePasswordActionPerformed
@@ -767,17 +796,27 @@ public class StaffHome extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClosePasswordActionPerformed
 
     private void btnEditSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditSubmitActionPerformed
-        DBManager db = new DBManager();
-        Staff loggedInStaff = new Staff();
-        loggedInStaff = db.getStaffFromUsername(loggedInUser.getUsername());
-        int staffID = loggedInStaff.getStaffID();
+        if(txtUsernameStaff.getText().isEmpty() ||   txtFirstNameStaff.getText().isEmpty() ||
+               txtLastNameStaff.getText().isEmpty() || txtEmailStaff.getText().isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "Please fill in all fields");
+        }
+        else
+        {
+            DBManager db = new DBManager();
+            Staff loggedInStaff = new Staff();
+            loggedInStaff = db.getStaffFromUsername(loggedInUser.getUsername());
+            int staffID = loggedInStaff.getStaffID();
 
-        String firstName = txtFirstNameStaff.getText();
-        String lastName = txtLastNameStaff.getText();
-        String email = txtEmailStaff.getText();
+            String firstName = txtFirstNameStaff.getText();
+            String lastName = txtLastNameStaff.getText();
+            String email = txtEmailStaff.getText();
 
-        Staff updateStaffDetails = new Staff(firstName, lastName, email);
-        db.updateStaffDetails(staffID, updateStaffDetails);
+            Staff updateStaffDetails = new Staff(firstName, lastName, email);
+            db.updateStaffDetails(staffID, updateStaffDetails);      
+            JOptionPane.showMessageDialog(null, "Details updated");
+            jframeEditStaffDetails.dispose();
+        }
     }//GEN-LAST:event_btnEditSubmitActionPerformed
 
     private void btnEditClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditClearActionPerformed
@@ -830,16 +869,15 @@ public class StaffHome extends javax.swing.JFrame {
         Date dateUntil = jdateDateUntil.getDate();
         HashMap<Integer, BookingLine> bookingLines = new HashMap<Integer, BookingLine>();
         DBManager db = new DBManager();
-        bookingLines = db.getBookingLinesBetweenDates(dateFrom, dateUntil);     
-        
+        bookingLines = db.getBookingLinesBetweenDates(dateFrom, dateUntil);  
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");       
         SimpleDateFormat fileFormat = new SimpleDateFormat("dd_MM_yyyy");
         String strDateFrom = fileFormat.format(dateFrom);
         String strDateUntil = fileFormat.format(dateUntil);
         String strAvailability = strDateFrom + "_until_" + strDateUntil;   
         Date today = new Date();
-        String todaysDate = fileFormat.format(today);
-        
+        String todaysDate = fileFormat.format(today);   
+        //load table on the fly with booking details for report        
         String colNames[] = {"Booking ID", "RoomID", "Check In", "Check Out", "Customer ID"};
         Object[][] tableData = new Object[bookingLines.keySet().size()][5];
         int index = 0;
@@ -855,7 +893,7 @@ public class StaffHome extends javax.swing.JFrame {
         }
         DefaultTableModel dtm = new DefaultTableModel(tableData,colNames);
         JTable tblBookingReport = new JTable(dtm);
-    
+        //create excel sheet showing booking report table
         ExcelWriter export = new ExcelWriter();
                 
         export.newExcelFile(strAvailability + "_" + todaysDate);

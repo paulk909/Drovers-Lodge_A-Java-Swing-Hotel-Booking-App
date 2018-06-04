@@ -31,20 +31,21 @@ import javax.swing.JOptionPane;
  * @author Paul
  */
 public class MainMenu extends javax.swing.JFrame {
-    
+    //intialise user and booking details to be passed
     private LoggedInUser loggedInUser = new LoggedInUser();
-    private Booking currentBooking = new Booking(); //loggedInCustomer.getCurrentBooking();
+    private Booking currentBooking = new Booking(); 
 
     /**
      * Creates new form MainMenu
      */
     public MainMenu() {
         loadFrame();
-//        currentBooking.populateBookingLines();
     }
     
+    //load intial components into frame
     public void loadFrame()
     {
+        //clear any unassignedbookings from db
         clearUnassignedBookingsOnStartup();
         initComponents();
         this.getContentPane().setBackground(Color.white); 
@@ -96,6 +97,7 @@ public class MainMenu extends javax.swing.JFrame {
         db.clearUnassignedBookingsOnStartup();
     }
     
+    //add room types to drop down
     public void populateRoomTypeDropDown()
     {
         comboRoomType.removeAllItems();
@@ -449,6 +451,8 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSignInActionPerformed
 
     private void btnFindRoomsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindRoomsActionPerformed
+        //pass booking request to check availability form
+        //make sure the dates and room type are selected
         if(jdateCheckIn.getDate() == null || jdateCheckOut.getDate() == null || comboRoomType.getSelectedIndex() == 0)
         {
             JOptionPane.showMessageDialog(null, "Please ensure the following are selected:\n - Check in date\n - Check out date\n - Type of room");
@@ -476,6 +480,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
+        //if customer is logged in register button becomes log out button
         if(loggedInUser.getIsLoggedIn())
         {
             loggedInUser = new LoggedInUser();
@@ -497,6 +502,7 @@ public class MainMenu extends javax.swing.JFrame {
         String password  =  txtPassword.getText();
         DBManager db= new DBManager();
         
+        //if user is logged in diable login button and display username
         if(db.checkLoginDetails(username, password))
         {
             loggedInUser = db.getValidUser(username);

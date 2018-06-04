@@ -512,10 +512,10 @@ public class MainMenu extends javax.swing.JFrame {
             {
                 lblStaff.setVisible(true);
             }
-        }
-        
-        
-               
+        } else
+        {
+                JOptionPane.showMessageDialog(null, "Login details not valid");
+        }      
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnControlPanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnControlPanelActionPerformed

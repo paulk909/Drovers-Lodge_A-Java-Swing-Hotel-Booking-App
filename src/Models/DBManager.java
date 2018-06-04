@@ -708,7 +708,7 @@ public class DBManager {
                 paymentToAdd.setTotalCost(rs.getDouble("TotalCost"));  
                 paymentToAdd.setPaymentHouse(rs.getString("PaymentHouse"));
                 paymentToAdd.setPaymentStreet(rs.getString("PaymentStreet"));  
-                paymentToAdd.setPaymentTown(rs.getString("aymentTown"));
+                paymentToAdd.setPaymentTown(rs.getString("PaymentTown"));
                 paymentToAdd.setPaymentPostcode(rs.getString("PaymentPostcode"));  
                 payments.put(paymentToAdd.getPaymentID(), paymentToAdd);
             }
@@ -748,6 +748,32 @@ public class DBManager {
             Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
         }            
         return bookings;
+    }
+    
+    
+    public boolean checkIfUserNameExists(String username)
+    {
+        boolean exists = false;
+        HashMap<Integer, Customer> customers = new HashMap<Integer, Customer>();
+        customers = getCustomers();
+        HashMap<Integer, Staff> staff = new HashMap<Integer, Staff>();
+        staff = getStaff();
+        
+        for(Map.Entry<Integer, Customer> customerEntry : customers.entrySet())
+        {
+            if(customerEntry.getValue().getUsername().equals(username))
+            {
+                return true;
+            }
+        }
+        for(Map.Entry<Integer, Staff> staffEntry : staff.entrySet())
+        {
+            if(staffEntry.getValue().getUsername().equals(username))
+            {
+                return true;
+            }
+        }
+        return false;
     }
     
     public HashMap<Integer, Booking> getBookingsBetweenDates(Date dateFrom, Date dateUntil)

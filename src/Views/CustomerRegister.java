@@ -11,7 +11,9 @@ import Models.Email;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.Calendar;
 import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -32,6 +34,10 @@ public class CustomerRegister extends javax.swing.JFrame {
         this.getContentPane().setBackground(Color.white); 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+        
+        Date today = new Date();
+        jdateDateOfBirth.setMaxSelectableDate(today);
+        jdateDateOfBirth.getComponent(1).setEnabled(false);
     }
     
 
@@ -286,23 +292,64 @@ public class CustomerRegister extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
-        String username = txtUsername.getText();
-        String password = txtPassword.getText();
-        String firstName = txtFirstName.getText();
-        String lastName = txtLastName.getText();
-        Date dateOfBirth = jdateDateOfBirth.getDate();
-        String email = txtEmail.getText();
-        String house = txtHouse.getText();
-        String street = txtStreet.getText();
-        String town = txtTown.getText();
-        String postcode = txtPostcode.getText();
-        String telephone = txtTelephone.getText();
-        String mobile = txtMobile.getText();
-        Customer customerToBeAdded = new Customer(username, password, firstName, lastName, dateOfBirth, email, house, street, town, postcode, telephone, mobile);
-        DBManager db = new DBManager();
-        db.addCustomerToDb(customerToBeAdded);
-        Email registeredEmail = new Email();
-        registeredEmail.registerEmail(email, firstName);
+        Date checkDate = jdateDateOfBirth.getDate();
+        if(txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty() || txtConfirmPassword.getText().isEmpty() || 
+                txtFirstName.getText().isEmpty() || txtLastName.getText().isEmpty() || txtEmail.getText().isEmpty() || 
+                txtHouse.getText().isEmpty() || txtTown.getText().isEmpty() || checkDate == null ||
+                txtPostcode.getText().isEmpty() || txtTelephone.getText().isEmpty() || txtMobile.getText().isEmpty())
+        {
+                JOptionPane.showMessageDialog(null, "Please fill in all required fields");
+        }
+        else
+        {
+            if(!txtPassword.getText().equals(txtConfirmPassword.getText()))
+            {
+                JOptionPane.showMessageDialog(null, "Passwords don't match");
+            }
+            else
+            {
+                DBManager db = new DBManager();
+                if(db.checkIfUserNameExists(txtUsername.getText()))
+                {
+                JOptionPane.showMessageDialog(null, "Username already exists");
+                }
+                else
+                {
+                    String username = txtUsername.getText();
+                    String password = txtPassword.getText();
+                    String firstName = txtFirstName.getText();
+                    String lastName = txtLastName.getText();
+                    Date dateOfBirth = jdateDateOfBirth.getDate();
+                    String email = txtEmail.getText();
+                    String house = txtHouse.getText();
+                    String street = txtStreet.getText();
+                    String town = txtTown.getText();
+                    String postcode = txtPostcode.getText();
+                    String telephone = txtTelephone.getText();
+                    String mobile = txtMobile.getText();
+                    Customer customerToBeAdded = new Customer(username, password, firstName, lastName, dateOfBirth, email, house, street, town, postcode, telephone, mobile);
+                    db.addCustomerToDb(customerToBeAdded);
+                    JOptionPane.showMessageDialog(null, "New customer has been registered");
+                    Email registeredEmail = new Email();
+                    registeredEmail.registerEmail(email, firstName);            
+
+                    txtUsername.setText("");
+                    txtPassword.setText("");
+                    txtFirstName.setText("");
+                    txtLastName.setText("");
+                    Date today = new Date();
+                    jdateDateOfBirth.setDate(today);
+                    txtEmail.setText("");
+                    txtHouse.setText("");
+                    txtStreet.setText("");
+                    txtTown.setText("");
+                    txtPostcode.setText("");
+                    txtTelephone.setText("");
+                    txtMobile.setText("");
+                }
+            }
+        }
+        
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
@@ -316,6 +363,7 @@ public class CustomerRegister extends javax.swing.JFrame {
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         txtUsername.setText("");
         txtPassword.setText("");
+        txtConfirmPassword.setText("");
         txtFirstName.setText("");
         txtLastName.setText("");
         Date today = new Date();

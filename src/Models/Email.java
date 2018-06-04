@@ -50,7 +50,7 @@ public class Email {
             mm.setText("Hello, " + firstName + "!\n\n Thank you for registering with Drovers Lodge guest house.");
             
             Transport.send(mm);
-            JOptionPane.showMessageDialog(null, "Email has been sent!");
+            System.out.println("Email has been sent");
         }
         catch (HeadlessException | MessagingException ex)
         {
@@ -165,7 +165,7 @@ public class Email {
                             + "The Drovers Lodge Team");
             
             Transport.send(mm);
-            JOptionPane.showMessageDialog(null, "Booking has been confirmed");
+            System.out.println("Email sent");
         }
         catch (HeadlessException | MessagingException ex)
         {

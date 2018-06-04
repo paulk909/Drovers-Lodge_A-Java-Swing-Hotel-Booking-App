@@ -481,6 +481,7 @@ public class Cart extends javax.swing.JFrame {
                 .addGap(23, 23, 23))
         );
 
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Payee's Address"));
 
         jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -1033,7 +1034,10 @@ public class Cart extends javax.swing.JFrame {
                 }
             }            
             
-        }
+        } else
+        {
+                JOptionPane.showMessageDialog(null, "Login details not valid");
+        }  
 
     }//GEN-LAST:event_btnLoginActionPerformed
 
@@ -1080,6 +1084,7 @@ public class Cart extends javax.swing.JFrame {
                     {
                         currentBooking.setOutstandingBalance(currentBooking.getTotalCost());
                         db.confirmBookingPayAtCheckIn(loggedInUser, bookingID, customerID);
+                        JOptionPane.showMessageDialog(null, "Booking has been confirmed");
                         String email = db.getCustomerFromCustomerID(customerID).getEmail();
                         Email bookingEmail = new Email();
                         bookingEmail.bookingEmail(email, currentBooking);
@@ -1102,78 +1107,115 @@ public class Cart extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConfirmActionPerformed
 
     private void btnPaymentSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaymentSubmitActionPerformed
-        DBManager db = new DBManager();
-        String payeeName = txtPayeeName.getText();
-        String cardNo = txtCardNo.getText();
-        String securityNo = txtSecurityNo.getText();
-        int expiryMonth = jMonthExpiry.getMonth();
-        String monthString;
-        switch (expiryMonth) {
-            case 0:  monthString = "Jan";
-                     break;
-            case 1:  monthString = "Feb";
-                     break;
-            case 2:  monthString = "Mar";
-                     break;
-            case 3:  monthString = "Apr";
-                     break;
-            case 4:  monthString = "May";
-                     break;
-            case 5:  monthString = "Jun";
-                     break;
-            case 6:  monthString = "Jul";
-                     break;
-            case 7:  monthString = "Aug";
-                     break;
-            case 8:  monthString = "Sep";
-                     break;
-            case 9: monthString = "Oct";
-                     break;
-            case 10: monthString = "Nov";
-                     break;
-            case 11: monthString = "Dec";
-                     break;
-            default: monthString = "Invalid month";
-                     break;
-        }
-        int expiryYear = jYearExpiry.getYear();      
-        Date expiryDate = new Date();
-        try 
+        if(txtPayeeName.getText().isEmpty() || txtCardNo.getText().isEmpty() || txtSecurityNo.getText().isEmpty() ||
+                comboCardType.getSelectedIndex()==0 || txtPaymentHouse.getText().isEmpty() ||
+                txtPaymentTown.getText().isEmpty() || txtPaymentPostcode.getText().isEmpty())
         {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-            expiryDate = dateFormat.parse(expiryYear + "-" + monthString + "-01 00:00:00");
-        } 
-        catch (ParseException ex) 
-        {
-            Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, "Please fill in all payment fields");
         }
-        int cardTypeID = db.getCardTypeIDFromCardType(String.valueOf(comboCardType.getSelectedItem()));
-        double totalCost = currentBooking.getTotalCost();
+        else
+        {
+            int length = txtCardNo.getText().length();
+            if(length < 10)
+            {
+                JOptionPane.showMessageDialog(null, "Card number must be at least 10 digits");
+            }
+            else
+            {
+                DBManager db = new DBManager();
+                String payeeName = txtPayeeName.getText();
+                String cardNo = txtCardNo.getText();
+                String securityNo = txtSecurityNo.getText();
+                int expiryMonth = jMonthExpiry.getMonth();
+                String monthString;
+                switch (expiryMonth) {
+                    case 0:  monthString = "Jan";
+                             break;
+                    case 1:  monthString = "Feb";
+                             break;
+                    case 2:  monthString = "Mar";
+                             break;
+                    case 3:  monthString = "Apr";
+                             break;
+                    case 4:  monthString = "May";
+                             break;
+                    case 5:  monthString = "Jun";
+                             break;
+                    case 6:  monthString = "Jul";
+                             break;
+                    case 7:  monthString = "Aug";
+                             break;
+                    case 8:  monthString = "Sep";
+                             break;
+                    case 9: monthString = "Oct";
+                             break;
+                    case 10: monthString = "Nov";
+                             break;
+                    case 11: monthString = "Dec";
+                             break;
+                    default: monthString = "Invalid month";
+                             break;
+                }
+                int expiryYear = jYearExpiry.getYear();      
+                Date expiryDate = new Date();
+                try 
+                {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+                    expiryDate = dateFormat.parse(expiryYear + "-" + monthString + "-01 00:00:00");
+                } 
+                catch (ParseException ex) 
+                {
+                    Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                int cardTypeID = db.getCardTypeIDFromCardType(String.valueOf(comboCardType.getSelectedItem()));
+                double totalCost = currentBooking.getTotalCost();
+
+                Payment payment = new Payment(payeeName, cardNo, securityNo, expiryDate, cardTypeID, totalCost);
+
+                int customerID = 0;
+                if(loggedInUser.getUserTypeID() == 2)
+                {
+                    customerID = db.getCustomerFromUsername(loggedInUser.getUsername()).getCustomerID();
+                }
+                else if(loggedInUser.getUserTypeID() == 3)
+                {
+                    customerID = db.getCustomerFromUsername(String.valueOf(comboCustomer.getSelectedItem())).getCustomerID();
+                }
+                int bookingID = currentBooking.getBookingID();
+
+                db.confirmBookingPayNow(loggedInUser, bookingID, customerID, payment);
+                jframePayment.dispose();
+                JOptionPane.showMessageDialog(null, "Booking has been confirmed");
+                String email = db.getCustomerFromCustomerID(customerID).getEmail();
+                Email bookingEmail = new Email();
+                bookingEmail.bookingEmail(email, currentBooking);
+                txtPayeeName.setText("");
+                txtCardNo.setText("");
+                txtSecurityNo.setText("");
+                comboCardType.setSelectedIndex(0);
+                checkSameAddress.setSelected(false);
+                txtPaymentHouse.setText("");
+                txtPaymentStreet.setText("");
+                txtPaymentTown.setText("");
+                txtPaymentPostcode.setText("");
+                emptyFrame();
+            }
+        }      
         
-        Payment payment = new Payment(payeeName, cardNo, securityNo, expiryDate, cardTypeID, totalCost);
         
-        int customerID = 0;
-        if(loggedInUser.getUserTypeID() == 2)
-        {
-            customerID = db.getCustomerFromUsername(loggedInUser.getUsername()).getCustomerID();
-        }
-        else if(loggedInUser.getUserTypeID() == 3)
-        {
-            customerID = db.getCustomerFromUsername(String.valueOf(comboCustomer.getSelectedItem())).getCustomerID();
-        }
-        int bookingID = currentBooking.getBookingID();
-        
-        db.confirmBookingPayNow(loggedInUser, bookingID, customerID, payment);
-        String email = db.getCustomerFromCustomerID(customerID).getEmail();
-        Email bookingEmail = new Email();
-        bookingEmail.bookingEmail(email, currentBooking);
-        jframePayment.dispose();
+
     }//GEN-LAST:event_btnPaymentSubmitActionPerformed
 
     private void btnPaymentClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaymentClearActionPerformed
         txtPayeeName.setText("");
         txtCardNo.setText("");
         txtSecurityNo.setText("");
+        comboCardType.setSelectedIndex(0);
+        checkSameAddress.setSelected(false);
+        txtPaymentHouse.setText("");
+        txtPaymentStreet.setText("");
+        txtPaymentTown.setText("");
+        txtPaymentPostcode.setText("");
     }//GEN-LAST:event_btnPaymentClearActionPerformed
 
     private void btnPaymentCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaymentCloseActionPerformed

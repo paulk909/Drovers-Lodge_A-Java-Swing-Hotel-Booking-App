@@ -633,7 +633,6 @@ public class StaffHome extends javax.swing.JFrame {
         );
 
         btnTrunc.setText("trunc");
-        btnTrunc.setEnabled(false);
         btnTrunc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTruncActionPerformed(evt);
